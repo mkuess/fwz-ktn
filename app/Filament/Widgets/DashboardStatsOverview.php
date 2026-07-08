@@ -12,16 +12,16 @@ class DashboardStatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Organisations', Organisation::count())
+            Stat::make('Organisationen gesamt', Organisation::count())
                 ->icon('heroicon-o-building-office-2')
                 ->color('primary'),
-            Stat::make('Pending Organisations', Organisation::where('is_approved', false)->count())
+            Stat::make('Ausstehende Organisationen', Organisation::where('is_approved', false)->count())
                 ->icon('heroicon-o-clock')
                 ->color('warning'),
-            Stat::make('Total Members', Member::count())
+            Stat::make('Mitglieder gesamt', Member::count())
                 ->icon('heroicon-o-users')
                 ->color('primary'),
-            Stat::make('Pending Members', Member::where('status', 'pending')->count())
+            Stat::make('Ausstehende Mitglieder', Member::where('status', 'pending')->count())
                 ->icon('heroicon-o-clock')
                 ->color('warning'),
         ];

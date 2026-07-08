@@ -17,6 +17,10 @@ class MemberResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $modelLabel = 'Mitglied';
+
+    protected static ?string $pluralModelLabel = 'Mitglieder';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -28,31 +32,37 @@ class MemberResource extends Resource
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('first_name')
+                    ->label('Vorname')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('last_name')
+                    ->label('Nachname')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('E-Mail')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\Select::make('status')
+                    ->label('Status')
                     ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
+                        'pending' => 'Ausstehend',
+                        'approved' => 'Genehmigt',
+                        'rejected' => 'Abgelehnt',
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('source')
+                    ->label('Quelle')
                     ->disabled()
                     ->dehydrated(),
                 Forms\Components\TextInput::make('membership_number')
+                    ->label('Mitgliedsnummer')
                     ->disabled()
                     ->dehydrated(),
                 Forms\Components\Toggle::make('newsletter_optin')
-                    ->label('Newsletter opt-in')
+                    ->label('Newsletter-Einwilligung')
                     ->default(false),
             ]);
     }
@@ -62,35 +72,53 @@ class MemberResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
+                    ->label('Vorname')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
+                    ->label('Nachname')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('E-Mail')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->label('Organisation')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Ausstehend',
+                        'approved' => 'Genehmigt',
+                        'rejected' => 'Abgelehnt',
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'approved' => 'success',
                         'rejected' => 'danger',
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('source')
-                    ->badge(),
+                    ->label('Quelle')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'self' => 'Selbst registriert',
+                        'csv' => 'CSV-Import',
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Erstellt am')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
                     ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
+                        'pending' => 'Ausstehend',
+                        'approved' => 'Genehmigt',
+                        'rejected' => 'Abgelehnt',
                     ]),
                 Tables\Filters\SelectFilter::make('organisation_id')
                     ->label('Organisation')
@@ -99,7 +127,7 @@ class MemberResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('approveMember')
-                    ->label('Approve Member')
+                    ->label('Mitglied freischalten')
                     ->icon('heroicon-o-check-badge')
                     ->color('success')
                     ->requiresConfirmation()
@@ -116,8 +144,8 @@ class MemberResource extends Resource
                         ]);
 
                         Notification::make()
-                            ->title('Member approved')
-                            ->body("Membership number: {$record->membership_number}")
+                            ->title('Mitglied freigeschalten')
+                            ->body("Mitgliedsnummer: {$record->membership_number}")
                             ->success()
                             ->send();
                     }),

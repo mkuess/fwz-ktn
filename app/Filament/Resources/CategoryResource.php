@@ -19,24 +19,33 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $modelLabel = 'Kategorie';
+
+    protected static ?string $pluralModelLabel = 'Kategorien';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Name')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null),
                 Forms\Components\TextInput::make('slug')
+                    ->label('Slug')
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
-                Forms\Components\ColorPicker::make('color'),
+                Forms\Components\ColorPicker::make('color')
+                    ->label('Farbe'),
                 Forms\Components\TextInput::make('icon')
+                    ->label('Icon')
                     ->maxLength(255)
-                    ->helperText('e.g. heroicon-o-tag'),
+                    ->helperText('z. B. heroicon-o-tag'),
                 Forms\Components\TextInput::make('sort_order')
+                    ->label('Reihenfolge')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -49,12 +58,16 @@ class CategoryResource extends Resource
             ->defaultSort('sort_order')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('Slug')
                     ->searchable(),
-                Tables\Columns\ColorColumn::make('color'),
+                Tables\Columns\ColorColumn::make('color')
+                    ->label('Farbe'),
                 Tables\Columns\TextColumn::make('sort_order')
+                    ->label('Reihenfolge')
                     ->numeric()
                     ->sortable(),
             ])

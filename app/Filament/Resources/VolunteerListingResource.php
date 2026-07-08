@@ -16,6 +16,10 @@ class VolunteerListingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hand-raised';
 
+    protected static ?string $modelLabel = 'Gesuch';
+
+    protected static ?string $pluralModelLabel = 'Gesuche';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -27,24 +31,33 @@ class VolunteerListingResource extends Resource
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('title')
+                    ->label('Titel')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label('Beschreibung')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('website_link')
+                    ->label('Website-Link')
                     ->url()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_spontaneous')
+                    ->label('Spontansuche')
                     ->default(false),
                 Forms\Components\TextInput::make('street')
+                    ->label('Straße')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('zip')
+                    ->label('PLZ')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('city')
+                    ->label('Ort')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('valid_until'),
+                Forms\Components\DatePicker::make('valid_until')
+                    ->label('Gültig bis'),
                 Forms\Components\Toggle::make('is_active')
+                    ->label('Aktiv')
                     ->default(true),
             ]);
     }
@@ -54,19 +67,23 @@ class VolunteerListingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Titel')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->label('Organisation')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktiv')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('valid_until')
+                    ->label('Gültig bis')
                     ->date()
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_active'),
+                Tables\Filters\TernaryFilter::make('is_active')
+                    ->label('Aktiv'),
                 Tables\Filters\SelectFilter::make('organisation_id')
                     ->label('Organisation')
                     ->relationship('organisation', 'name')

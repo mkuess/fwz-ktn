@@ -16,8 +16,8 @@ class ListOrganisations extends ListRecords
         return [
             Actions\ImportAction::make()
                 ->importer(OrganisationImporter::class)
-                ->label('Import CSV')
-                ->modalDescription('Required columns: type, name, email, password. Optional columns: zvr_number, description, street, zip, city, phone, website, representative, contact_person. Imported organisations are created as unapproved (is_approved = false) and will need to be reviewed.'),
+                ->label('CSV importieren')
+                ->modalDescription('Pflichtspalten: type, name, email, password. Optionale Spalten: zvr_number, description, street, zip, city, phone, website, representative, contact_person. Importierte Organisationen werden als nicht freigeschalten (is_approved = false) angelegt und müssen geprüft werden.'),
             Actions\CreateAction::make(),
         ];
     }

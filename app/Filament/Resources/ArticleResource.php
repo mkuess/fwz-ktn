@@ -17,11 +17,16 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
+    protected static ?string $modelLabel = 'Artikel';
+
+    protected static ?string $pluralModelLabel = 'Artikel';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label('Titel')
                     ->required()
                     ->live(onBlur: true)
                     ->maxLength(255)
@@ -31,21 +36,28 @@ class ArticleResource extends Resource
                         }
                     }),
                 Forms\Components\TextInput::make('slug')
+                    ->label('Slug')
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\Textarea::make('excerpt')
+                    ->label('Kurztext')
                     ->columnSpanFull(),
                 Forms\Components\RichEditor::make('body')
+                    ->label('Inhalt')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('cover_image_path')
+                    ->label('Titelbild')
                     ->image()
                     ->directory('articles/covers'),
-                Forms\Components\DateTimePicker::make('published_at'),
+                Forms\Components\DateTimePicker::make('published_at')
+                    ->label('Veröffentlicht am'),
                 Forms\Components\Toggle::make('is_published')
+                    ->label('Veröffentlicht')
                     ->default(false),
                 Forms\Components\Repeater::make('attachments')
+                    ->label('Anhänge')
                     ->relationship('attachments')
                     ->schema([
                         Forms\Components\FileUpload::make('file_path')
@@ -67,7 +79,7 @@ class ArticleResource extends Resource
                     ])
                     ->columns(2)
                     ->columnSpanFull()
-                    ->addActionLabel('Add attachment'),
+                    ->addActionLabel('Anhang hinzufügen'),
             ]);
     }
 
@@ -76,13 +88,17 @@ class ArticleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Titel')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
+                    ->label('Veröffentlicht')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('published_at')
+                    ->label('Veröffentlicht am')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Erstellt am')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

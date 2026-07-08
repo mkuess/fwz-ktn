@@ -1,1 +1,1 @@
-- [Filament 3 Importer hooks and custom Dashboard override](filament-3-import-dashboard.md) — valid Importer hook names (beforeSave etc.) and how to properly replace the default Dashboard widgets.
+- [Filament 3 Importer hooks, custom Dashboard override, and localization](filament-3-import-dashboard.md) — valid Importer hook names, replacing default Dashboard widgets, and how panel locale actually works (no Panel::locale()).

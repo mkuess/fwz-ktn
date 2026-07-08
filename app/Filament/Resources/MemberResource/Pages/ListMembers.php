@@ -16,8 +16,8 @@ class ListMembers extends ListRecords
         return [
             Actions\ImportAction::make()
                 ->importer(MemberImporter::class)
-                ->label('Import CSV')
-                ->modalDescription('Required columns: first_name, last_name, email, organisation_id. Optional columns: newsletter_optin (1/0). Imported members are created with status = pending and source = csv.'),
+                ->label('CSV importieren')
+                ->modalDescription('Pflichtspalten: first_name, last_name, email, organisation_id. Optionale Spalte: newsletter_optin (1/0). Importierte Mitglieder werden mit Status = Ausstehend und Quelle = CSV-Import angelegt.'),
             Actions\CreateAction::make(),
         ];
     }
