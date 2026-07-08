@@ -189,10 +189,31 @@ class SmartCsvImportAction
     protected static function resolvePath(mixed $file): string
     {
         if ($file instanceof TemporaryUploadedFile) {
-            return $file->getRealPath();
+            $path = $file->getRealPath() ?: $file->getPathname();
+
+            if (! $path || ! is_file($path)) {
+                throw new RuntimeException('Die hochgeladene Datei konnte nicht gefunden werden.');
+            }
+
+            return $path;
         }
 
-        if (is_string($file) && is_file($file)) {
+        // Filament's FileUpload component exposes its *raw* (non-dehydrated)
+        // form state as an array keyed by a random UUID, even for a single,
+        // non-multiple upload, e.g. ['9f2b...' => TemporaryUploadedFile].
+        // $get() inside step closures returns this raw state, so we need to
+        // unwrap it before resolving the actual file.
+        if (is_array($file)) {
+            foreach ($file as $item) {
+                if ($item) {
+                    return self::resolvePath($item);
+                }
+            }
+
+            throw new RuntimeException('Es wurde keine Datei hochgeladen.');
+        }
+
+        if (is_string($file) && $file !== '' && is_file($file)) {
             return $file;
         }
 
