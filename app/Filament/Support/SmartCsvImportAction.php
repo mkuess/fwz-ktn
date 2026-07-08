@@ -10,6 +10,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use RuntimeException;
@@ -108,6 +109,11 @@ class SmartCsvImportAction
                             }),
                         $fields
                     )),
+                Placeholder::make('csv_row_preview')
+                    ->hiddenLabel()
+                    ->live()
+                    ->visible(fn (Get $get) => self::tryAnalyze($get('csv_file')) !== null)
+                    ->content(fn (Get $get) => self::renderPreview($get, $fields)),
             ])
             ->action(function (array $data) use ($fields, $importRow, $entityPluralLabel) {
                 $file = $data['csv_file'] ?? null;
@@ -130,7 +136,7 @@ class SmartCsvImportAction
                     $skipped = 0;
                     $skipReasons = [];
 
-                    foreach ($rows as $row) {
+                    foreach ($rows as $rowIndex => $row) {
                         $mapped = [];
 
                         foreach ($fields as $field) {
@@ -146,7 +152,11 @@ class SmartCsvImportAction
                             }
                         }
 
-                        $result = $importRow($mapped);
+                        try {
+                            $result = $importRow($mapped);
+                        } catch (Throwable $e) {
+                            $result = 'Fehler: '.$e->getMessage();
+                        }
 
                         if ($result === true) {
                             $imported++;
@@ -154,6 +164,13 @@ class SmartCsvImportAction
                             $skipped++;
                             $reason = is_string($result) && $result !== '' ? $result : 'unbekannter Grund';
                             $skipReasons[$reason] = ($skipReasons[$reason] ?? 0) + 1;
+
+                            Log::warning('CSV-Import: Zeile übersprungen', [
+                                'entitaet' => $entityPluralLabel,
+                                'zeile' => $rowIndex + 2,
+                                'grund' => $reason,
+                                'daten' => $mapped,
+                            ]);
                         }
                     }
 
@@ -174,6 +191,11 @@ class SmartCsvImportAction
                         ->success()
                         ->send();
                 } catch (Throwable $e) {
+                    Log::error('CSV-Import fehlgeschlagen', [
+                        'entitaet' => $entityPluralLabel,
+                        'fehler' => $e->getMessage(),
+                    ]);
+
                     Notification::make()
                         ->title('CSV-Import fehlgeschlagen')
                         ->body('Die Datei konnte nicht verarbeitet werden. Bitte überprüfen Sie das Format.')
@@ -197,6 +219,72 @@ class SmartCsvImportAction
         } catch (Throwable $e) {
             return null;
         }
+    }
+
+    /**
+     * @param  array<int, array{key: string, label: string, icon?: string, required?: bool, special?: array{value: string, label: string}}>  $fields
+     */
+    protected static function renderPreview(Get $get, array $fields): string|HtmlString
+    {
+        $analysis = self::tryAnalyze($get('csv_file'));
+
+        if ($analysis === null) {
+            return '';
+        }
+
+        try {
+            $path = self::resolvePath($get('csv_file'));
+            $rows = array_slice(CsvImportHelper::readRows($path, $analysis['delimiter']), 0, 3);
+        } catch (Throwable $e) {
+            return '';
+        }
+
+        if ($rows === []) {
+            return '';
+        }
+
+        $mappedFields = [];
+
+        foreach ($fields as $field) {
+            $column = $get("mapping_{$field['key']}");
+
+            if ($column && $column !== self::IGNORE) {
+                $mappedFields[] = $field;
+            }
+        }
+
+        if ($mappedFields === []) {
+            return '';
+        }
+
+        $headerHtml = '';
+
+        foreach ($mappedFields as $field) {
+            $headerHtml .= '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap">'
+                .e(($field['icon'] ?? '').' '.$field['label']).'</th>';
+        }
+
+        $bodyHtml = '';
+
+        foreach ($rows as $row) {
+            $bodyHtml .= '<tr class="border-t border-gray-100 dark:border-white/5">';
+
+            foreach ($mappedFields as $field) {
+                $column = $get("mapping_{$field['key']}");
+                $value = ($column === self::AUTO_SLUG) ? '(automatisch)' : ($row[$column] ?? '');
+                $bodyHtml .= '<td class="px-3 py-2 text-xs text-gray-700 dark:text-gray-300 truncate max-w-[10rem]">'
+                    .e((string) $value).'</td>';
+            }
+
+            $bodyHtml .= '</tr>';
+        }
+
+        return new HtmlString(
+            '<div class="fi-in-text text-sm text-gray-500 dark:text-gray-400 mb-1">👁 Vorschau (erste 3 Zeilen)</div>'
+            .'<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-white/10">'
+            .'<table class="min-w-full divide-y divide-gray-200 dark:divide-white/10"><thead><tr>'.$headerHtml.'</tr></thead>'
+            .'<tbody>'.$bodyHtml.'</tbody></table></div>'
+        );
     }
 
     protected static function normalize(string $value): string

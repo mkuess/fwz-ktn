@@ -7,6 +7,7 @@ use App\Filament\Support\SmartCsvImportAction;
 use App\Models\Organisation;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Str;
 
 class ListOrganisations extends ListRecords
 {
@@ -19,10 +20,10 @@ class ListOrganisations extends ListRecords
                 name: 'importCsv',
                 label: 'CSV importieren',
                 fields: [
-                    ['key' => 'type', 'label' => 'Typ', 'icon' => '🏢', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'name', 'label' => 'Name', 'icon' => '🏷', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'email', 'label' => 'E-Mail', 'icon' => '📧', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'password', 'label' => 'Passwort', 'icon' => '🔑', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'email', 'label' => 'E-Mail', 'icon' => '📧', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'type', 'label' => 'Typ', 'icon' => '🏢', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'password', 'label' => 'Passwort', 'icon' => '🔑', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'zvr_number', 'label' => 'ZVR-Nummer', 'icon' => '🔢', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'description', 'label' => 'Beschreibung', 'icon' => '📝', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'street', 'label' => 'Straße', 'icon' => '🏠', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
@@ -33,25 +34,32 @@ class ListOrganisations extends ListRecords
                     ['key' => 'representative', 'label' => 'Vertretung', 'icon' => '👤', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'contact_person', 'label' => 'Ansprechpartner:in', 'icon' => '👥', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
-                importRow: function (array $mapped): bool {
-                    $type = $mapped['type'] ?? null;
+                importRow: function (array $mapped): bool|string {
                     $name = $mapped['name'] ?? null;
+
+                    if (! $name) {
+                        return 'ohne Name';
+                    }
+
                     $email = $mapped['email'] ?? null;
+
+                    if ($email !== null && $email !== '' && ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        return 'mit ungültiger E-Mail';
+                    }
+
+                    if (! $email) {
+                        $email = Str::slug($name).'@import.local';
+                    }
+
+                    $typeRaw = strtoupper(trim((string) ($mapped['type'] ?? '')));
+                    $type = match (true) {
+                        in_array($typeRaw, ['ASSOCIATION', 'VEREIN', 'V'], true) => 'verein',
+                        in_array($typeRaw, ['ORGANISATION', 'O'], true) => 'organisation',
+                        default => 'organisation',
+                    };
+
                     $password = $mapped['password'] ?? null;
-
-                    if (! $type || ! $name || ! $email || ! $password) {
-                        return false;
-                    }
-
-                    $type = strtolower($type);
-
-                    if (! in_array($type, ['verein', 'organisation'], true)) {
-                        return false;
-                    }
-
-                    if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        return false;
-                    }
+                    $password = ($password !== null && $password !== '') ? $password : Str::random(12);
 
                     Organisation::updateOrCreate(
                         ['email' => $email],

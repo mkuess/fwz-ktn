@@ -1,2 +1,3 @@
 - [Filament 3 Importer hooks, custom Dashboard override, and localization](filament-3-import-dashboard.md) — valid Importer hook names, replacing default Dashboard widgets, and how panel locale actually works (no Panel::locale()).
 - [Filament smart CSV import](filament-smart-csv-import.md) — build multi-step upload+column-mapping+dedup import as a plain wizard Action instead of the Importer/ImportAction job pipeline.
+- [Debugging "0 imported, all skipped" CSV imports](filament-smart-csv-import.md) — always inspect the real uploaded livewire-tmp file's actual header row first; never assume it matches the resource's field list.
