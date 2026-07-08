@@ -23,7 +23,7 @@ class SmartCsvImportAction
 
     /**
      * @param  array<int, array{key: string, label: string, icon?: string, required?: bool, special?: array{value: string, label: string}}>  $fields
-     * @param  Closure(array<string, string|null>): bool  $importRow  Returns true when the row was imported, false when it was skipped.
+     * @param  Closure(array<string, string|null>): (bool|string)  $importRow  Returns true when the row was imported, false when it was skipped (generic reason), or a string with the skip reason.
      */
     public static function make(
         string $name,
@@ -128,6 +128,7 @@ class SmartCsvImportAction
 
                     $imported = 0;
                     $skipped = 0;
+                    $skipReasons = [];
 
                     foreach ($rows as $row) {
                         $mapped = [];
@@ -145,15 +146,31 @@ class SmartCsvImportAction
                             }
                         }
 
-                        if ($importRow($mapped)) {
+                        $result = $importRow($mapped);
+
+                        if ($result === true) {
                             $imported++;
                         } else {
                             $skipped++;
+                            $reason = is_string($result) && $result !== '' ? $result : 'unbekannter Grund';
+                            $skipReasons[$reason] = ($skipReasons[$reason] ?? 0) + 1;
                         }
                     }
 
+                    $title = "{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen";
+
+                    if ($skipReasons !== []) {
+                        $breakdown = [];
+
+                        foreach ($skipReasons as $reason => $count) {
+                            $breakdown[] = "{$count} {$reason}";
+                        }
+
+                        $title .= ' ('.implode(', ', $breakdown).')';
+                    }
+
                     Notification::make()
-                        ->title("{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen")
+                        ->title($title)
                         ->success()
                         ->send();
                 } catch (Throwable $e) {

@@ -21,6 +21,7 @@ class Member extends Model
         'approved_at',
         'approved_by',
         'newsletter_optin',
+        'role',
     ];
 
     protected $hidden = [
