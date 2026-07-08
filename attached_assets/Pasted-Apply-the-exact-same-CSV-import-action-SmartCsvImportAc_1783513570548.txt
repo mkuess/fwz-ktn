@@ -1,0 +1,42 @@
+Apply the exact same CSV import action (SmartCsvImportAction) that was built for CategoryResource to ALL other resources. Do NOT delete the database. No duplicate code - reuse the existing shared classes.
+
+Apply to these resources with their specific field mappings:
+
+1. OrganisationResource - field mappings:
+Required: type (options: verein/organisation), name, email, password
+Optional: zvr_number, description, street, zip, city, phone, website, representative, contact_person
+Icons: 🏢 Typ*, 🏷 Name*, 📧 E-Mail*, 🔑 Passwort*, 🔢 ZVR-Nummer, 📝 Beschreibung, 🏠 Straße, 📮 PLZ, 🌆 Ort, 📞 Telefon, 🌐 Webseite, 👤 Vertretung, 👥 Ansprechpartner:in
+On import: is_approved=false, is_active=true
+Dedup on: email
+
+2. MemberResource - field mappings:
+Required: first_name, last_name, email, organisation_id
+Optional: newsletter_optin (1/0)
+Icons: 👤 Vorname*, 👤 Nachname*, 📧 E-Mail*, 🏢 Organisation ID*, 📰 Newsletter
+On import: status=pending, source=csv
+Dedup on: email
+
+3. BenefitResource - add CSV import:
+Required: name, description
+Optional: website, logo_path, is_active (1/0), sort_order
+Icons: 🏷 Name*, 📝 Beschreibung*, 🌐 Webseite, 🖼 Logo, ✅ Aktiv, 🔢 Reihenfolge
+Dedup on: name
+
+4. ArticleResource - add CSV import:
+Required: title, body
+Optional: slug, excerpt, published_at, is_published (1/0)
+Icons: 📰 Titel*, 📄 Inhalt*, 🔗 Slug, 📋 Kurztext, 📅 Veröffentlicht am, ✅ Veröffentlicht
+Auto-generate slug from title if not provided
+Dedup on: slug
+
+5. VolunteerListingResource - add CSV import:
+Required: title, description, organisation_id
+Optional: website_link, is_spontaneous (1/0), street, zip, city, valid_until, is_active (1/0)
+Icons: 📰 Titel*, 📝 Beschreibung*, 🏢 Organisation ID*, 🌐 Website, ⚡ Spontansuche, 🏠 Straße, 📮 PLZ, 🌆 Ort, 📅 Gültig bis, ✅ Aktiv
+On import: is_active=true
+Dedup on: title + organisation_id combination
+
+Use the existing SmartCsvImportAction class - just pass different field configs to it.
+Same visual style as CategoryResource: clean modal, icons, no description text, live column detection.
+
+Do NOT delete the database. Do NOT duplicate CSS or action logic.

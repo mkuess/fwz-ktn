@@ -20,11 +20,11 @@ class ListCategories extends ListRecords
                 name: 'importCsv',
                 label: 'CSV importieren',
                 fields: [
-                    ['key' => 'name', 'label' => 'Name', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'slug', 'label' => 'Slug', 'special' => ['value' => SmartCsvImportAction::AUTO_SLUG, 'label' => '(auto-generieren aus Name)']],
-                    ['key' => 'color', 'label' => 'Farbe', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'icon', 'label' => 'Icon', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'sort_order', 'label' => 'Reihenfolge', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'name', 'label' => 'Name', 'icon' => '🏷', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'slug', 'label' => 'Slug', 'icon' => '🔗', 'special' => ['value' => SmartCsvImportAction::AUTO_SLUG, 'label' => '(auto-generieren aus Name)']],
+                    ['key' => 'color', 'label' => 'Farbe', 'icon' => '🎨', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'icon', 'label' => 'Icon', 'icon' => '✨', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'sort_order', 'label' => 'Reihenfolge', 'icon' => '🔢', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
                 importRow: function (array $mapped): bool {
                     $name = $mapped['name'] ?? null;
@@ -54,7 +54,6 @@ class ListCategories extends ListRecords
                     return true;
                 },
                 entityPluralLabel: 'Kategorien',
-                description: 'Pflichtfelder: name | Optionale Felder: slug, color, icon, sort_order. Beispiel: Feuerwehren,feuerwehren,#dc2626,fire,1',
             ),
             Actions\CreateAction::make(),
         ];

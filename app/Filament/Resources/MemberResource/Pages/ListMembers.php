@@ -20,11 +20,11 @@ class ListMembers extends ListRecords
                 name: 'importCsv',
                 label: 'CSV importieren',
                 fields: [
-                    ['key' => 'first_name', 'label' => 'Vorname', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'last_name', 'label' => 'Nachname', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'email', 'label' => 'E-Mail', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'organisation_id', 'label' => 'Organisation (ID)', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'newsletter_optin', 'label' => 'Newsletter-Anmeldung', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'first_name', 'label' => 'Vorname', 'icon' => '🙋', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'last_name', 'label' => 'Nachname', 'icon' => '👤', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'email', 'label' => 'E-Mail', 'icon' => '✉️', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'organisation_id', 'label' => 'Organisation (ID)', 'icon' => '🏢', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'newsletter_optin', 'label' => 'Newsletter-Anmeldung', 'icon' => '📰', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
                 importRow: function (array $mapped): bool {
                     $firstName = $mapped['first_name'] ?? null;
@@ -62,7 +62,6 @@ class ListMembers extends ListRecords
                     return true;
                 },
                 entityPluralLabel: 'Mitglieder',
-                description: 'Pflichtspalten: first_name, last_name, email, organisation_id. Optionale Spalte: newsletter_optin (1/0). Importierte Mitglieder werden mit Status = Ausstehend und Quelle = CSV-Import angelegt.',
             ),
             Actions\CreateAction::make(),
         ];

@@ -5,9 +5,9 @@ namespace App\Filament\Support;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
@@ -22,7 +22,7 @@ class SmartCsvImportAction
     public const AUTO_SLUG = '__auto_slug__';
 
     /**
-     * @param  array<int, array{key: string, label: string, required?: bool, special?: array{value: string, label: string}}>  $fields
+     * @param  array<int, array{key: string, label: string, icon?: string, required?: bool, special?: array{value: string, label: string}}>  $fields
      * @param  Closure(array<string, string|null>): bool  $importRow  Returns true when the row was imported, false when it was skipped.
      */
     public static function make(
@@ -31,50 +31,51 @@ class SmartCsvImportAction
         array $fields,
         Closure $importRow,
         string $entityPluralLabel,
-        ?string $description = null,
     ): Action {
         return Action::make($name)
             ->label($label)
             ->icon('heroicon-o-arrow-up-tray')
-            ->modalWidth('2xl')
+            ->modalWidth('xl')
+            ->modalHeading($label)
             ->modalSubmitActionLabel('Importieren')
-            ->steps([
-                Step::make('upload')
-                    ->label('Datei hochladen')
-                    ->description($description)
-                    ->schema([
-                        FileUpload::make('csv_file')
-                            ->label('CSV-Datei')
-                            ->required()
-                            ->live()
-                            ->storeFiles(false)
-                            ->acceptedFileTypes(['text/csv', 'text/plain', 'application/csv', 'application/vnd.ms-excel'])
-                            ->helperText('Das Trennzeichen (Semikolon, Komma oder Tabulator) wird automatisch erkannt.'),
-                        Placeholder::make('csv_preview')
-                            ->label('Erkannte Spalten')
-                            ->live()
-                            ->content(function (Get $get) {
-                                $analysis = self::tryAnalyze($get('csv_file'));
+            ->modalCancelActionLabel('Abbrechen')
+            ->form([
+                FileUpload::make('csv_file')
+                    ->hiddenLabel()
+                    ->required()
+                    ->live()
+                    ->storeFiles(false)
+                    ->acceptedFileTypes(['text/csv', 'text/plain', 'application/csv', 'application/vnd.ms-excel']),
+                Placeholder::make('csv_preview')
+                    ->hiddenLabel()
+                    ->live()
+                    ->visible(fn (Get $get) => self::tryAnalyze($get('csv_file')) !== null)
+                    ->content(function (Get $get) {
+                        $analysis = self::tryAnalyze($get('csv_file'));
 
-                                if ($analysis === null) {
-                                    return 'Bitte laden Sie zunächst eine CSV-Datei hoch.';
-                                }
+                        if ($analysis === null) {
+                            return '';
+                        }
 
-                                return new HtmlString(sprintf(
-                                    'Erkannter Trennzeichen: %s | Gefundene Spalten: %s',
-                                    e($analysis['delimiterLabel']),
-                                    e(implode(', ', $analysis['headers']))
-                                ));
-                            }),
-                    ]),
-                Step::make('mapping')
-                    ->label('Spalten zuordnen')
-                    ->description('Ordnen Sie jeder Datenbank-Spalte die passende CSV-Spalte zu.')
+                        return new HtmlString(sprintf(
+                            '<span class="fi-in-text text-sm text-gray-500 dark:text-gray-400">📋 Erkannter Trennzeichen: %s | Spalten: %s</span>',
+                            e($analysis['delimiterLabel']),
+                            e(implode(', ', $analysis['headers']))
+                        ));
+                    }),
+                Grid::make(2)
+                    ->visible(fn (Get $get) => self::tryAnalyze($get('csv_file')) !== null)
                     ->schema(array_map(
                         fn (array $field) => Select::make("mapping_{$field['key']}")
-                            ->label($field['label'])
+                            ->label(new HtmlString(sprintf(
+                                '%s %s%s',
+                                $field['icon'] ?? '🏷',
+                                e($field['label']),
+                                ($field['required'] ?? false) ? '<span class="text-danger-600">*</span>' : ''
+                            )))
                             ->required((bool) ($field['required'] ?? false))
                             ->searchable()
+                            ->live()
                             ->options(function (Get $get) use ($field) {
                                 $options = [];
                                 $analysis = self::tryAnalyze($get('csv_file'));
@@ -201,8 +202,8 @@ class SmartCsvImportAction
         // Filament's FileUpload component exposes its *raw* (non-dehydrated)
         // form state as an array keyed by a random UUID, even for a single,
         // non-multiple upload, e.g. ['9f2b...' => TemporaryUploadedFile].
-        // $get() inside step closures returns this raw state, so we need to
-        // unwrap it before resolving the actual file.
+        // $get() inside reactive closures returns this raw state, so we need
+        // to unwrap it before resolving the actual file.
         if (is_array($file)) {
             foreach ($file as $item) {
                 if ($item) {
