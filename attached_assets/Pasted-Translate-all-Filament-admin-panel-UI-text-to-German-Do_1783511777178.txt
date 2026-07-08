@@ -1,0 +1,83 @@
+Translate all Filament admin panel UI text to German. Do NOT delete the database.
+
+1. In app/Providers/Filament/AdminPanelProvider.php:
+Add: ->locale('de')
+
+2. Install German translation for Filament if not already present:
+composer require filament/spatie-laravel-translatable-plugin is NOT needed.
+Instead just set the locale.
+
+3. Translate all Resource labels, column headers, form field labels, and action names to German in these files:
+
+OrganisationResource:
+- Model label: 'Organisation' / plural: 'Organisationen'
+- Columns: Name, Typ, E-Mail, Stadt, Freigeschalten, Erstellt am
+- Form labels: Typ (radio options: 'Verein (ZVR)' / 'Organisation / Initiative'), Name, ZVR-Nummer, E-Mail, Passwort, Beschreibung, Logo, Straße, PLZ, Ort, Telefon, Webseite, Vertretungsberechtigte Person, Ansprechpartner:in, Kategorien, Freigeschaltet, Aktiv
+- Actions: 'Ausgewählte freischalten'
+- Filters: 'Freigegeben', 'Typ'
+
+MemberResource:
+- Model label: 'Mitglied' / plural: 'Mitglieder'
+- Columns: Vorname, Nachname, E-Mail, Organisation, Status, Quelle, Erstellt am
+- Status badge labels: 'Ausstehend', 'Genehmigt', 'Abgelehnt'
+- Source labels: 'Selbst registriert', 'CSV-Import'
+- Form labels: Organisation, Vorname, Nachname, E-Mail, Status, Quelle, Mitgliedsnummer, Newsletter-Einwilligung
+- Actions: 'Mitglied freischalten'
+- Filters: 'Status', 'Organisation'
+
+BenefitResource:
+- Model label: 'Benefit' / plural: 'Benefits'
+- Columns: Name, Webseite, Aktiv, Reihenfolge
+- Form labels: Name, Beschreibung, Webseite, Logo, Aktiv, Reihenfolge
+
+ArticleResource:
+- Model label: 'Artikel' / plural: 'Artikel'
+- Columns: Titel, Veröffentlicht, Veröffentlicht am, Erstellt am
+- Form labels: Titel, Slug, Kurztext, Inhalt, Titelbild, Veröffentlicht am, Veröffentlicht, Anhänge
+
+VolunteerListingResource:
+- Model label: 'Gesuch' / plural: 'Gesuche'
+- Columns: Titel, Organisation, Aktiv, Gültig bis
+- Form labels: Organisation, Titel, Beschreibung, Website-Link, Spontansuche, Straße, PLZ, Ort, Gültig bis, Aktiv
+
+CategoryResource:
+- Model label: 'Kategorie' / plural: 'Kategorien'
+- Columns: Name, Slug, Farbe, Reihenfolge
+- Form labels: Name, Slug, Farbe, Icon, Reihenfolge
+
+Dashboard stats (if created):
+- 'Organisationen gesamt', 'Ausstehende Organisationen', 'Mitglieder gesamt', 'Ausstehende Mitglieder'
+
+General Filament UI - add to config/app.php:
+'locale' => 'de',
+'fallback_locale' => 'de',
+
+Also in resources/lang/de.json (create if not exists) add common Filament translations:
+{
+    "Are you sure?": "Sind Sie sicher?",
+    "Cancel": "Abbrechen",
+    "Save": "Speichern",
+    "Create": "Erstellen",
+    "Edit": "Bearbeiten",
+    "Delete": "Löschen",
+    "Search": "Suchen",
+    "Filter": "Filtern",
+    "Reset": "Zurücksetzen",
+    "Export": "Exportieren",
+    "Import": "Importieren",
+    "Actions": "Aktionen",
+    "No records found": "Keine Einträge gefunden",
+    "per page": "pro Seite",
+    "Sign in": "Anmelden",
+    "Email address": "E-Mail-Adresse",
+    "Password": "Passwort",
+    "Remember me": "Angemeldet bleiben",
+    "Sign out": "Abmelden",
+    "Dashboard": "Dashboard",
+    "Are you sure you want to delete this?": "Möchten Sie diesen Eintrag wirklich löschen?",
+    "Saved successfully": "Erfolgreich gespeichert",
+    "Created successfully": "Erfolgreich erstellt",
+    "Deleted successfully": "Erfolgreich gelöscht"
+}
+
+Do NOT delete the database. Report what was changed.

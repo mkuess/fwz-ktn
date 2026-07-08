@@ -1,0 +1,1 @@
+- [Filament 3 Importer hooks and custom Dashboard override](filament-3-import-dashboard.md) — valid Importer hook names (beforeSave etc.) and how to properly replace the default Dashboard widgets.
