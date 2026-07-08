@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Member extends Model
+{
+    protected $fillable = [
+        'organisation_id',
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'email_verified_at',
+        'membership_number',
+        'membership_card_path',
+        'source',
+        'status',
+        'approved_at',
+        'approved_by',
+        'newsletter_optin',
+    ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+            'email_verified_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'newsletter_optin' => 'boolean',
+        ];
+    }
+
+    public function organisation(): BelongsTo
+    {
+        return $this->belongsTo(Organisation::class);
+    }
+}
