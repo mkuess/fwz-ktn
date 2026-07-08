@@ -95,6 +95,42 @@ class CsvImportHelper
     }
 
     /**
+     * Ensures the given CSV file is UTF-8 encoded. Many spreadsheet exports
+     * (e.g. Excel on Windows) save CSVs as ISO-8859-1 / Windows-1252, which
+     * turns German umlauts (ü, ö, ä, ß) into garbage characters once read as
+     * UTF-8. When a non-UTF-8 encoding is detected, the file is converted
+     * and written to a new temporary file whose path is returned. If the
+     * file is already UTF-8 (or its encoding can't be determined), the
+     * original path is returned unchanged.
+     */
+    public static function ensureUtf8Path(string $path): string
+    {
+        $content = file_get_contents($path);
+
+        if ($content === false || $content === '') {
+            return $path;
+        }
+
+        $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
+
+        if ($encoding === 'UTF-8' || $encoding === false) {
+            return $path;
+        }
+
+        $converted = mb_convert_encoding($content, 'UTF-8', $encoding);
+
+        $tmpPath = tempnam(sys_get_temp_dir(), 'csv_utf8_');
+
+        if ($tmpPath === false) {
+            return $path;
+        }
+
+        file_put_contents($tmpPath, $converted);
+
+        return $tmpPath;
+    }
+
+    /**
      * @param  array<int, string|null>  $row
      * @return array<int, string>
      */

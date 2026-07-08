@@ -10,6 +10,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -127,51 +128,66 @@ class SmartCsvImportAction
                     return;
                 }
 
+                // CSV imports can involve hundreds of rows and (for some
+                // resources) per-row password hashing, which can easily
+                // exceed PHP's default 30 second execution limit. Bulk
+                // imports are an explicit, admin-triggered action, so it's
+                // safe to grant them a generous ceiling.
+                set_time_limit(300);
+
                 try {
                     $path = self::resolvePath($file);
                     $analysis = CsvImportHelper::analyze($path);
-                    $rows = CsvImportHelper::readRows($path, $analysis['delimiter']);
+                    $rows = iterator_to_array(CsvImportHelper::readRows($path, $analysis['delimiter']));
 
                     $imported = 0;
                     $skipped = 0;
                     $skipReasons = [];
 
-                    foreach ($rows as $rowIndex => $row) {
-                        $mapped = [];
+                    // Process rows in chunks so we can wrap each batch in a
+                    // single DB transaction (far fewer commits than one per
+                    // row) while keeping memory usage bounded for very large
+                    // files.
+                    foreach (array_chunk($rows, 50, preserve_keys: true) as $chunk) {
+                        DB::transaction(function () use ($chunk, $fields, $data, $importRow, $entityPluralLabel, &$imported, &$skipped, &$skipReasons) {
+                            foreach ($chunk as $rowIndex => $row) {
+                                $mapped = [];
 
-                        foreach ($fields as $field) {
-                            $mappingKey = $data["mapping_{$field['key']}"] ?? null;
+                                foreach ($fields as $field) {
+                                    $mappingKey = $data["mapping_{$field['key']}"] ?? null;
 
-                            if ($mappingKey === null || $mappingKey === self::IGNORE) {
-                                $mapped[$field['key']] = null;
-                            } elseif ($mappingKey === self::AUTO_SLUG) {
-                                $mapped[$field['key']] = self::AUTO_SLUG;
-                            } else {
-                                $value = $row[$mappingKey] ?? null;
-                                $mapped[$field['key']] = $value !== null && $value !== '' ? trim((string) $value) : null;
+                                    if ($mappingKey === null || $mappingKey === self::IGNORE) {
+                                        $mapped[$field['key']] = null;
+                                    } elseif ($mappingKey === self::AUTO_SLUG) {
+                                        $mapped[$field['key']] = self::AUTO_SLUG;
+                                    } else {
+                                        $value = $row[$mappingKey] ?? null;
+                                        $mapped[$field['key']] = $value !== null && $value !== '' ? trim((string) $value) : null;
+                                    }
+                                }
+
+                                try {
+                                    $result = $importRow($mapped);
+                                } catch (Throwable $e) {
+                                    $result = 'Fehler: '.$e->getMessage();
+                                }
+
+                                if ($result === true) {
+                                    $imported++;
+                                } else {
+                                    $skipped++;
+                                    $reason = is_string($result) && $result !== '' ? $result : 'unbekannter Grund';
+                                    $skipReasons[$reason] = ($skipReasons[$reason] ?? 0) + 1;
+
+                                    Log::warning('CSV-Import: Zeile übersprungen', [
+                                        'entitaet' => $entityPluralLabel,
+                                        'zeile' => $rowIndex + 2,
+                                        'grund' => $reason,
+                                        'daten' => $mapped,
+                                    ]);
+                                }
                             }
-                        }
-
-                        try {
-                            $result = $importRow($mapped);
-                        } catch (Throwable $e) {
-                            $result = 'Fehler: '.$e->getMessage();
-                        }
-
-                        if ($result === true) {
-                            $imported++;
-                        } else {
-                            $skipped++;
-                            $reason = is_string($result) && $result !== '' ? $result : 'unbekannter Grund';
-                            $skipReasons[$reason] = ($skipReasons[$reason] ?? 0) + 1;
-
-                            Log::warning('CSV-Import: Zeile übersprungen', [
-                                'entitaet' => $entityPluralLabel,
-                                'zeile' => $rowIndex + 2,
-                                'grund' => $reason,
-                                'daten' => $mapped,
-                            ]);
-                        }
+                        });
                     }
 
                     $title = "{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen";
@@ -301,7 +317,7 @@ class SmartCsvImportAction
                 throw new RuntimeException('Die hochgeladene Datei konnte nicht gefunden werden.');
             }
 
-            return $path;
+            return CsvImportHelper::ensureUtf8Path($path);
         }
 
         // Filament's FileUpload component exposes its *raw* (non-dehydrated)
@@ -320,7 +336,7 @@ class SmartCsvImportAction
         }
 
         if (is_string($file) && $file !== '' && is_file($file)) {
-            return $file;
+            return CsvImportHelper::ensureUtf8Path($file);
         }
 
         throw new RuntimeException('Unbekannter Dateityp.');

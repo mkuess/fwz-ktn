@@ -7,6 +7,7 @@ use App\Filament\Support\SmartCsvImportAction;
 use App\Models\Organisation;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class ListOrganisations extends ListRecords
@@ -59,7 +60,21 @@ class ListOrganisations extends ListRecords
                     };
 
                     $password = $mapped['password'] ?? null;
-                    $password = ($password !== null && $password !== '') ? $password : Str::random(12);
+
+                    // CSV imports can involve hundreds of rows, and Laravel's
+                    // default bcrypt cost (12 rounds) takes long enough per
+                    // hash that hashing a large batch of auto-generated
+                    // passwords can exceed the PHP execution time limit. For
+                    // rows without an explicit password we generate a random
+                    // one and hash it with a much lower cost, since these
+                    // orgs must go through a password reset before ever
+                    // using it anyway. Pre-hashing here (rather than letting
+                    // the model's 'hashed' cast do it) means Laravel's
+                    // Hash::isHashed() check sees an already-valid bcrypt
+                    // hash and skips re-hashing at the default cost.
+                    $password = ($password !== null && $password !== '')
+                        ? $password
+                        : Hash::make(Str::random(12), ['rounds' => 4]);
 
                     Organisation::updateOrCreate(
                         ['email' => $email],
