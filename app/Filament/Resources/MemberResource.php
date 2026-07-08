@@ -79,6 +79,8 @@ class MemberResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultPaginationPageOption(30)
+            ->paginationPageOptions([10, 30, 50, 100])
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
                     ->label('Vorname')

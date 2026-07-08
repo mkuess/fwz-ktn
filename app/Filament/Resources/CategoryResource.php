@@ -56,6 +56,8 @@ class CategoryResource extends Resource
     {
         return $table
             ->defaultSort('sort_order')
+            ->defaultPaginationPageOption(30)
+            ->paginationPageOptions([10, 30, 50, 100])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
