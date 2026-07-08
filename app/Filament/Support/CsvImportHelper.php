@@ -105,27 +105,32 @@ class CsvImportHelper
      */
     public static function ensureUtf8Path(string $path): string
     {
-        $content = file_get_contents($path);
+        $rawContent = file_get_contents($path);
 
-        if ($content === false || $content === '') {
+        if ($rawContent === false || $rawContent === '') {
             return $path;
         }
 
-        $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
-
-        if ($encoding === 'UTF-8' || $encoding === false) {
-            return $path;
+        // mb_detect_encoding(..., 'UTF-8', true) returns false when the
+        // content is NOT valid UTF-8. That's the signal that this is a
+        // Windows/Excel export that needs converting — Windows-1252 is by
+        // far the most common encoding for Austrian/German spreadsheet
+        // exports, so we treat it as the default fallback.
+        if (mb_detect_encoding($rawContent, 'UTF-8', true) === false) {
+            $rawContent = mb_convert_encoding($rawContent, 'UTF-8', 'Windows-1252');
         }
 
-        $converted = mb_convert_encoding($content, 'UTF-8', $encoding);
+        // Strip a UTF-8 byte order mark, which some spreadsheet exports
+        // (e.g. Excel) prepend to the very first header cell.
+        $rawContent = preg_replace('/^\xEF\xBB\xBF/', '', $rawContent);
 
-        $tmpPath = tempnam(sys_get_temp_dir(), 'csv_utf8_');
+        $tmpPath = tempnam(sys_get_temp_dir(), 'csv_');
 
         if ($tmpPath === false) {
             return $path;
         }
 
-        file_put_contents($tmpPath, $converted);
+        file_put_contents($tmpPath, $rawContent);
 
         return $tmpPath;
     }
@@ -137,7 +142,7 @@ class CsvImportHelper
     protected static function cleanRow(array $row): array
     {
         return array_values(array_filter(
-            array_map(fn ($value) => trim((string) $value), $row),
+            array_map(fn ($value) => trim((string) $value, "\xEF\xBB\xBF\"\r\n "), $row),
             fn (string $value) => $value !== ''
         ));
     }

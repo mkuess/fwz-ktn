@@ -25,3 +25,17 @@ When a user reports every row skipped with no clear reason, the real uploaded fi
 **Why:** The failure was caused by the resource's `importRow` closure hard-requiring columns (e.g. `type`, `password`) that didn't exist at all in the real export, silently returning bare `false` for every row with no diagnostic. Guessing at the schema from the code wastes turns; the ground truth is the byte content of the uploaded file.
 
 **How to apply:** For any "all rows skipped" CSV bug, first locate and read the actual livewire-tmp file before touching the importRow logic. Make `importRow` return a `string` skip-reason (not just `bool`) so `SmartCsvImportAction` can aggregate a breakdown like "12 imported, 3 skipped (2 missing name, 1 invalid email)" instead of an opaque count — and only treat truly indispensable fields (e.g. `name`) as hard-required, auto-filling/defaulting everything else (password, type, email placeholder) rather than rejecting the row.
+
+## Bulk-import timeouts are almost always bcrypt cost, not I/O
+Hashing ~450 auto-generated passwords at Laravel's default bcrypt cost (12 rounds, `BCRYPT_ROUNDS` in `.env`) took ~90s in benchmarking — comfortably blowing PHP's 30s `max_execution_time` — while the same count at `['rounds' => 4]` took under 1s.
+
+**Why:** Auto-generated import passwords are throwaway (user resets on first login anyway), so paying full bcrypt cost for them is pure waste. `Hash::isHashed()` treats any valid bcrypt string (any cost) as already-hashed, so pre-hashing with `Hash::make($value, ['rounds' => 4])` before assigning to a `'hashed'`-cast attribute is safe — Eloquent won't re-hash it at the model's default cost.
+
+**How to apply:** For any bulk import/seed path that generates-and-hashes many passwords, lower the bcrypt cost explicitly for the generated value; also add `set_time_limit(300)` at the start of the import action and batch DB writes in chunks (e.g. `array_chunk` + one `DB::transaction` per chunk) to cut per-row commit overhead.
+
+## CSV encoding: garbled German umlauts mean raw Windows-1252 bytes, not double-encoding
+Real-world German/Austrian CSV exports (Excel) are frequently Windows-1252, not UTF-8. If read as UTF-8 without conversion, umlauts (ü/ö/ä/ß) become single high-byte characters that fail `mb_check_encoding($v, 'UTF-8')` — this is different from the "mojibake" pattern (literal `?`/`�`) and can't be fixed by a naive re-encode of already-broken data.
+
+**Why:** `mb_detect_encoding($content, 'UTF-8', true) === false` is a reliable one-shot check for "this file is not valid UTF-8"; converting such content from Windows-1252 (the common case for AT/DE exports) to UTF-8 fixes it in one pass. Data already inserted before the fix must be repaired in-place per affected text column via `mb_check_encoding()`-gated `mb_convert_encoding($v, 'UTF-8', 'Windows-1252')` UPDATEs — never blanket-reconvert every row, since already-correct UTF-8 rows would get corrupted by a second conversion pass.
+
+**How to apply:** Centralize encoding normalization in one shared helper called before any CSV parsing (so every importer benefits automatically), and when fixing historical bad data, gate each column update on `!mb_check_encoding($value, 'UTF-8')` so only genuinely broken values are touched.
