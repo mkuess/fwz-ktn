@@ -60,6 +60,13 @@ class ListMembers extends ListRecords
                     $newsletterRaw = strtolower((string) ($mapped['newsletter_optin'] ?? ''));
                     $newsletterOptin = in_array($newsletterRaw, ['1', 'true', 'yes', 'ja'], true);
 
+                    $roleRaw = strtolower(trim((string) ($mapped['role'] ?? '')));
+                    $role = match (true) {
+                        in_array($roleRaw, ['organisations-administrator', 'org_admin', 'organisator'], true) => 'org_admin',
+                        in_array($roleRaw, ['administrator', 'admin'], true) => 'admin',
+                        default => 'member',
+                    };
+
                     Member::updateOrCreate(
                         ['email' => $email],
                         [
@@ -67,7 +74,7 @@ class ListMembers extends ListRecords
                             'first_name' => $firstName,
                             'last_name' => $lastName,
                             'newsletter_optin' => $newsletterOptin,
-                            'role' => $mapped['role'] ?: null,
+                            'role' => $role,
                             'status' => 'pending',
                             'source' => 'csv',
                         ]

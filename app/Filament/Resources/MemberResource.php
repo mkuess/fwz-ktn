@@ -53,6 +53,15 @@ class MemberResource extends Resource
                         'rejected' => 'Abgelehnt',
                     ])
                     ->required(),
+                Forms\Components\Select::make('role')
+                    ->label('Rolle')
+                    ->options([
+                        'member' => 'Mitglied',
+                        'org_admin' => 'Organisations-Admin',
+                        'admin' => 'FWZ Admin',
+                    ])
+                    ->default('member')
+                    ->required(),
                 Forms\Components\TextInput::make('source')
                     ->label('Quelle')
                     ->disabled()
@@ -106,6 +115,20 @@ class MemberResource extends Resource
                         'csv' => 'CSV-Import',
                         default => $state,
                     }),
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Rolle')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'member' => 'Mitglied',
+                        'org_admin' => 'Org-Admin',
+                        'admin' => 'Admin',
+                        default => $state ?? 'Mitglied',
+                    })
+                    ->color(fn (?string $state): string => match ($state) {
+                        'org_admin' => 'info',
+                        'admin' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Erstellt am')
                     ->dateTime()
@@ -124,6 +147,13 @@ class MemberResource extends Resource
                     ->label('Organisation')
                     ->relationship('organisation', 'name')
                     ->searchable(),
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Rolle')
+                    ->options([
+                        'member' => 'Mitglied',
+                        'org_admin' => 'Organisations-Admin',
+                        'admin' => 'FWZ Admin',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\Action::make('approveMember')
