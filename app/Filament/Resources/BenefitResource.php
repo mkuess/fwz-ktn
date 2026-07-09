@@ -32,6 +32,21 @@ class BenefitResource extends Resource
                     ->label('Beschreibung')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\RichEditor::make('content')
+                    ->label('Inhalt')
+                    ->helperText('Detaillierter Inhalt / Beschreibung des Benefits')
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'bulletList',
+                        'orderedList',
+                        'link',
+                        'h2',
+                        'h3',
+                    ])
+                    ->nullable()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('website')
                     ->label('Webseite')
                     ->url()
@@ -62,6 +77,11 @@ class BenefitResource extends Resource
                 Tables\Columns\TextColumn::make('website')
                     ->label('Webseite')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Inhalt')
+                    ->html()
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Aktiv')
                     ->boolean(),
