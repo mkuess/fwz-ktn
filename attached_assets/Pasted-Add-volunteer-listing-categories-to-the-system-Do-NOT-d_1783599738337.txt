@@ -1,0 +1,83 @@
+Add volunteer listing categories to the system. Do NOT delete the database.
+
+STEP 1 - Create migration for volunteer_listing_categories table:
+Schema::create('volunteer_listing_categories', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('slug')->unique();
+    $table->integer('sort_order')->default(0);
+    $table->boolean('is_active')->default(true);
+    $table->timestamps();
+});
+
+Also create pivot table volunteer_listing_volunteer_listing_category:
+Schema::create('volunteer_listing_category', function (Blueprint $table) {
+    $table->foreignId('volunteer_listing_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('volunteer_listing_category_id')->constrained()->cascadeOnDelete();
+});
+
+Run: php artisan migrate
+
+STEP 2 - Create VolunteerListingCategory model:
+app/Models/VolunteerListingCategory.php
+- fillable: name, slug, sort_order, is_active
+- belongsToMany VolunteerListing
+
+STEP 3 - Update VolunteerListing model:
+Add relationship:
+public function categories(): BelongsToMany
+{
+    return $this->belongsToMany(VolunteerListingCategory::class, 'volunteer_listing_category');
+}
+
+STEP 4 - Create VolunteerListingCategoryResource:
+app/Filament/Resources/VolunteerListingCategoryResource.php
+
+- Navigation label: 'Gesuch-Kategorien'
+- Navigation icon: 'heroicon-o-tag'
+- Navigation group: 'Gesuche' (same group as VolunteerListingResource)
+- Model label: 'Gesuch-Kategorie' / plural: 'Gesuch-Kategorien'
+
+List columns: Name, Slug, Aktiv, Reihenfolge (sort_order)
+Form fields: 
+- name (auto-generates slug)
+- slug (editable)
+- sort_order
+- is_active toggle
+
+Add CSV import with fields: name, slug, sort_order
+
+STEP 5 - Add categories to VolunteerListingResource form:
+Add a Select field for categories:
+Select::make('categories')
+    ->label('Kategorien')
+    ->multiple()
+    ->relationship('categories', 'name', 
+        fn ($query) => $query->where('is_active', true)->orderBy('sort_order')
+    )
+    ->searchable()
+    ->preload()
+    ->nullable()
+
+STEP 6 - Add categories column to VolunteerListingResource list:
+Tables\Columns\TextColumn::make('categories.name')
+    ->label('Kategorien')
+    ->badge()
+    ->color('success')
+    ->placeholder('-'),
+
+STEP 7 - Seed the categories from the screenshot:
+Run via seeder or tinker, create these categories:
+- Sportinteressierte
+- Naturfreunde und umweltbewusste Menschen
+- Einsatzfreudige
+- Wissbegierige
+- Wohnungslose und Armutsbetroffene Personen
+- Senior/innen
+- Menschen mit Migrationshintergrund
+- Menschen mit Beeinträchtigung
+- Kinder- und Jugendliche
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.

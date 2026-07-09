@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class VolunteerListing extends Model
 {
@@ -32,5 +33,10 @@ class VolunteerListing extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(VolunteerListingCategory::class, 'volunteer_listing_category');
     }
 }

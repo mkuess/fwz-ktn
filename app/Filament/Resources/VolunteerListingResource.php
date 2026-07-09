@@ -16,6 +16,8 @@ class VolunteerListingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hand-raised';
 
+    protected static ?string $navigationGroup = 'Gesuche';
+
     protected static ?string $modelLabel = 'Gesuch';
 
     protected static ?string $pluralModelLabel = 'Gesuche';
@@ -59,6 +61,17 @@ class VolunteerListingResource extends Resource
                 Forms\Components\Toggle::make('is_active')
                     ->label('Aktiv')
                     ->default(true),
+                Forms\Components\Select::make('categories')
+                    ->label('Kategorien')
+                    ->multiple()
+                    ->relationship(
+                        'categories',
+                        'name',
+                        fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('is_active', true)->orderBy('sort_order')
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
             ]);
     }
 
@@ -82,6 +95,11 @@ class VolunteerListingResource extends Resource
                     ->label('Gültig bis')
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Kategorien')
+                    ->badge()
+                    ->color('success')
+                    ->placeholder('-'),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
