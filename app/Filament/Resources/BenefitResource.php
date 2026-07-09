@@ -16,6 +16,10 @@ class BenefitResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
 
+    protected static ?string $navigationGroup = 'Sonstiges';
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Benefit';
 
     protected static ?string $pluralModelLabel = 'Benefits';

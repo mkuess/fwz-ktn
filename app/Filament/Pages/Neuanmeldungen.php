@@ -20,7 +20,7 @@ class Neuanmeldungen extends Page implements HasTable
 
     protected static ?string $title = 'Neuanmeldungen';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.neuanmeldungen';
 

@@ -21,6 +21,8 @@ class VolunteerListingCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Gesuche';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Gesuch-Kategorie';
 
     protected static ?string $pluralModelLabel = 'Gesuch-Kategorien';
