@@ -66,6 +66,25 @@ class MemberResource extends Resource
                     ->required(),
                 Forms\Components\Hidden::make('source')
                     ->default('self'),
+                Forms\Components\TextInput::make('password')
+                    ->label('Passwort')
+                    ->password()
+                    ->revealable()
+                    ->dehydrateStateUsing(fn ($state) => ! empty($state) ? bcrypt($state) : null)
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->helperText(fn (string $operation): string => $operation === 'edit'
+                        ? 'Nur ausfüllen wenn das Passwort geändert werden soll'
+                        : 'Pflichtfeld beim Erstellen')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Passwort bestätigen')
+                    ->password()
+                    ->revealable()
+                    ->dehydrated(false)
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->same('password')
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('membership_number')
                     ->label('Mitgliedsnummer')
                     ->disabled()
