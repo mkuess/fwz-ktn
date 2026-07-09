@@ -95,7 +95,8 @@ class BenefitResource extends Resource
                 Tables\Columns\TextColumn::make('sort_order')
                     ->label('Reihenfolge')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('content')
                     ->label('Inhalt')
                     ->html()
