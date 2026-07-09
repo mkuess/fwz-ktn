@@ -39,13 +39,13 @@ class ListOrganisations extends ListRecords
                     $name = $mapped['name'] ?? null;
 
                     if (! $name) {
-                        return 'ohne Name';
+                        return 'Name fehlt';
                     }
 
                     $email = $mapped['email'] ?? null;
 
                     if ($email !== null && $email !== '' && ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        return 'mit ungültiger E-Mail';
+                        return "ungültige E-Mail '{$email}' (Name: {$name})";
                     }
 
                     if (! $email) {
@@ -76,30 +76,35 @@ class ListOrganisations extends ListRecords
                         ? $password
                         : Hash::make(Str::random(12), ['rounds' => 4]);
 
-                    Organisation::updateOrCreate(
-                        ['email' => $email],
-                        [
-                            'type' => $type,
-                            'name' => $name,
-                            'password' => $password,
-                            'zvr_number' => $mapped['zvr_number'] ?: null,
-                            'description' => $mapped['description'] ?: null,
-                            'street' => $mapped['street'] ?: null,
-                            'zip' => $mapped['zip'] ?: null,
-                            'city' => $mapped['city'] ?: null,
-                            'phone' => $mapped['phone'] ?: null,
-                            'website' => $mapped['website'] ?: null,
-                            'representative' => $mapped['representative'] ?: null,
-                            'contact_person' => $mapped['contact_person'] ?: null,
-                            'is_approved' => false,
-                            'is_active' => true,
-                        ]
-                    );
+                    try {
+                        Organisation::updateOrCreate(
+                            ['email' => $email],
+                            [
+                                'type' => $type,
+                                'name' => $name,
+                                'password' => $password,
+                                'zvr_number' => $mapped['zvr_number'] ?: null,
+                                'description' => $mapped['description'] ?: null,
+                                'street' => $mapped['street'] ?: null,
+                                'zip' => $mapped['zip'] ?: null,
+                                'city' => $mapped['city'] ?: null,
+                                'phone' => $mapped['phone'] ?: null,
+                                'website' => $mapped['website'] ?: null,
+                                'representative' => $mapped['representative'] ?: null,
+                                'contact_person' => $mapped['contact_person'] ?: null,
+                                'is_approved' => false,
+                                'is_active' => true,
+                            ]
+                        );
+                    } catch (\Throwable $e) {
+                        return "Fehler beim Speichern: {$e->getMessage()} (Name: {$name})";
+                    }
 
                     return true;
                 },
                 entityPluralLabel: 'Organisationen',
             ),
+            SmartCsvImportAction::viewLogAction(),
             Actions\CreateAction::make(),
         ];
     }

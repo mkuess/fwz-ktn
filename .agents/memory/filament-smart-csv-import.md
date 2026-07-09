@@ -39,3 +39,10 @@ Real-world German/Austrian CSV exports (Excel) are frequently Windows-1252, not 
 **Why:** `mb_detect_encoding($content, 'UTF-8', true) === false` is a reliable one-shot check for "this file is not valid UTF-8"; converting such content from Windows-1252 (the common case for AT/DE exports) to UTF-8 fixes it in one pass. Data already inserted before the fix must be repaired in-place per affected text column via `mb_check_encoding()`-gated `mb_convert_encoding($v, 'UTF-8', 'Windows-1252')` UPDATEs — never blanket-reconvert every row, since already-correct UTF-8 rows would get corrupted by a second conversion pass.
 
 **How to apply:** Centralize encoding normalization in one shared helper called before any CSV parsing (so every importer benefits automatically), and when fixing historical bad data, gate each column update on `!mb_check_encoding($value, 'UTF-8')` so only genuinely broken values are touched.
+
+## "Unbekannter Grund" skip reasons mean a bare bool return, not a real mystery
+When a shared import action shows "X übersprungen (unbekannter Grund)", the cause is an `importRow` closure returning a bare `false`/`true` on some failure branch instead of a descriptive string — the shared action can only report what the closure gives it.
+
+**Why:** A generic try/catch around the whole row in the shared action (converting exceptions to `'Fehler: '.$e->getMessage()`) already covers *thrown* errors with detail; the "unbekannter Grund" cases come specifically from explicit `return false;` validation branches inside the resource's own closure that the author forgot to give a reason string to.
+
+**How to apply:** Audit every `importRow` closure for the resource in question — every `return false`/`return true` early-exit must become a descriptive string (e.g. `'Name fehlt'`, `"Organisation '{$x}' nicht gefunden (Name: {$name})"`), and wrap any DB write (`updateOrCreate` etc.) in its own try/catch that appends an identifying field (name/email) to the exception message, since the outer generic catch has no row context to add.

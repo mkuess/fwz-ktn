@@ -24,6 +24,12 @@ class SmartCsvImportAction
     public const AUTO_SLUG = '__auto_slug__';
 
     /**
+     * Relative (to storage_path()) path of the detailed skip-reason log
+     * written after every import run.
+     */
+    public const LOG_PATH = 'logs/import.log';
+
+    /**
      * @param  array<int, array{key: string, label: string, icon?: string, required?: bool, special?: array{value: string, label: string}}>  $fields
      * @param  Closure(array<string, string|null>): (bool|string)  $importRow  Returns true when the row was imported, false when it was skipped (generic reason), or a string with the skip reason.
      */
@@ -143,13 +149,14 @@ class SmartCsvImportAction
                     $imported = 0;
                     $skipped = 0;
                     $skipReasons = [];
+                    $skipDetails = [];
 
                     // Process rows in chunks so we can wrap each batch in a
                     // single DB transaction (far fewer commits than one per
                     // row) while keeping memory usage bounded for very large
                     // files.
                     foreach (array_chunk($rows, 50, preserve_keys: true) as $chunk) {
-                        DB::transaction(function () use ($chunk, $fields, $data, $importRow, $entityPluralLabel, &$imported, &$skipped, &$skipReasons) {
+                        DB::transaction(function () use ($chunk, $fields, $data, $importRow, $entityPluralLabel, &$imported, &$skipped, &$skipReasons, &$skipDetails) {
                             foreach ($chunk as $rowIndex => $row) {
                                 $mapped = [];
 
@@ -179,9 +186,18 @@ class SmartCsvImportAction
                                     $reason = is_string($result) && $result !== '' ? $result : 'unbekannter Grund';
                                     $skipReasons[$reason] = ($skipReasons[$reason] ?? 0) + 1;
 
+                                    $lineNumber = $rowIndex + 2;
+                                    $identifyingValue = self::firstNonEmptyMappedValue($mapped);
+                                    $skipDetails[] = sprintf(
+                                        'Zeile %d: %s%s',
+                                        $lineNumber,
+                                        $reason,
+                                        $identifyingValue !== null ? " ({$identifyingValue})" : ''
+                                    );
+
                                     Log::warning('CSV-Import: Zeile übersprungen', [
                                         'entitaet' => $entityPluralLabel,
-                                        'zeile' => $rowIndex + 2,
+                                        'zeile' => $lineNumber,
                                         'grund' => $reason,
                                         'daten' => $mapped,
                                     ]);
@@ -190,22 +206,42 @@ class SmartCsvImportAction
                         });
                     }
 
-                    $title = "{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen";
+                    if ($skipDetails !== []) {
+                        $logHeader = sprintf(
+                            "=== CSV-Import %s: %s ===\n",
+                            $entityPluralLabel,
+                            now()->format('Y-m-d H:i:s')
+                        );
 
-                    if ($skipReasons !== []) {
-                        $breakdown = [];
-
-                        foreach ($skipReasons as $reason => $count) {
-                            $breakdown[] = "{$count} {$reason}";
-                        }
-
-                        $title .= ' ('.implode(', ', $breakdown).')';
+                        file_put_contents(
+                            storage_path(self::LOG_PATH),
+                            $logHeader.implode("\n", $skipDetails)."\n"
+                        );
                     }
 
-                    Notification::make()
-                        ->title($title)
-                        ->success()
-                        ->send();
+                    $title = "{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen";
+
+                    $notification = Notification::make()->title($title);
+
+                    if ($skipDetails !== []) {
+                        $shown = array_slice($skipDetails, 0, 10);
+                        $body = implode("\n", $shown);
+
+                        $remaining = count($skipDetails) - count($shown);
+
+                        if ($remaining > 0) {
+                            $body .= "\n\nWeitere {$remaining} Zeilen übersprungen – Details in storage/".self::LOG_PATH;
+                        }
+
+                        $notification
+                            ->body($body)
+                            ->warning()
+                            ->persistent();
+                    } else {
+                        $notification->success();
+                    }
+
+                    $notification->send();
                 } catch (Throwable $e) {
                     Log::error('CSV-Import fehlgeschlagen', [
                         'entitaet' => $entityPluralLabel,
@@ -219,6 +255,61 @@ class SmartCsvImportAction
                         ->send();
                 }
             });
+    }
+
+    /**
+     * A secondary header button that lets admins open the full detailed
+     * skip-reason log (written by the most recent CSV import run, of any
+     * resource) in a read-only modal, without needing to open the shell.
+     */
+    public static function viewLogAction(): Action
+    {
+        return Action::make('viewImportLog')
+            ->label('Log anzeigen')
+            ->icon('heroicon-o-document-text')
+            ->color('gray')
+            ->modalWidth('2xl')
+            ->modalHeading('Import-Log')
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Schließen')
+            ->modalContent(function () {
+                $path = storage_path(self::LOG_PATH);
+
+                if (! is_file($path)) {
+                    $content = 'Es liegt noch kein Import-Log vor.';
+                } else {
+                    $content = trim((string) file_get_contents($path));
+
+                    if ($content === '') {
+                        $content = 'Das Import-Log ist leer.';
+                    }
+                }
+
+                return new HtmlString(
+                    '<pre class="fi-in-text text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap max-h-[60vh] overflow-y-auto bg-gray-50 dark:bg-white/5 rounded-lg p-3">'
+                    .e($content)
+                    .'</pre>'
+                );
+            });
+    }
+
+    /**
+     * Returns the first non-empty value from a mapped row, for use as a
+     * human-readable identifier (e.g. a name or email) next to a skip
+     * reason, so admins don't have to cross-reference the CSV by line
+     * number alone.
+     *
+     * @param  array<string, string|null>  $mapped
+     */
+    protected static function firstNonEmptyMappedValue(array $mapped): ?string
+    {
+        foreach ($mapped as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== self::AUTO_SLUG) {
+                return "{$key}: {$value}";
+            }
+        }
+
+        return null;
     }
 
     /**

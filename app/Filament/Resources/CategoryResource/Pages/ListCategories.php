@@ -26,11 +26,11 @@ class ListCategories extends ListRecords
                     ['key' => 'icon', 'label' => 'Icon', 'icon' => '✨', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'sort_order', 'label' => 'Reihenfolge', 'icon' => '🔢', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
-                importRow: function (array $mapped): bool {
+                importRow: function (array $mapped): bool|string {
                     $name = $mapped['name'] ?? null;
 
                     if ($name === null || $name === '') {
-                        return false;
+                        return 'Name fehlt';
                     }
 
                     $slugValue = $mapped['slug'] ?? null;
@@ -41,20 +41,25 @@ class ListCategories extends ListRecords
                     $sortOrder = $mapped['sort_order'];
                     $sortOrder = ($sortOrder !== null && $sortOrder !== '') ? (int) $sortOrder : 0;
 
-                    Category::updateOrCreate(
-                        ['slug' => $slug],
-                        [
-                            'name' => $name,
-                            'color' => $mapped['color'] ?: null,
-                            'icon' => $mapped['icon'] ?: null,
-                            'sort_order' => $sortOrder,
-                        ]
-                    );
+                    try {
+                        Category::updateOrCreate(
+                            ['slug' => $slug],
+                            [
+                                'name' => $name,
+                                'color' => $mapped['color'] ?: null,
+                                'icon' => $mapped['icon'] ?: null,
+                                'sort_order' => $sortOrder,
+                            ]
+                        );
+                    } catch (\Throwable $e) {
+                        return "Fehler beim Speichern: {$e->getMessage()} (Name: {$name})";
+                    }
 
                     return true;
                 },
                 entityPluralLabel: 'Kategorien',
             ),
+            SmartCsvImportAction::viewLogAction(),
             Actions\CreateAction::make(),
         ];
     }

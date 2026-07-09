@@ -33,11 +33,17 @@ class ListMembers extends ListRecords
                     $email = $mapped['email'] ?? null;
 
                     if (! $firstName || ! $lastName || ! $email) {
-                        return 'ohne Pflichtfelder';
+                        $missing = array_filter([
+                            ! $firstName ? 'Vorname' : null,
+                            ! $lastName ? 'Nachname' : null,
+                            ! $email ? 'E-Mail' : null,
+                        ]);
+
+                        return 'fehlende Pflichtfelder: '.implode(', ', $missing);
                     }
 
                     if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        return 'mit ungültiger E-Mail';
+                        return "ungültige E-Mail '{$email}' (Name: {$firstName} {$lastName})";
                     }
 
                     $organisationRaw = $mapped['organisation_id'] ?? null;
@@ -53,7 +59,7 @@ class ListMembers extends ListRecords
                         }
 
                         if ($organisationId === null) {
-                            return 'Organisation nicht gefunden';
+                            return "Organisation '{$organisationRaw}' nicht gefunden (Name: {$firstName} {$lastName})";
                         }
                     }
 
@@ -67,23 +73,28 @@ class ListMembers extends ListRecords
                         default => 'member',
                     };
 
-                    Member::updateOrCreate(
-                        ['email' => $email],
-                        [
-                            'organisation_id' => $organisationId,
-                            'first_name' => $firstName,
-                            'last_name' => $lastName,
-                            'newsletter_optin' => $newsletterOptin,
-                            'role' => $role,
-                            'status' => 'pending',
-                            'source' => 'csv',
-                        ]
-                    );
+                    try {
+                        Member::updateOrCreate(
+                            ['email' => $email],
+                            [
+                                'organisation_id' => $organisationId,
+                                'first_name' => $firstName,
+                                'last_name' => $lastName,
+                                'newsletter_optin' => $newsletterOptin,
+                                'role' => $role,
+                                'status' => 'pending',
+                                'source' => 'csv',
+                            ]
+                        );
+                    } catch (\Throwable $e) {
+                        return "Fehler beim Speichern: {$e->getMessage()} (Name: {$firstName} {$lastName})";
+                    }
 
                     return true;
                 },
                 entityPluralLabel: 'Mitglieder',
             ),
+            SmartCsvImportAction::viewLogAction(),
             Actions\CreateAction::make(),
         ];
     }
