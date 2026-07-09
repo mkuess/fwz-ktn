@@ -34,6 +34,7 @@ class ListOrganisations extends ListRecords
                     ['key' => 'website', 'label' => 'Webseite', 'icon' => '🌐', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'representative', 'label' => 'Vertretung', 'icon' => '👤', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'contact_person', 'label' => 'Ansprechpartner:in', 'icon' => '👥', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'role', 'label' => 'Rolle', 'icon' => '🎭', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
                 importRow: function (array $mapped): bool|string {
                     $name = $mapped['name'] ?? null;
@@ -59,6 +60,13 @@ class ListOrganisations extends ListRecords
                         default => 'organisation',
                     };
 
+                    $roleRaw = strtolower(trim((string) ($mapped['role'] ?? '')));
+                    $role = match (true) {
+                        in_array($roleRaw, ['administrator', 'admin'], true) => 'admin',
+                        in_array($roleRaw, ['organisations-administrator', 'org_admin'], true) => 'org_admin',
+                        default => 'org_admin',
+                    };
+
                     $password = $mapped['password'] ?? null;
 
                     // CSV imports can involve hundreds of rows, and Laravel's
@@ -81,6 +89,7 @@ class ListOrganisations extends ListRecords
                             ['email' => $email],
                             [
                                 'type' => $type,
+                                'role' => $role,
                                 'name' => $name,
                                 'password' => $password,
                                 'zvr_number' => $mapped['zvr_number'] ?: null,

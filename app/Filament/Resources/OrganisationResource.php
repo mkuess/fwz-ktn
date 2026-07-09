@@ -90,11 +90,22 @@ class OrganisationResource extends Resource
                     ->multiple()
                     ->preload()
                     ->searchable(),
+                Forms\Components\Select::make('role')
+                    ->label('Rolle')
+                    ->options([
+                        'org_admin' => '🏢 Organisations-Admin',
+                        'user' => '👤 Benutzer',
+                        'admin' => '🔑 Admin',
+                    ])
+                    ->default('org_admin')
+                    ->required(),
                 Forms\Components\Toggle::make('is_approved')
                     ->label('Freigeschaltet')
+                    ->helperText('Organisation wurde vom FWZ-Team geprüft und genehmigt')
                     ->default(false),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Aktiv')
+                    ->helperText('Organisation ist technisch aktiv und kann sich einloggen')
                     ->default(true),
             ]);
     }
@@ -119,6 +130,20 @@ class OrganisationResource extends Resource
                 Tables\Columns\TextColumn::make('city')
                     ->label('Stadt')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Rolle')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'org_admin' => 'Org-Admin',
+                        'admin' => 'Admin',
+                        default => 'Benutzer',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'org_admin' => 'info',
+                        'admin' => 'danger',
+                        default => 'gray',
+                    })
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean()
