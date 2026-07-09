@@ -104,12 +104,16 @@ class MemberResource extends Resource
             ->defaultPaginationPageOption(30)
             ->paginationPageOptions([10, 30, 50, 100])
             ->columns([
-                Tables\Columns\TextColumn::make('first_name')
-                    ->label('Vorname')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('last_name')
-                    ->label('Nachname')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Name')
+                    ->state(fn (?Member $record): string => trim(($record?->first_name ?? '').' '.($record?->last_name ?? '')) ?: ($record?->email ?? '-'))
+                    ->searchable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $search): \Illuminate\Database\Eloquent\Builder {
+                        return $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($search) {
+                            $query->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                    }),
                 Tables\Columns\TextColumn::make('email')
                     ->label('E-Mail')
                     ->searchable(),

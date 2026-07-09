@@ -20,26 +20,20 @@ class ListMembers extends ListRecords
                 name: 'importCsv',
                 label: 'CSV importieren',
                 fields: [
-                    ['key' => 'first_name', 'label' => 'Vorname', 'icon' => '👤', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'last_name', 'label' => 'Nachname', 'icon' => '👤', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'first_name', 'label' => 'Vorname', 'icon' => '👤', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'last_name', 'label' => 'Nachname', 'icon' => '👤', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'email', 'label' => 'E-Mail', 'icon' => '📧', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'organisation_id', 'label' => 'Organisation', 'icon' => '🏢', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'newsletter_optin', 'label' => 'Newsletter', 'icon' => '📰', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'role', 'label' => 'Rolle', 'icon' => '🎭', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
                 importRow: function (array $mapped): bool|string {
-                    $firstName = $mapped['first_name'] ?? null;
-                    $lastName = $mapped['last_name'] ?? null;
+                    $firstName = $mapped['first_name'] ?? '';
+                    $lastName = $mapped['last_name'] ?? '';
                     $email = $mapped['email'] ?? null;
 
-                    if (! $firstName || ! $lastName || ! $email) {
-                        $missing = array_filter([
-                            ! $firstName ? 'Vorname' : null,
-                            ! $lastName ? 'Nachname' : null,
-                            ! $email ? 'E-Mail' : null,
-                        ]);
-
-                        return 'fehlende Pflichtfelder: '.implode(', ', $missing);
+                    if (! $email) {
+                        return 'fehlendes Pflichtfeld: E-Mail';
                     }
 
                     if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -78,8 +72,8 @@ class ListMembers extends ListRecords
                             ['email' => $email],
                             [
                                 'organisation_id' => $organisationId,
-                                'first_name' => $firstName,
-                                'last_name' => $lastName,
+                                'first_name' => $firstName !== '' ? $firstName : null,
+                                'last_name' => $lastName !== '' ? $lastName : null,
                                 'newsletter_optin' => $newsletterOptin,
                                 'role' => $role,
                                 'status' => 'pending',
