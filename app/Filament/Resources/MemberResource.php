@@ -102,19 +102,12 @@ class MemberResource extends Resource
             ->defaultPaginationPageOption(30)
             ->paginationPageOptions([10, 30, 50, 100])
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
-                    ->state(fn (?Member $record): string => trim(($record?->first_name ?? '').' '.($record?->last_name ?? '')) ?: ($record?->email ?? '-'))
-                    ->searchable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $search): \Illuminate\Database\Eloquent\Builder {
-                        return $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($search) {
-                            $query->where('first_name', 'like', "%{$search}%")
-                                ->orWhere('last_name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
-                    }),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('E-Mail')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label('Mitglied')
+                    ->state(fn (?Member $record): string => trim(($record?->first_name ?? '').' '.($record?->last_name ?? '')) ?: '-')
+                    ->description(fn (?Member $record): string => $record?->email ?? '')
+                    ->searchable(['first_name', 'last_name', 'email'])
+                    ->sortable(['last_name']),
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->label('Organisation')
                     ->searchable()
@@ -140,7 +133,8 @@ class MemberResource extends Resource
                         'self' => 'Selbst registriert',
                         'csv' => 'CSV-Import',
                         default => $state,
-                    }),
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('role')
                     ->label('Rolle')
                     ->badge()
@@ -190,29 +184,6 @@ class MemberResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\Action::make('approveMember')
-                    ->label('Mitglied freischalten')
-                    ->icon('heroicon-o-check-badge')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->visible(fn (?Member $record): bool => $record?->status !== 'approved')
-                    ->action(function (Member $record) {
-                        $record->update([
-                            'status' => 'approved',
-                            'approved_at' => now(),
-                            'membership_number' => sprintf(
-                                'FWZ-%s-%06d',
-                                now()->year,
-                                $record->id
-                            ),
-                        ]);
-
-                        Notification::make()
-                            ->title('Mitglied freigeschalten')
-                            ->body("Mitgliedsnummer: {$record->membership_number}")
-                            ->success()
-                            ->send();
-                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\RestoreAction::make()
                     ->label('Wiederherstellen'),
@@ -239,6 +210,22 @@ class MemberResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion()
                         ->successNotificationTitle('Rolle erfolgreich zugewiesen'),
+                    Tables\Actions\BulkAction::make('approveSelected')
+                        ->label('Ausgewählte freischalten')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records): void {
+                            $records->each(function (Member $record) {
+                                $record->update([
+                                    'status' => 'approved',
+                                    'approved_at' => now(),
+                                ]);
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->requiresConfirmation()
+                        ->modalHeading('Mitglieder freischalten')
+                        ->modalDescription('Möchten Sie alle ausgewählten Mitglieder freischalten?'),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make()
                         ->label('Ausgewählte wiederherstellen'),
