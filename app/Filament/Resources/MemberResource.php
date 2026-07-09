@@ -30,14 +30,15 @@ class MemberResource extends Resource
                     ->relationship('organisation', 'name')
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->nullable()
+                    ->placeholder('Keine Organisation'),
                 Forms\Components\TextInput::make('first_name')
                     ->label('Vorname')
-                    ->required()
+                    ->nullable()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('last_name')
                     ->label('Nachname')
-                    ->required()
+                    ->nullable()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->label('E-Mail')
@@ -52,6 +53,7 @@ class MemberResource extends Resource
                         'approved' => 'Genehmigt',
                         'rejected' => 'Abgelehnt',
                     ])
+                    ->default('pending')
                     ->required(),
                 Forms\Components\Select::make('role')
                     ->label('Rolle')
