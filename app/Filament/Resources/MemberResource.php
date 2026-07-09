@@ -273,7 +273,6 @@ class MemberResource extends Resource
     {
         return [
             'index' => Pages\ListMembers::route('/'),
-            'neuanmeldungen' => Pages\ListNeuanmeldungen::route('/neuanmeldungen'),
             'create' => Pages\CreateMember::route('/create'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
         ];

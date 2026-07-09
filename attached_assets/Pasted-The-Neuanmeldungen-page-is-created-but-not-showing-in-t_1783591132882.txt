@@ -1,0 +1,83 @@
+The "Neuanmeldungen" page is created but not showing in the left navigation menu. Fix this. Do NOT delete the database.
+
+The issue is that Filament only shows navigation items for pages registered via getNavigationItems() or via static navigation registration. A ListRecords page inside a Resource does NOT automatically appear as a separate nav item.
+
+Fix by creating a proper standalone Filament Page instead:
+
+Create app/Filament/Pages/Neuanmeldungen.php:
+
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Filament\Resources\MemberResource;
+use App\Models\Member;
+use Filament\Pages\Page;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Builder;
+
+class Neuanmeldungen extends Page implements HasTable
+{
+    use InteractsWithTable;
+
+    protected static ?string $navigationIcon = 'heroicon-o-user-plus';
+    protected static ?string $navigationLabel = 'Neuanmeldungen';
+    protected static ?string $title = 'Neuanmeldungen';
+    protected static ?string $navigationGroup = 'Mitglieder';
+    protected static ?int $navigationSort = 3;
+    protected static string $view = 'filament.pages.neuanmeldungen';
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Member::where('status', 'pending')->where('role', 'member')->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string
+    {
+        return 'warning';
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Member::query()
+                    ->where('status', 'pending')
+                    ->where('role', 'member')
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label('Mitglied')
+                    ->state(fn (Member $record): string => trim(($record->first_name ?? '') . ' ' . ($record->last_name ?? '')) ?: '-')
+                    ->description(fn (Member $record): string => $record->email ?? '')
+                    ->searchable(['first_name', 'last_name', 'email']),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Angemeldet')
+                    ->since()
+                    ->tooltip(fn (Member $record): string => $record->created_at?->format('d.m.Y H:i') ?? '')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('organisation.name')
+                    ->label('Organisation')
+                    ->placeholder('-'),
+            ])
+            ->recordUrl(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
+            ->defaultSort('created_at', 'desc')
+            ->paginated([10, 30, 50]);
+    }
+}
+
+Then create the view file resources/views/filament/pages/neuanmeldungen.blade.php:
+
+<x-filament-panels::page>
+    {{ $this->table }}
+</x-filament-panels::page>
+
+Make sure the Neuanmeldungen page is NOT registered in MemberResource::getPages() - it should be a standalone page discovered automatically by Filament.
+
+Also make sure navigationGroup 'Mitglieder' matches exactly the group used in MemberResource - check MemberResource for getNavigationGroup() and use the same string.
+
+Do NOT delete the database. Report when done.
