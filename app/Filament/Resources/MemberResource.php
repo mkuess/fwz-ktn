@@ -64,10 +64,8 @@ class MemberResource extends Resource
                     ])
                     ->default('member')
                     ->required(),
-                Forms\Components\TextInput::make('source')
-                    ->label('Quelle')
-                    ->disabled()
-                    ->dehydrated(),
+                Forms\Components\Hidden::make('source')
+                    ->default('self'),
                 Forms\Components\TextInput::make('membership_number')
                     ->label('Mitgliedsnummer')
                     ->disabled()

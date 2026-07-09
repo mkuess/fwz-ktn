@@ -32,6 +32,13 @@ class Member extends Model
         'password',
     ];
 
+    protected $attributes = [
+        'source' => 'self',
+        'status' => 'pending',
+        'role' => 'member',
+        'newsletter_optin' => false,
+    ];
+
     protected function casts(): array
     {
         return [
