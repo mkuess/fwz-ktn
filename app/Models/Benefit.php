@@ -13,6 +13,7 @@ class Benefit extends Model
         'website',
         'logo_path',
         'is_active',
+        'is_teaser',
         'sort_order',
     ];
 
@@ -20,6 +21,7 @@ class Benefit extends Model
     {
         return [
             'is_active' => 'boolean',
+            'is_teaser' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

@@ -58,6 +58,10 @@ class BenefitResource extends Resource
                 Forms\Components\Toggle::make('is_active')
                     ->label('Aktiv')
                     ->default(true),
+                Forms\Components\Toggle::make('is_teaser')
+                    ->label('Teaser (Landingpage)')
+                    ->helperText('Wird auf der Landingpage im Teaser-Bereich angezeigt')
+                    ->default(false),
                 Forms\Components\TextInput::make('sort_order')
                     ->label('Reihenfolge')
                     ->numeric()
@@ -74,14 +78,17 @@ class BenefitResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('website')
-                    ->label('Webseite')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('content')
-                    ->label('Inhalt')
-                    ->html()
-                    ->limit(50)
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Beschreibung')
+                    ->limit(60)
+                    ->tooltip(fn ($record) => $record->description),
+                Tables\Columns\IconColumn::make('is_teaser')
+                    ->label('Teaser')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-star')
+                    ->falseIcon('heroicon-o-minus')
+                    ->trueColor('warning')
+                    ->falseColor('gray'),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Aktiv')
                     ->boolean(),
@@ -89,6 +96,11 @@ class BenefitResource extends Resource
                     ->label('Reihenfolge')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Inhalt')
+                    ->html()
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
