@@ -149,6 +149,14 @@ class MemberResource extends Resource
                         'admin' => 'danger',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('managedOrganisations.name')
+                    ->label('Organisationszugang')
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->placeholder('-')
+                    ->badge()
+                    ->color('info'),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Gelöscht')
                     ->badge()
