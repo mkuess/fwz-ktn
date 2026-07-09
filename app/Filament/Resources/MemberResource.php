@@ -197,6 +197,24 @@ class MemberResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('assignRole')
+                        ->label('Rolle zuweisen')
+                        ->icon('heroicon-o-shield-check')
+                        ->form([
+                            Forms\Components\Select::make('role')
+                                ->label('Rolle')
+                                ->options([
+                                    'member' => '👤 Mitglied',
+                                    'org_admin' => '🏢 Organisations-Admin',
+                                    'admin' => '🔑 Admin',
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data): void {
+                            $records->each->update(['role' => $data['role']]);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->successNotificationTitle('Rolle erfolgreich zugewiesen'),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make()
                         ->label('Ausgewählte wiederherstellen'),
