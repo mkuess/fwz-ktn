@@ -151,9 +151,9 @@ class OrganisationResource extends Resource
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Gelöscht')
                     ->badge()
-                    ->state(fn (Organisation $record): ?string => $record->deleted_at ? 'Gelöscht' : null)
+                    ->state(fn (?Organisation $record): ?string => $record?->deleted_at ? 'Gelöscht' : null)
                     ->color('danger')
-                    ->visible(fn (Organisation $record): bool => $record->deleted_at !== null),
+                    ->visible(fn (?Organisation $record): bool => $record?->deleted_at !== null),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Erstellt am')
                     ->dateTime()
