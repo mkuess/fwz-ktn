@@ -78,11 +78,18 @@ class MemberResource extends Resource
                 Forms\Components\Section::make('Organisationszugang')
                     ->description('Welche Organisationen kann dieses Mitglied verwalten (z. B. als Organisations-Admin)?')
                     ->schema([
-                        Forms\Components\CheckboxList::make('managedOrganisations')
+                        Forms\Components\Select::make('managedOrganisations')
                             ->label('Organisationszugang')
                             ->helperText('Welche Organisationen kann dieses Mitglied verwalten?')
-                            ->relationship('managedOrganisations', 'name')
+                            ->multiple()
+                            ->relationship(
+                                'managedOrganisations',
+                                'name',
+                                fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('is_active', true)->orderBy('name')
+                            )
                             ->searchable()
+                            ->preload(false)
+                            ->placeholder('Organisation suchen...')
                             ->nullable(),
                     ])
                     ->collapsible(),
