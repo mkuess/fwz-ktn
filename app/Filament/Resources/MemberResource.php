@@ -56,9 +56,9 @@ class MemberResource extends Resource
                 Forms\Components\Select::make('role')
                     ->label('Rolle')
                     ->options([
-                        'member' => 'Mitglied',
-                        'org_admin' => 'Organisations-Admin',
-                        'admin' => 'FWZ Admin',
+                        'member' => '👤 Mitglied',
+                        'org_admin' => '🏢 Organisations-Admin',
+                        'admin' => '🔑 FWZ Admin',
                     ])
                     ->default('member')
                     ->required(),
@@ -73,6 +73,28 @@ class MemberResource extends Resource
                 Forms\Components\Toggle::make('newsletter_optin')
                     ->label('Newsletter-Einwilligung')
                     ->default(false),
+                Forms\Components\Section::make('Organisationszugang')
+                    ->description('Welche Organisationen kann dieses Mitglied verwalten (z. B. als Organisations-Admin)?')
+                    ->schema([
+                        Forms\Components\Repeater::make('managedOrganisations')
+                            ->label('Organisationen')
+                            ->relationship('managedOrganisations')
+                            ->schema([
+                                Forms\Components\Select::make('id')
+                                    ->label('Organisation')
+                                    ->options(fn () => \App\Models\Organisation::query()->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                                Forms\Components\Toggle::make('can_edit')
+                                    ->label('Kann bearbeiten')
+                                    ->default(false),
+                            ])
+                            ->columns(2)
+                            ->addActionLabel('Organisation hinzufügen')
+                            ->defaultItems(0),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
@@ -206,7 +228,7 @@ class MemberResource extends Resource
                                 ->options([
                                     'member' => '👤 Mitglied',
                                     'org_admin' => '🏢 Organisations-Admin',
-                                    'admin' => '🔑 Admin',
+                                    'admin' => '🔑 FWZ Admin',
                                 ])
                                 ->required(),
                         ])

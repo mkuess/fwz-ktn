@@ -1,0 +1,73 @@
+Fix role system - roles belong to Members not Organisations. Do NOT delete the database.
+
+STEP 1 - Remove role from OrganisationResource:
+- Remove role Select field from OrganisationResource form
+- Remove role column from organisations list view
+- Remove bulk role assignment action from OrganisationResource
+- Remove role column from organisations table if it was added via migration
+  → Do NOT drop the column if it has data, just hide it from UI
+
+STEP 2 - Ensure role is properly set up in MemberResource:
+Make sure members table has role column (enum: member, org_admin, admin, default: member)
+If not exists: create migration and run php artisan migrate
+
+Add to MemberResource form:
+Select::make('role')
+    ->label('Rolle')
+    ->options([
+        'member' => '👤 Mitglied',
+        'org_admin' => '🏢 Organisations-Admin',
+        'admin' => '🔑 FWZ Admin',
+    ])
+    ->default('member')
+    ->required()
+
+Add role badge column to MemberResource list:
+- member → gray "Mitglied"
+- org_admin → blue "Org-Admin"
+- admin → red "Admin"
+
+Add bulk role assignment to MemberResource:
+BulkAction::make('assignRole')
+    ->label('Rolle zuweisen')
+    ->icon('heroicon-o-shield-check')
+    ->form([
+        Select::make('role')
+            ->label('Rolle')
+            ->options([
+                'member' => '👤 Mitglied',
+                'org_admin' => '🏢 Organisations-Admin',
+                'admin' => '🔑 FWZ Admin',
+            ])
+            ->required(),
+    ])
+    ->action(fn (Collection $records, array $data) => $records->each->update(['role' => $data['role']]))
+    ->deselectRecordsAfterCompletion()
+
+STEP 3 - Add Organisation assignment to Members (pivot relationship):
+Create a new pivot table: member_organisation
+- member_id (foreignId cascadeOnDelete)
+- organisation_id (foreignId cascadeOnDelete)  
+- can_edit (boolean default false) → whether this member can edit the organisation
+- timestamps
+
+Run: php artisan migrate
+
+Add to Member model:
+public function managedOrganisations(): BelongsToMany
+{
+    return $this->belongsToMany(Organisation::class, 'member_organisation')
+        ->withPivot('can_edit')
+        ->withTimestamps();
+}
+
+Add to MemberResource form a section "Organisationszugang":
+CheckboxList or Repeater showing:
+- Select Organisation (searchable dropdown)
+- Toggle "Kann bearbeiten" (can_edit)
+
+This allows assigning which organisations a member (especially org_admin role) can manage.
+
+Do NOT delete the database. Do NOT run migrate:fresh. 
+Run only: php artisan migrate
+Report when done.

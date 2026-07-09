@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Member extends Model
@@ -44,5 +45,12 @@ class Member extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
+    }
+
+    public function managedOrganisations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organisation::class, 'member_organisation')
+            ->withPivot('can_edit')
+            ->withTimestamps();
     }
 }
