@@ -1,0 +1,92 @@
+Create a new "Neuanmeldungen" page in the Filament navigation. Do NOT delete the database.
+
+STEP 1 - Create a new Filament Resource Page (not a new Resource):
+Create app/Filament/Pages/Neuanmeldungen.php as a custom page that uses the existing Member model.
+
+Actually the cleanest approach: Create a new ListMembers-like page inside MemberResource:
+
+Create app/Filament/Resources/MemberResource/Pages/ListNeuanmeldungen.php
+
+This page extends the existing ListMembers but filters for:
+- role = 'member' 
+- status = 'pending'
+
+STEP 2 - Register the page in MemberResource:
+In MemberResource::getPages() add:
+'neuanmeldungen' => Pages\ListNeuanmeldungen::route('/neuanmeldungen'),
+
+STEP 3 - Create the ListNeuanmeldungen page:
+
+namespace App\Filament\Resources\MemberResource\Pages;
+
+use App\Filament\Resources\MemberResource;
+use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
+
+class ListNeuanmeldungen extends ListRecords
+{
+    protected static string $resource = MemberResource::class;
+    
+    protected static ?string $title = 'Neuanmeldungen';
+    
+    protected static ?string $navigationIcon = 'heroicon-o-user-plus';
+    
+    protected static ?string $navigationLabel = 'Neuanmeldungen';
+    
+    protected static ?int $navigationSort = 2;
+    
+    // Show badge with count in navigation
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) \App\Models\Member::where('status', 'pending')
+            ->where('role', 'member')
+            ->count();
+    }
+    
+    public static function getNavigationBadgeColor(): string
+    {
+        return 'warning';
+    }
+    
+    protected function getTableQuery(): Builder
+    {
+        return parent::getTableQuery()
+            ->where('status', 'pending')
+            ->where('role', 'member');
+    }
+    
+    protected function getHeaderActions(): array
+    {
+        return []; // No create button here
+    }
+}
+
+STEP 4 - Add "Angemeldet am" column to MemberResource table:
+Add a created_at column with human-readable relative time:
+
+Tables\Columns\TextColumn::make('created_at')
+    ->label('Angemeldet')
+    ->dateTime('D, d. M Y \u\m H:i')
+    ->since()  // shows "vor 5 Minuten", "gestern", etc.
+    ->tooltip(fn ($record) => $record->created_at?->format('d.m.Y H:i'))
+    ->sortable(),
+
+->since() automatically shows:
+- "vor wenigen Sekunden"
+- "vor 5 Minuten"  
+- "vor 3 Stunden"
+- "gestern"
+- date for older entries
+
+STEP 5 - Clicking a row opens existing MemberResource edit page:
+In ListNeuanmeldungen, the edit action automatically uses MemberResource edit page since it uses the same resource. No new edit page needed.
+
+Add to the table:
+->recordUrl(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
+
+STEP 6 - Register in navigation:
+The page should appear in the left menu under "Mitglieder" or as separate nav item.
+Add navigation group:
+protected static ?string $navigationGroup = 'Mitglieder';
+
+Do NOT delete the database. Report when done.

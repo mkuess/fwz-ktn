@@ -181,11 +181,13 @@ class MemberResource extends Resource
                     ->color('danger')
                     ->visible(fn (?Member $record): bool => $record?->deleted_at !== null),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Erstellt am')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Angemeldet')
+                    ->dateTime('D, d. M Y \u\m H:i')
+                    ->since()
+                    ->tooltip(fn (?Member $record): ?string => $record?->created_at?->format('d.m.Y H:i'))
+                    ->sortable(),
             ])
+            ->recordUrl(fn (Member $record): string => static::getUrl('edit', ['record' => $record]))
             ->striped()
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -271,6 +273,7 @@ class MemberResource extends Resource
     {
         return [
             'index' => Pages\ListMembers::route('/'),
+            'neuanmeldungen' => Pages\ListNeuanmeldungen::route('/neuanmeldungen'),
             'create' => Pages\CreateMember::route('/create'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
         ];
