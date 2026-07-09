@@ -74,6 +74,17 @@ class VolunteerListingResource extends Resource
                     ->searchable()
                     ->preload()
                     ->nullable(),
+                Forms\Components\Select::make('activities')
+                    ->label('Aktivitäten')
+                    ->multiple()
+                    ->relationship(
+                        'activities',
+                        'name',
+                        fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('is_active', true)->orderBy('sort_order')
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
             ]);
     }
 

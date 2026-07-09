@@ -1,0 +1,78 @@
+Create a "Gesuch-Aktivitäten" management section. Do NOT delete the database.
+
+STEP 1 - Create migration for volunteer_listing_activities table:
+Schema::create('volunteer_listing_activities', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('slug')->unique();
+    $table->integer('sort_order')->default(0);
+    $table->boolean('is_active')->default(true);
+    $table->timestamps();
+});
+
+Also create pivot table:
+Schema::create('volunteer_listing_activity', function (Blueprint $table) {
+    $table->foreignId('volunteer_listing_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('volunteer_listing_activity_id')->constrained()->cascadeOnDelete();
+});
+
+Run: php artisan migrate
+
+STEP 2 - Create VolunteerListingActivity model:
+app/Models/VolunteerListingActivity.php
+- fillable: name, slug, sort_order, is_active
+- belongsToMany VolunteerListing
+
+STEP 3 - Update VolunteerListing model:
+Add:
+public function activities(): BelongsToMany
+{
+    return $this->belongsToMany(VolunteerListingActivity::class, 'volunteer_listing_activity');
+}
+
+STEP 4 - Create VolunteerListingActivityResource:
+- Navigation label: 'Gesuch-Aktivitäten'
+- Navigation icon: 'heroicon-o-bolt'
+- Navigation group: 'Gesuche'
+- Navigation sort: 3
+- Model label: 'Aktivität' / plural: 'Aktivitäten'
+
+List columns: Name, Slug, Aktiv, Reihenfolge
+Form fields: name (auto-generates slug), slug, sort_order, is_active toggle
+Add CSV import same style as other resources.
+
+STEP 5 - Add activities to VolunteerListingResource form:
+Select::make('activities')
+    ->label('Aktivitäten')
+    ->multiple()
+    ->relationship('activities', 'name',
+        fn ($query) => $query->where('is_active', true)->orderBy('sort_order')
+    )
+    ->searchable()
+    ->preload()
+    ->nullable()
+
+STEP 6 - Seed all 16 activities from the Excel file:
+Run via tinker or seeder - create these activities:
+1. Mithilfe bei Aktionen und Veranstaltungen
+2. Engagement für die Umwelt
+3. Fortbildungsvortragende in Einsatzorganisationen
+4. Rettungs- und Fahrdienste
+5. Sprachhilfe
+6. Handwerkliche und technische Tätigkeiten
+7. Betreuung und Begleitung
+8. Administrative Tätigkeiten
+9. Öffentlichkeitsarbeit und Kommunikation
+10. Fundraising und Sponsoring
+11. Lehre und Wissensvermittlung
+12. Kulturelle und kreative Tätigkeiten
+13. Sportliche Aktivitäten
+14. Soziale Beratung und Unterstützung
+15. Pflege und Gesundheitsversorgung
+16. Sonstiges
+
+Use Str::slug($name) for slug generation.
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.

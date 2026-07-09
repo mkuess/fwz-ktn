@@ -39,4 +39,9 @@ class VolunteerListing extends Model
     {
         return $this->belongsToMany(VolunteerListingCategory::class, 'volunteer_listing_category');
     }
+
+    public function activities(): BelongsToMany
+    {
+        return $this->belongsToMany(VolunteerListingActivity::class, 'volunteer_listing_activity');
+    }
 }
