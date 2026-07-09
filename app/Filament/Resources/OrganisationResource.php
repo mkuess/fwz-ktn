@@ -148,13 +148,21 @@ class OrganisationResource extends Resource
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean()
                     ->label('Freigeschalten'),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Gelöscht')
+                    ->badge()
+                    ->state(fn (Organisation $record): ?string => $record->deleted_at ? 'Gelöscht' : null)
+                    ->color('danger')
+                    ->visible(fn (Organisation $record): bool => $record->deleted_at !== null),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Erstellt am')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->striped()
             ->filters([
+                Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\TernaryFilter::make('is_approved')
                     ->label('Freigegeben'),
                 Tables\Filters\SelectFilter::make('type')
@@ -166,6 +174,10 @@ class OrganisationResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->label('Wiederherstellen'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->label('Endgültig löschen'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -182,6 +194,10 @@ class OrganisationResource extends Resource
                         ))
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->label('Ausgewählte wiederherstellen'),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->label('Ausgewählte endgültig löschen'),
                 ]),
             ]);
     }

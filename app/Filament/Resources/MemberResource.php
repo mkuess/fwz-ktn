@@ -131,13 +131,21 @@ class MemberResource extends Resource
                         'admin' => 'danger',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Gelöscht')
+                    ->badge()
+                    ->state(fn (Member $record): ?string => $record->deleted_at ? 'Gelöscht' : null)
+                    ->color('danger')
+                    ->visible(fn (Member $record): bool => $record->deleted_at !== null),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Erstellt am')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->striped()
             ->filters([
+                Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
@@ -182,10 +190,18 @@ class MemberResource extends Resource
                             ->send();
                     }),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->label('Wiederherstellen'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->label('Endgültig löschen'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->label('Ausgewählte wiederherstellen'),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->label('Ausgewählte endgültig löschen'),
                 ]),
             ]);
     }
