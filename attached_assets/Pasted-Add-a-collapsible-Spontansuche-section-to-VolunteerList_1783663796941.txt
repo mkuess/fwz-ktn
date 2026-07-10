@@ -1,0 +1,75 @@
+Add a collapsible "Spontansuche" section to VolunteerListingResource form. Do NOT delete the database.
+
+STEP 1 - Add new columns to volunteer_listings table:
+Create migration:
+$table->json('weekdays')->nullable()->after('is_spontaneous');
+$table->json('daytimes')->nullable()->after('weekdays');
+$table->unsignedSmallInteger('hours_per_week')->nullable()->after('daytimes');
+Run: php artisan migrate
+
+STEP 2 - Add to VolunteerListing model fillable:
+'weekdays', 'daytimes', 'hours_per_week'
+
+Add casts:
+protected $casts = [
+    'weekdays' => 'array',
+    'daytimes' => 'array',
+    'is_spontaneous' => 'boolean',
+    'is_active' => 'boolean',
+    'valid_until' => 'date',
+];
+
+STEP 3 - Replace the is_spontaneous toggle in the form with a full Section:
+
+Forms\Components\Section::make('Spontansuche')
+    ->description('Aktivieren wenn Freiwillige spontan und flexibel gesucht werden')
+    ->schema([
+        Forms\Components\Toggle::make('is_spontaneous')
+            ->label('Spontansuche aktiv')
+            ->live()
+            ->default(false),
+
+        Forms\Components\Grid::make(2)
+            ->schema([
+                Forms\Components\CheckboxList::make('weekdays')
+                    ->label('Wochentage')
+                    ->options([
+                        'montag' => 'Montag',
+                        'dienstag' => 'Dienstag',
+                        'mittwoch' => 'Mittwoch',
+                        'donnerstag' => 'Donnerstag',
+                        'freitag' => 'Freitag',
+                        'samstag' => 'Samstag',
+                        'sonntag' => 'Sonntag',
+                    ])
+                    ->nullable()
+                    ->visible(fn (Forms\Get $get): bool => !$get('is_spontaneous')),
+
+                Forms\Components\CheckboxList::make('daytimes')
+                    ->label('Tageszeiten')
+                    ->options([
+                        'vormittags' => 'Vormittags',
+                        'mittags' => 'Mittags',
+                        'nachmittags' => 'Nachmittags',
+                        'abends' => 'Abends',
+                    ])
+                    ->nullable()
+                    ->visible(fn (Forms\Get $get): bool => !$get('is_spontaneous')),
+            ]),
+
+        Forms\Components\TextInput::make('hours_per_week')
+            ->label('Zeitaufwand pro Woche (in Stunden)')
+            ->numeric()
+            ->minValue(1)
+            ->maxValue(168)
+            ->nullable()
+            ->visible(fn (Forms\Get $get): bool => !$get('is_spontaneous')),
+    ])
+    ->collapsible()
+    ->columnSpanFull(),
+
+STEP 4 - Remove is_spontaneous from the date/toggles grid since it's now in its own section.
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.

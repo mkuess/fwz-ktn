@@ -14,6 +14,9 @@ class VolunteerListing extends Model
         'description',
         'website_link',
         'is_spontaneous',
+        'weekdays',
+        'daytimes',
+        'hours_per_week',
         'street',
         'zip',
         'city',
@@ -24,6 +27,8 @@ class VolunteerListing extends Model
     protected function casts(): array
     {
         return [
+            'weekdays' => 'array',
+            'daytimes' => 'array',
             'is_spontaneous' => 'boolean',
             'valid_until' => 'date',
             'is_active' => 'boolean',

@@ -61,8 +61,54 @@ class VolunteerListingResource extends Resource
                 Forms\Components\Grid::make(3)->schema([
                     Forms\Components\DatePicker::make('valid_until')->label('Gültig bis'),
                     Forms\Components\Toggle::make('is_active')->label('Aktiv')->default(true)->inline(false),
-                    Forms\Components\Toggle::make('is_spontaneous')->label('Spontansuche')->inline(false),
                 ])->columnSpanFull(),
+
+                Forms\Components\Section::make('Spontansuche')
+                    ->description('Aktivieren wenn Freiwillige spontan und flexibel gesucht werden')
+                    ->schema([
+                        Forms\Components\Toggle::make('is_spontaneous')
+                            ->label('Spontansuche aktiv')
+                            ->live()
+                            ->default(false),
+
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\CheckboxList::make('weekdays')
+                                    ->label('Wochentage')
+                                    ->options([
+                                        'montag' => 'Montag',
+                                        'dienstag' => 'Dienstag',
+                                        'mittwoch' => 'Mittwoch',
+                                        'donnerstag' => 'Donnerstag',
+                                        'freitag' => 'Freitag',
+                                        'samstag' => 'Samstag',
+                                        'sonntag' => 'Sonntag',
+                                    ])
+                                    ->nullable()
+                                    ->visible(fn (Forms\Get $get): bool => ! $get('is_spontaneous')),
+
+                                Forms\Components\CheckboxList::make('daytimes')
+                                    ->label('Tageszeiten')
+                                    ->options([
+                                        'vormittags' => 'Vormittags',
+                                        'mittags' => 'Mittags',
+                                        'nachmittags' => 'Nachmittags',
+                                        'abends' => 'Abends',
+                                    ])
+                                    ->nullable()
+                                    ->visible(fn (Forms\Get $get): bool => ! $get('is_spontaneous')),
+                            ]),
+
+                        Forms\Components\TextInput::make('hours_per_week')
+                            ->label('Zeitaufwand pro Woche (in Stunden)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(168)
+                            ->nullable()
+                            ->visible(fn (Forms\Get $get): bool => ! $get('is_spontaneous')),
+                    ])
+                    ->collapsible()
+                    ->columnSpanFull(),
 
                 Forms\Components\Grid::make(2)->schema([
                     Forms\Components\Select::make('categories')
