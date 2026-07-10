@@ -1,0 +1,103 @@
+Redesign the Filament dashboard. Do NOT delete the database.
+
+STEP 1 - Update dashboard stats widgets:
+Find or create app/Filament/Widgets/StatsOverview.php
+
+Replace existing stats with these 4 cards:
+
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Models\Organisation;
+use App\Models\Member;
+use App\Models\VolunteerListing;
+
+class StatsOverviewWidget extends BaseWidget
+{
+    protected function getStats(): array
+    {
+        return [
+            Stat::make('Organisationen', Organisation::count())
+                ->description('Registrierte Organisationen')
+                ->icon('heroicon-o-building-office-2')
+                ->color('primary'),
+
+            Stat::make('Mitglieder gesamt', Member::count())
+                ->description('Alle registrierten Mitglieder')
+                ->icon('heroicon-o-users')
+                ->color('info'),
+
+            Stat::make('Neuanmeldungen', Member::where('status', 'pending')->where('role', 'member')->count())
+                ->description('Ausstehende Freischaltungen')
+                ->icon('heroicon-o-user-plus')
+                ->color('warning'),
+
+            Stat::make('Aktuelle Gesuche', VolunteerListing::where('is_active', true)->count())
+                ->description('Aktive Gesuche')
+                ->icon('heroicon-o-clipboard-document-list')
+                ->color('success'),
+        ];
+    }
+}
+
+STEP 2 - Create a "Letzte Neuanmeldungen" table widget:
+Create app/Filament/Widgets/LatestSignupsWidget.php:
+
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use App\Models\Member;
+use App\Filament\Resources\MemberResource;
+
+class LatestSignupsWidget extends BaseWidget
+{
+    protected static ?string $heading = 'Letzte Neuanmeldungen';
+    protected int|string|array $columnSpan = 'full';
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Member::query()
+                    ->where('status', 'pending')
+                    ->where('role', 'member')
+                    ->latest()
+                    ->limit(7)
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label('Name')
+                    ->state(fn (Member $record): string => trim(($record->first_name ?? '') . ' ' . ($record->last_name ?? '')) ?: '-')
+                    ->description(fn (Member $record): string => $record->email ?? ''),
+                Tables\Columns\TextColumn::make('organisation.name')
+                    ->label('Organisation')
+                    ->placeholder('-'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Angemeldet')
+                    ->since()
+                    ->tooltip(fn (Member $record): string => $record->created_at?->format('d.m.Y H:i') ?? ''),
+            ])
+            ->actions([
+                Tables\Actions\Action::make('bearbeiten')
+                    ->label('Bearbeiten')
+                    ->url(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
+                    ->icon('heroicon-o-pencil'),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('alle_anzeigen')
+                    ->label('Alle Neuanmeldungen anzeigen')
+                    ->url('/verwaltung/neuanmeldungen')
+                    ->icon('heroicon-o-arrow-right')
+                    ->color('warning'),
+            ])
+            ->paginated(false);
+    }
+}
+
+STEP 3 - Register both widgets on the dashboard:
+In app/Providers/Filament/AdminPanelProvider.php add to ->widgets([]):
+\App\Filament\Widgets\StatsOverviewWidget::class,
+\App\Filament\Widgets\LatestSignupsWidget::class,
+
+OR if using a custom Dashboard page, add getWidgets() method returning both widgets with StatsOverview first and LatestSignupsWidget second (full width).
+
+Do NOT delete the database. Report when done.
