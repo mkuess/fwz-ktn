@@ -27,64 +27,60 @@ class VolunteerListingResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(2)
             ->schema([
                 Forms\Components\Select::make('organisation_id')
                     ->label('Organisation')
                     ->relationship('organisation', 'name')
                     ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
+
                 Forms\Components\TextInput::make('title')
                     ->label('Titel')
                     ->required()
-                    ->maxLength(255),
+                    ->columnSpanFull(),
+
                 Forms\Components\Textarea::make('description')
                     ->label('Beschreibung')
                     ->required()
+                    ->rows(4)
                     ->columnSpanFull(),
+
                 Forms\Components\TextInput::make('website_link')
                     ->label('Website-Link')
                     ->url()
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('is_spontaneous')
-                    ->label('Spontansuche')
-                    ->default(false),
-                Forms\Components\TextInput::make('street')
-                    ->label('Straße')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('zip')
-                    ->label('PLZ')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('city')
-                    ->label('Ort')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('valid_until')
-                    ->label('Gültig bis'),
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Aktiv')
-                    ->default(true),
-                Forms\Components\Select::make('categories')
-                    ->label('Kategorien')
-                    ->multiple()
-                    ->relationship(
-                        'categories',
-                        'name',
-                        fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('is_active', true)->orderBy('sort_order')
-                    )
-                    ->searchable()
-                    ->preload()
-                    ->nullable(),
-                Forms\Components\Select::make('activities')
-                    ->label('Aktivitäten')
-                    ->multiple()
-                    ->relationship(
-                        'activities',
-                        'name',
-                        fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('is_active', true)->orderBy('sort_order')
-                    )
-                    ->searchable()
-                    ->preload()
-                    ->nullable(),
+                    ->columnSpanFull(),
+
+                Forms\Components\Grid::make(3)->schema([
+                    Forms\Components\TextInput::make('street')->label('Straße'),
+                    Forms\Components\TextInput::make('zip')->label('PLZ')->maxLength(10),
+                    Forms\Components\TextInput::make('city')->label('Ort'),
+                ])->columnSpanFull(),
+
+                Forms\Components\Grid::make(3)->schema([
+                    Forms\Components\DatePicker::make('valid_until')->label('Gültig bis'),
+                    Forms\Components\Toggle::make('is_active')->label('Aktiv')->default(true)->inline(false),
+                    Forms\Components\Toggle::make('is_spontaneous')->label('Spontansuche')->inline(false),
+                ])->columnSpanFull(),
+
+                Forms\Components\Grid::make(2)->schema([
+                    Forms\Components\Select::make('categories')
+                        ->label('Kategorien')
+                        ->multiple()
+                        ->relationship('categories', 'name', fn ($query) => $query->where('is_active', true)->orderBy('sort_order'))
+                        ->searchable()
+                        ->preload()
+                        ->columnSpan(1),
+
+                    Forms\Components\Select::make('activities')
+                        ->label('Aktivitäten')
+                        ->multiple()
+                        ->relationship('activities', 'name', fn ($query) => $query->where('is_active', true)->orderBy('sort_order'))
+                        ->searchable()
+                        ->preload()
+                        ->columnSpan(1),
+                ])->columnSpanFull(),
             ]);
     }
 
