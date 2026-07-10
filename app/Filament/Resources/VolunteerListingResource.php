@@ -67,7 +67,7 @@ class VolunteerListingResource extends Resource
                     ->description('Aktivieren wenn Freiwillige spontan und flexibel gesucht werden')
                     ->schema([
                         Forms\Components\Toggle::make('is_spontaneous')
-                            ->label('Spontansuche aktiv')
+                            ->label('Spontansuche')
                             ->live()
                             ->default(false),
 
