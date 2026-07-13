@@ -39,22 +39,22 @@
         </div>
         <div class="features">
           <div class="feature">
-            <img class="icon-img" src="{{ asset('img/icon-freiwillige.svg') }}" alt="Icon Freiwillige">
+            <img class="icon-img" src="{{ asset('img/icon-freiwillige.png') }}" alt="Icon Freiwillige">
             <h3 class="h3">Für Freiwillige</h3>
             <p>Finde Vereine, Projekte und Veranstaltungen in deiner Region — und entdecke dort deinen Platz, wo du wirken willst.</p>
           </div>
           <div class="feature">
-            <img class="icon-img" src="{{ asset('img/icon-vereine.svg') }}" alt="Icon Vereine">
+            <img class="icon-img" src="{{ asset('img/icon-vereine.png') }}" alt="Icon Vereine">
             <h3 class="h3">Für Vereine</h3>
             <p>Macht eure Arbeit sichtbar, gewinnt neue Mitstreiter:innen und werdet Teil eines kärntenweiten Netzwerks.</p>
           </div>
           <div class="feature">
-            <img class="icon-img" src="{{ asset('img/icon-benefits.svg') }}" alt="Icon Benefits">
+            <img class="icon-img" src="{{ asset('img/icon-benefits.png') }}" alt="Icon Benefits">
             <h3 class="h3">Benefits</h3>
             <p>Mit dem persönlichen Vereinscode öffnen sich Vergünstigungen bei ausgewählten Kärntner Partnerbetrieben.</p>
           </div>
           <div class="feature">
-            <img class="icon-img" src="{{ asset('img/icon-sicherheit.svg') }}" alt="Icon Sicherheit">
+            <img class="icon-img" src="{{ asset('img/icon-sicherheitsnetz.png') }}" alt="Icon Sicherheitsnetz">
             <h3 class="h3">Sicherheitsnetz</h3>
             <p>Zusätzlicher Versicherungsschutz für freiwillig Engagierte während der Freiwilligenarbeit in Kärnten.</p>
           </div>
