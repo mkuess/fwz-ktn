@@ -1,0 +1,25 @@
+Add a new 3-step organisation registration flow. Files to add (do not overwrite anything already working):
+
+1. app/Models/Organisation.php — IMPORTANT: if an Organisation model already exists from the Filament build, do NOT overwrite it. Instead compare $fillable fields and merge in anything missing, plus the password-hashing logic in the booted() method.
+
+2. database/migrations/2026_07_13_000000_create_organisations_table.php — this migration checks Schema::hasTable('organisations') and does nothing if the table already exists, so it's safe to run either way. But please verify column names against this file match your existing Filament resource before running php artisan migrate.
+
+3. app/Http/Controllers/OrganisationRegistrationController.php — new controller, session-based 3-step wizard (no Livewire dependency).
+
+4. app/Mail/OrgRegistered.php and resources/views/emails/org-registered.blade.php — admin notification email sent on successful registration, uses Laravel's built-in markdown mail components (no publishing needed).
+
+5. resources/views/registrierung/_sidebar.blade.php, _stepper.blade.php, schritt1.blade.php, schritt2.blade.php, schritt3.blade.php, danke.blade.php — new views.
+
+6. Merge the routes from routes-registrierung-snippet.php into routes/web.php (adds a route group under /registrieren), placed before any existing fallback/catch-all route.
+
+7. Replace public/css/style.css with the updated version — it only APPENDS a new "Registrierungs-Flow" section at the end (stepper, two-column layout, form fields), nothing above it is touched.
+
+8. Replace resources/views/layouts/app.blade.php with the updated version — it only adds @stack('scripts') right after the two existing <script> tags, so pages can push page-specific JS (used by step 3's same-contact checkbox logic).
+
+9. Replace resources/views/home.blade.php with the updated version — only change is the "Jetzt Verein registrieren" button now points to route('registrierung.schritt1') instead of route('in-arbeit').
+
+10. Run: php artisan storage:link (needed so uploaded organisation logos in storage/app/public/vereinslogos are web-accessible).
+
+11. Set a real admin notification address: either add 'fwz_admin_address' => env('FWZ_ADMIN_EMAIL', 'office@freiwilligenzentrum-kaernten.at') to config/mail.php, or just confirm the fallback address in OrganisationRegistrationController is correct.
+
+Verify: /registrieren shows step 1 (Organisation), submitting goes to step 2 (Benutzerkonto — newsletter checkbox must be UNCHECKED by default), then step 3 (Standort & Kontakt), then creates the Organisation record with is_approved=false and shows /registrieren/danke. Check the new organisation appears in the Filament admin under /verwaltung awaiting approval. /verwaltung itself stays untouched.
