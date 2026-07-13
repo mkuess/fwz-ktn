@@ -3,7 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\DashboardStatsOverview;
-use App\Filament\Widgets\LatestSignupsWidget;
+use App\Filament\Widgets\LatestMembersWidget;
+use App\Filament\Widgets\LatestOrganisationsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -14,7 +15,8 @@ class Dashboard extends BaseDashboard
     {
         return [
             DashboardStatsOverview::class,
-            LatestSignupsWidget::class,
+            LatestOrganisationsWidget::class,
+            LatestMembersWidget::class,
         ];
     }
 }

@@ -1,0 +1,117 @@
+Add "Neue Organisationen" page to navigation and update dashboard. Do NOT delete the database.
+
+STEP 1 - Create app/Filament/Pages/NeueOrganisationen.php:
+
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Filament\Resources\OrganisationResource;
+use App\Models\Organisation;
+use Filament\Pages\Page;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+
+class NeueOrganisationen extends Page implements HasTable
+{
+    use InteractsWithTable;
+
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationLabel = 'Neue Organisationen';
+    protected static ?string $title = 'Neue Organisationen';
+    protected static ?string $navigationGroup = null; // top level like Neuanmeldungen
+    protected static ?int $navigationSort = 2;
+    protected static string $view = 'filament.pages.neue-organisationen';
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Organisation::where('is_approved', false)->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string
+    {
+        return 'warning';
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Organisation::query()
+                    ->where('is_approved', false)
+                    ->withoutTrashed()
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Organisation')
+                    ->description(fn (Organisation $record): string => $record->email ?? '')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Typ')
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'verein' => 'success',
+                        'organisation' => 'warning',
+                        default => 'gray',
+                    }),
+                Tables\Columns\TextColumn::make('city')
+                    ->label('Ort')
+                    ->placeholder('-'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Angemeldet')
+                    ->since()
+                    ->tooltip(fn (Organisation $record): string => $record->created_at?->format('d.m.Y H:i') ?? '')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktiv')
+                    ->boolean(),
+            ])
+            ->recordUrl(fn (Organisation $record): string => OrganisationResource::getUrl('edit', ['record' => $record]))
+            ->defaultSort('created_at', 'desc')
+            ->paginated([10, 30, 50]);
+    }
+}
+
+STEP 2 - Create view file resources/views/filament/pages/neue-organisationen.blade.php:
+<x-filament-panels::page>
+    {{ $this->table }}
+</x-filament-panels::page>
+
+STEP 3 - Update Dashboard with two widgets:
+
+Create app/Filament/Widgets/LatestMembersWidget.php:
+- Shows last 5 pending members (status=pending, role=member)
+- Columns: Name+Email, Angemeldet (since), Organisation
+- Link to MemberResource edit page
+- Heading: "Neuanmeldungen Mitglieder"
+
+Create app/Filament/Widgets/LatestOrganisationsWidget.php:
+- Shows last 5 unapproved organisations (is_approved=false)
+- Columns: Name+Email, Typ, Angemeldet (since)
+- Link to OrganisationResource edit page
+- Heading: "Neue Organisationen"
+
+Both widgets extend Tables\Widgets\TableWidget and use the same table style.
+
+STEP 4 - Register widgets in AdminPanelProvider.php:
+->widgets([
+    Widgets\AccountWidget::class,
+    Filament\Widgets\FilamentInfoWidget::class,
+    \App\Filament\Widgets\LatestOrganisationsWidget::class,
+    \App\Filament\Widgets\LatestMembersWidget::class,
+])
+
+STEP 5 - Add stat cards to dashboard:
+Also add 4 stat overview cards above the widgets:
+- Organisationen gesamt (Organisation::count())
+- Ausstehende Organisationen (Organisation::where('is_approved', false)->count()) → warning color
+- Mitglieder gesamt (Member::count())
+- Ausstehende Mitglieder (Member::where('status', 'pending')->count()) → warning color
+
+Create app/Filament/Widgets/StatsOverviewWidget.php extending Widgets\StatsOverviewWidget.
+
+Do NOT delete the database. Report when done.
