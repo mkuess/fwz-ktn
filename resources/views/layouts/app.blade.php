@@ -19,7 +19,7 @@
       <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
         <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
-        <a href="{{ route('home') }}#registrieren">Registrieren</a>
+        <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         <a href="{{ route('home') }}#vereine">Vereine</a>
         <a href="{{ route('home') }}#aktionen">Aktuelles</a>
       </div>
@@ -35,13 +35,13 @@
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
     <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
     <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
-    <a href="{{ route('home') }}#registrieren">Registrieren</a>
+    <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
     <a href="{{ route('home') }}#vereine">Vereine</a>
     <a href="{{ route('home') }}#aktionen">Aktuelles</a>
   </nav>
   <div class="mobile-nav-panel__actions">
     <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
-    <a class="btn light" href="{{ route('home') }}#registrieren">Verein anmelden</a>
+    <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden</a>
   </div>
 </div>
 
@@ -66,7 +66,7 @@
       <h4>Schnellzugriff</h4>
       <ul>
         <li><a href="{{ route('home') }}#fwz">Über das FWZ</a></li>
-        <li><a href="{{ route('home') }}#registrieren">Verein registrieren</a></li>
+        <li><a href="{{ route('registrierung.schritt1') }}">Verein registrieren</a></li>
         <li><a href="{{ route('home') }}#vereine">Vereine finden</a></li>
         <li><a href="{{ route('home') }}#aktionen">Aktionen &amp; Termine</a></li>
       </ul>
