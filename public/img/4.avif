@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#eaeaf5"/>
+  <rect x="160" y="120" width="480" height="360" rx="8" fill="#d0d0e8"/>
+  <circle cx="400" cy="280" r="50" fill="#3a3a8a" opacity="0.3"/>
+  <text x="400" y="380" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#3a3a7a" opacity="0.7">Platzhalterbild</text>
+</svg>

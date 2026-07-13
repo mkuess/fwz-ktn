@@ -10,12 +10,14 @@
 </head>
 <body>
 
+{{-- Ergänzung (nicht Teil der Vorlage, gesetzlich/barrierefrei nötig): Skip-Link --}}
 <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
 
+{{-- Ab hier: 1:1 aus der Vorlage übernommene Header-Struktur, unverändert --}}
 <header class="header">
   <nav class="nav">
     <div class="nav-left">
-      <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-hor.svg') }}" alt="FWZ Kärnten" width="228" height="40"></a>
+      <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo.svg') }}" alt="FWZ Kärnten"></a>
       <div class="menu">
         <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
         <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
@@ -37,6 +39,9 @@
   @yield('content')
 </main>
 
+{{-- Ab hier: 1:1 aus der Vorlage übernommene Footer-Struktur, unverändert
+     (nur die vier "#"-Platzhalterlinks unter "Rechtliches" wurden auf die
+     echten Routen der Rechtsseiten gesetzt, plus ein Cookie-Einstellungen-Link) --}}
 <footer class="footer">
   <div class="container footer-grid">
     <div>
@@ -54,11 +59,11 @@
         <li><a href="{{ route('home') }}#fwz">Über das FWZ</a></li>
         <li><a href="{{ route('home') }}#registrieren">Verein registrieren</a></li>
         <li><a href="{{ route('home') }}#vereine">Vereine finden</a></li>
-        <li><a href="{{ route('home') }}#aktionen">Aktionen &amp; Termine</a></li>
+        <li><a href="{{ route('home') }}#aktionen">Aktionen & Termine</a></li>
       </ul>
     </div>
     <div>
-      <h4>Rechtliches &amp; Social</h4>
+      <h4>Rechtliches & Social</h4>
       <ul>
         <li><a href="{{ route('impressum') }}">Impressum</a></li>
         <li><a href="{{ route('datenschutz') }}">Datenschutz</a></li>

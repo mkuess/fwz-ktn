@@ -3,6 +3,7 @@
 @section('title', 'Freiwilligenzentrum Kärnten – Gemeinsam für das Ehrenamt')
 @section('meta_description', 'Das Freiwilligenzentrum Kärnten (FWZ) ist die zentrale Anlaufstelle des Landes Kärnten für ehrenamtliches Engagement – für Freiwillige und Vereine.')
 
+{{-- 1:1 aus der Vorlage --}}
 @section('hero')
 <section class="hero" id="top">
   <div class="container hero-inner">
@@ -29,6 +30,7 @@
 
 @section('content')
 
+  {{-- 1:1 aus der Vorlage --}}
   <section class="section" id="fwz">
     <div class="container">
       <div class="box intro-box">
@@ -63,6 +65,7 @@
     </div>
   </section>
 
+  {{-- 1:1 aus der Vorlage --}}
   <section class="section" id="willkommen">
     <div class="container">
       <div class="box welcome-box">
@@ -83,6 +86,7 @@
     </div>
   </section>
 
+  {{-- 1:1 aus der Vorlage --}}
   <section class="section" id="registrieren">
     <div class="container">
       <div class="box centered-box">
@@ -115,6 +119,7 @@
     </div>
   </section>
 
+  {{-- 1:1 aus der Vorlage, nur org-grid ist jetzt dynamisch --}}
   <section class="section" id="vereine">
     <div class="container">
       <div class="box directory-box">
@@ -149,12 +154,13 @@
     </div>
   </section>
 
+  {{-- 1:1 aus der Vorlage, nur news-grid ist jetzt dynamisch --}}
   <section class="section" id="aktionen">
     <div class="container">
       <div class="box banner-box">
         <div class="banner-head">
           <div>
-            <span class="eyebrow">News &amp; Aktuelles</span>
+            <span class="eyebrow">News & Aktuelles</span>
             <h2 class="h2">Aktionen, die jetzt deine Hilfe brauchen.</h2>
           </div>
           <a class="btn dark" href="{{ route('in-arbeit') }}">Alle Aktionen <span class="arrow">→</span></a>
@@ -181,6 +187,7 @@
     </div>
   </section>
 
+  {{-- 1:1 aus der Vorlage, nur benefit-grid ist jetzt dynamisch --}}
   <section class="section">
     <div class="container">
       <div class="box benefit-box">
@@ -209,6 +216,7 @@
     </div>
   </section>
 
+  {{-- 1:1 aus der Vorlage --}}
   <section class="section testimonials">
     <div class="container">
       <div class="testi-head">
@@ -220,7 +228,7 @@
           <article class="testi-card">
             <div class="avatar">🙂</div>
             <div>
-              <div class="quote">„{{ $t['zitat'] }}"</div>
+              <div class="quote">„{{ $t['zitat'] }}“</div>
               <div class="person">{{ $t['person'] }}</div>
               <div class="role">{{ $t['rolle'] }}</div>
             </div>
