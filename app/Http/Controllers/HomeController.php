@@ -100,15 +100,16 @@ class HomeController extends Controller
             $query->whereHas('categories', fn ($sub) => $sub->where('slug', $kategorie));
         }
 
-        return response()->json(
-            $query->orderBy('name')->take(8)->get()
-                ->map(fn ($org) => [
-                    'name'     => $org->name,
-                    'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
-                    'kuerzel'  => $this->abbreviation($org->name),
-                    'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
-                ])
-        );
+        $total   = (clone $query)->count();
+        $results = $query->orderBy('name')->take(8)->get()
+            ->map(fn ($org) => [
+                'name'     => $org->name,
+                'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
+                'kuerzel'  => $this->abbreviation($org->name),
+                'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
+            ]);
+
+        return response()->json(['total' => $total, 'results' => $results]);
     }
 
     private function abbreviation(string $name): string

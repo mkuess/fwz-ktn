@@ -72,14 +72,17 @@
     fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(function (r) { return r.json(); })
       .then(function (data) {
+        var results = data.results || data;
+        var total   = data.total != null ? data.total : results.length;
+
         if (q.length >= 2) {
-          renderListbox(data, q);
+          renderListbox(results, q);
         } else {
           closeListbox();
         }
         if (updateGrid || kategorie !== '') {
-          renderGrid(data);
-          announce(data.length);
+          renderGrid(results);
+          announce(total);
         }
       })
       .catch(function () {});
