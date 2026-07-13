@@ -16,7 +16,7 @@
   <nav class="nav">
     <div class="nav-left">
       <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-hor.svg') }}" alt="FWZ Kärnten" width="228" height="40"></a>
-      <div class="menu">
+      <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
         <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
         <a href="{{ route('home') }}#registrieren">Registrieren</a>
@@ -28,6 +28,7 @@
       <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
       <a class="btn light" href="{{ route('home') }}#registrieren">Verein anmelden</a>
     </div>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
   </nav>
 </header>
 

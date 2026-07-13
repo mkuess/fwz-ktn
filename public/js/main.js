@@ -4,11 +4,13 @@
 
   /* ── Mobile nav toggle ── */
   var toggle = document.querySelector('.nav-toggle');
-  var menu = document.getElementById('mobile-menu');
-  if (toggle && menu) {
+  var header = document.querySelector('.header');
+  if (toggle && header) {
     toggle.addEventListener('click', function () {
-      var open = menu.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(open));
+      var open = header.getAttribute('data-open') === 'true';
+      header.setAttribute('data-open', String(!open));
+      toggle.setAttribute('aria-expanded', String(!open));
+      toggle.querySelector('span').textContent = !open ? '✕' : '☰';
     });
   }
 

@@ -29,7 +29,7 @@ img{display:block;max-width:100%}
 p{margin:0;color:var(--text)}
 .lead{font-size:1.08rem;line-height:1.7}
 .muted{color:#5d7390}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 24px;border-radius:999px;font-weight:800;line-height:1;white-space:nowrap;min-height:58px;border:1px solid transparent;transition:.2s ease;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:8px 24px;border-radius:999px;font-weight:800;line-height:1;white-space:nowrap;min-height:48px;border:1px solid transparent;transition:.2s ease;flex-shrink:0}
 .btn:hover{transform:translateY(-1px)}
 .btn.primary{background:var(--yellow);color:var(--blue-dark)}
 .btn.dark{background:var(--blue);color:#fff}
@@ -218,3 +218,45 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .switch input{width:44px;height:26px;accent-color:var(--blue);cursor:pointer}
 .switch input:disabled{opacity:.6;cursor:not-allowed}
 .cookie-settings__actions{display:flex;justify-content:flex-end;gap:12px;margin-top:24px;flex-wrap:wrap}
+
+/* ── Responsive nav ─────────────────────────────────────────────────────── */
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.5rem;color:#fff;padding:6px 10px;line-height:1;z-index:200}
+
+@media(max-width:1080px){
+  .nav .menu{display:none}
+  .nav-toggle{display:block}
+  .header[data-open="true"] .nav{
+    flex-wrap:wrap;
+    align-items:flex-start;
+    padding-bottom:16px;
+  }
+  .header[data-open="true"] .nav-left{width:100%}
+  .header[data-open="true"] .menu{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    gap:0;
+    padding:8px 0 4px;
+  }
+  .header[data-open="true"] .menu a{
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,.15);
+    font-size:1rem;
+  }
+  .header[data-open="true"] .nav-actions{
+    width:100%;
+    flex-direction:column;
+    gap:10px;
+    padding:12px 0 4px;
+  }
+  .header[data-open="true"] .nav-actions .btn{
+    width:100%;
+    text-align:center;
+    justify-content:center;
+  }
+}
+
+@media(max-width:640px){
+  .nav-actions{display:none}
+  .header[data-open="true"] .nav-actions{display:flex}
+}
