@@ -19,10 +19,10 @@
 
 <div class="container hero-stats">
   <div class="stats box">
-    <div class="stat"><div class="stat-icon">◎</div><div><strong>{{ $stats['vereine'] }}</strong><span>Vereine</span></div></div>
-    <div class="stat"><div class="stat-icon">◉</div><div><strong>{{ $stats['freiwillige'] }}</strong><span>aktive Freiwillige</span></div></div>
-    <div class="stat"><div class="stat-icon">◌</div><div><strong>{{ $stats['stunden'] }}</strong><span>Stunden / Jahr</span></div></div>
-    <div class="stat"><div class="stat-icon">✦</div><div><strong>{{ $stats['engagementFelder'] }}</strong><span>Engagement-Felder</span></div></div>
+    <div class="stat"><img class="stat-icon-img" src="{{ asset('img/stat-vereine.png') }}" alt=""><div><strong>{{ $stats['vereine'] }}</strong><span>Vereine</span></div></div>
+    <div class="stat"><img class="stat-icon-img" src="{{ asset('img/stat-freiwillige.png') }}" alt=""><div><strong>{{ $stats['freiwillige'] }}</strong><span>aktive Freiwillige</span></div></div>
+    <div class="stat"><img class="stat-icon-img" src="{{ asset('img/stat-stunden.png') }}" alt=""><div><strong>{{ $stats['stunden'] }}</strong><span>Stunden / Jahr</span></div></div>
+    <div class="stat"><img class="stat-icon-img" src="{{ asset('img/stat-engagement.png') }}" alt=""><div><strong>{{ $stats['engagementFelder'] }}</strong><span>Engagement-Felder</span></div></div>
   </div>
 </div>
 @endsection
