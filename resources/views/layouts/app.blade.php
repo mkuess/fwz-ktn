@@ -26,7 +26,6 @@
     </div>
     <div class="nav-actions">
       <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
-      <a class="btn light" href="{{ route('home') }}#registrieren">Verein anmelden</a>
     </div>
     <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
   </nav>
