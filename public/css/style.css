@@ -85,7 +85,9 @@ p{margin:0;color:var(--text)}
 .searchbar{display:grid;grid-template-columns:1.25fr .85fr auto;gap:12px;margin:22px 0 16px}
 .input{padding:16px 18px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;color:#4b6482}
 .chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
-.chip{padding:8px 14px;border-radius:999px;background:#f2f6fb;border:1px solid var(--line);font-size:.86rem;font-weight:800;color:#4b6482;cursor:pointer}
+.chip{padding:8px 14px;border-radius:999px;background:#f2f6fb;border:1px solid var(--line);font-size:.86rem;font-weight:800;color:#4b6482;cursor:pointer;font-family:inherit;transition:background .15s,color .15s,border-color .15s}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip:hover:not(.active){background:#e4ecf7;border-color:#b0c4d8}
 .org-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .org-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:186px}
 .org-logo{width:72px;height:72px;border-radius:18px;background:#f3f7fc;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto 18px;font-weight:900;color:var(--blue);font-size:.92rem;line-height:1.15;padding:8px}
@@ -269,6 +271,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     line-height:1;
   }
 }
+
+/* ── Vereinssuche ────────────────────────────────────────────────────────── */
+.vereine-search-wrap{margin:22px 0 16px}
+.combobox-wrap{position:relative}
+.combobox-wrap .input{width:100%;display:block}
+.vereine-listbox{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);z-index:200;overflow:hidden;max-height:340px;overflow-y:auto}
+.vereine-option{padding:13px 18px;cursor:pointer;display:flex;flex-direction:column;gap:3px;border-bottom:1px solid #f0f4f9}
+.vereine-option:last-child{border-bottom:0}
+.vereine-option strong{font-size:.95rem;color:var(--ink)}
+.vereine-option__ort{font-size:.83rem;color:#6a7f99}
+.vereine-option.is-active,.vereine-option:hover{background:#f3f7fc}
+.vereine-result-count{font-size:.86rem;color:#6a7f99;margin:6px 0 0;min-height:1.2em}
+
+img.org-logo{object-fit:contain;background:#f3f7fc;padding:6px}
 
 /* ── Registrierungs-Flow ──────────────────────────────────────────────────── */
 .reg-section{padding:40px 0 70px}

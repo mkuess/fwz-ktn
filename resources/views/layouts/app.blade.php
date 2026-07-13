@@ -89,6 +89,7 @@
 
 <script src="{{ asset('js/main.js') }}" defer></script>
 <script src="{{ asset('js/cookie-consent.js') }}" defer></script>
+<script src="{{ asset('js/vereine-suche.js') }}" defer></script>
 @stack('scripts')
 </body>
 </html>

@@ -10,6 +10,8 @@ Route::get('/datenschutz', [HomeController::class, 'datenschutz'])->name('datens
 Route::get('/barrierefreiheit', [HomeController::class, 'barrierefreiheit'])->name('barrierefreiheit');
 Route::get('/in-arbeit', [HomeController::class, 'inArbeit'])->name('in-arbeit');
 
+Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
+
 Route::prefix('registrieren')->name('registrierung.')->group(function () {
     Route::get('/',         [OrganisationRegistrationController::class, 'schritt1'])->name('schritt1');
     Route::post('/',        [OrganisationRegistrationController::class, 'schritt1Post'])->name('schritt1.post');

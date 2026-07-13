@@ -2,40 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Organisation;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * Startseite. Die Arrays unten enthalten exakt die Demo-Inhalte aus der
-     * ursprünglichen Design-Vorlage, nur jetzt als Datenstruktur statt fest
-     * codiertem HTML. Jeder Block zeigt per TODO-Kommentar, wie die spätere
-     * echte Eloquent-Abfrage aussehen sollte.
-     */
     public function index(Request $request)
     {
-        // TODO: ersetzen durch z. B.
-        // Verein::query()
-        //   ->where('freigeschaltet', true)
-        //   ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->q.'%'))
-        //   ->when($request->filled('ort'), fn ($q) => $q->where('ort', 'like', '%'.$request->ort.'%'))
-        //   ->orderBy('name')->get()
-        //   ->map(fn ($v) => ['name' => $v->name, 'ort' => $v->ort, 'kuerzel' => $v->kuerzel]);
-        $vereine = collect([
-            ['kuerzel' => 'ÖRK',  'name' => 'Österreichisches Rotes Kreuz Kärnten',  'ort' => 'Klagenfurt'],
-            ['kuerzel' => 'ÖWR',  'name' => 'Österreichische Wasserrettung Kärnten', 'ort' => 'Klagenfurt'],
-            ['kuerzel' => 'FFV',  'name' => 'Freiwillige Feuerwehr Villach',          'ort' => 'Villach'],
-            ['kuerzel' => 'ASKÖ', 'name' => 'ASKÖ Landesverband Kärnten',             'ort' => 'Klagenfurt'],
-            ['kuerzel' => 'BRK',  'name' => 'Bergrettung Kärnten',                   'ort' => 'Spittal an der Drau'],
-            ['kuerzel' => 'CK',   'name' => 'Caritas Kärnten',                       'ort' => 'Klagenfurt'],
-            ['kuerzel' => 'NFK',  'name' => 'Naturfreunde Kärnten',                  'ort' => 'Villach'],
-            ['kuerzel' => 'LB',   'name' => 'Lese-Buddies Kärnten',                  'ort' => 'Villach'],
-        ]);
+        $vereine = Organisation::query()
+            ->where('is_approved', true)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($org) => [
+                'kuerzel'  => $this->abbreviation($org->name),
+                'name'     => $org->name,
+                'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
+                'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
+            ]);
 
-        // TODO: ersetzen durch z. B. Kategorie::pluck('name')->prepend('Alle')
-        $kategorien = ['Alle', 'Feuerwehren', 'Rettungsdienste', 'Soziales & Integration', 'Sport', 'Natur & Umwelt', 'Kultur', 'Bildung & Technik'];
+        $kategorien = Category::orderBy('sort_order')->get(['name', 'slug']);
 
-        // TODO: ersetzen durch z. B. Aktion::upcoming()->take(3)->get()
         $aktionen = collect([
             [
                 'typ'          => 'Aktion',
@@ -79,20 +67,62 @@ class HomeController extends Controller
             ['zitat' => 'Im Verein begleiten wir Kinder beim Aufwachsen und schaffen Chancen für alle.',                    'person' => 'Sophie K.',   'rolle' => 'Naturfreunde Kärnten'],
         ];
 
-        // TODO: ersetzen durch echte Aggregation, z. B.
-        // 'vereine' => Verein::where('freigeschaltet', true)->count().'+',
         $stats = [
-            'vereine'          => '450+',
+            'vereine'          => Organisation::where('is_approved', true)->count() . '+',
             'freiwillige'      => '1.2k',
             'stunden'          => '15k',
-            'engagementFelder' => '7',
+            'engagementFelder' => Category::count(),
         ];
 
         return view('home', compact('vereine', 'kategorien', 'aktionen', 'benefits', 'testimonials', 'stats'));
     }
 
-    public function impressum()      { return view('impressum'); }
-    public function datenschutz()    { return view('datenschutz'); }
+    public function vereineSuche(Request $request)
+    {
+        $q         = trim($request->get('q', ''));
+        $kategorie = trim($request->get('kategorie', ''));
+
+        $query = Organisation::query()
+            ->where('is_approved', true)
+            ->where('is_active', true);
+
+        if ($q !== '') {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', '%' . $q . '%')
+                    ->orWhere('city', 'like', '%' . $q . '%')
+                    ->orWhere('zip',  'like', '%' . $q . '%')
+                    ->orWhere('description', 'like', '%' . $q . '%');
+            });
+        }
+
+        if ($kategorie !== '' && $kategorie !== 'alle') {
+            $query->whereHas('categories', fn ($sub) => $sub->where('slug', $kategorie));
+        }
+
+        return response()->json(
+            $query->orderBy('name')->take(20)->get()
+                ->map(fn ($org) => [
+                    'name'     => $org->name,
+                    'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
+                    'kuerzel'  => $this->abbreviation($org->name),
+                    'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
+                ])
+        );
+    }
+
+    private function abbreviation(string $name): string
+    {
+        $abbr = collect(explode(' ', $name))
+            ->filter(fn ($w) => mb_strlen($w) > 2)
+            ->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))
+            ->take(4)
+            ->implode('');
+
+        return $abbr ?: mb_strtoupper(mb_substr($name, 0, 3));
+    }
+
+    public function impressum()       { return view('impressum'); }
+    public function datenschutz()     { return view('datenschutz'); }
     public function barrierefreiheit(){ return view('barrierefreiheit'); }
-    public function inArbeit()       { return view('in-arbeit'); }
+    public function inArbeit()        { return view('in-arbeit'); }
 }

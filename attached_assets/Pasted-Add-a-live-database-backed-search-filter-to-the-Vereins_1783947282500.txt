@@ -1,0 +1,23 @@
+Add a live, database-backed search/filter to the Vereinsverzeichnis on the homepage. Files to add/replace:
+
+1. app/Models/Category.php — new model IF one doesn't already exist from the Filament CategoryResource. If it exists, only add the organisations() belongsToMany relation (through the organisation_category pivot) if it's missing.
+
+2. app/Models/Organisation.php — IMPORTANT: this is the existing Organisation model from the registration feature, with ONE addition: a categories() belongsToMany relation at the bottom. If your real model already has more fields/logic than this, do NOT overwrite it — just add the categories() method.
+
+3. app/Http/Controllers/HomeController.php — replaces the demo-array version. index() now queries real approved+active organisations from the DB (with a generated abbreviation from the name, and either the uploaded logo or null for the frontend to fall back to a placeholder). Also adds a new vereineSuche() method returning JSON, used by the live search.
+
+4. Merge the route from routes-vereinssuche-snippet.php into routes/web.php: GET /vereine/suche → HomeController@vereineSuche, name 'vereine.suche'.
+
+5. public/js/vereine-suche.js — new file. Implements an accessible ARIA-combobox autocomplete on the single search input (debounced fetch, keyboard navigation, live region for result count) and wires the category chips to the same endpoint. No extra JS dependencies.
+
+6. public/img/placeholder-verein-logo.svg — new placeholder image shown for organisations without an uploaded logo.
+
+7. Replace public/css/style.css with the updated version — only APPENDS new rules for the search dropdown/listbox and switches .org-logo from a text-initial div to an actual <img> (rounded, object-fit: cover). Nothing above the previous end of file is touched.
+
+8. Replace resources/views/layouts/app.blade.php with the updated version — only adds one new <script src="{{ asset('js/vereine-suche.js') }}" defer> tag.
+
+9. Replace resources/views/home.blade.php with the updated version — the Vereinsverzeichnis section: removed the separate "Ort" field (single search input now), added the ARIA listbox markup, category chips are now real buttons with data-kategorie attributes matching category slugs, and org cards render an <img> for the logo.
+
+10. Run php artisan storage:link if not already done (needed so uploaded organisation logos under storage/app/public are reachable at /storage/...).
+
+Verify: typing in the search field shows a dropdown of matching organisations after ~300ms, the grid below updates to match, clicking a category chip filters by that category's slug via the organisation_category pivot, and organisations without an uploaded logo show the placeholder icon instead of a broken image. /verwaltung stays untouched.

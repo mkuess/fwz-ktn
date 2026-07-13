@@ -122,21 +122,41 @@
           <h2 class="h2">Finde Vereine, die schon dabei sind.</h2>
           <p>Durchsuche Mitglieds-Organisationen des Freiwilligenzentrums Kärnten — nach Name, Ort oder Tätigkeitsfeld.</p>
         </div>
-        {{-- TODO: an echte Such-Route anbinden (GET q / ort auswerten) --}}
-        <form class="searchbar" action="{{ route('home') }}" method="get">
-          <input class="input" type="search" name="q" value="{{ request('q') }}" placeholder="Verein, Organisation oder Stichwort" aria-label="Suche nach Verein"/>
-          <input class="input" type="text" name="ort" value="{{ request('ort') }}" placeholder="Ort, Bezirk oder Region" aria-label="Ort oder Region"/>
-          <button class="btn primary" type="submit">Suchen</button>
-        </form>
+
+        <div class="vereine-search-wrap">
+          <div class="combobox-wrap" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-owns="vereine-listbox">
+            <input
+              id="vereine-suche"
+              class="input"
+              type="search"
+              placeholder="Verein, Organisation, Ort oder Stichwort"
+              aria-label="Suche nach Verein oder Organisation"
+              aria-autocomplete="list"
+              aria-controls="vereine-listbox"
+              autocomplete="off"
+            />
+            <div id="vereine-listbox" class="vereine-listbox" role="listbox" aria-label="Suchergebnisse" hidden></div>
+          </div>
+          <p class="vereine-result-count" aria-live="polite" aria-atomic="true"></p>
+        </div>
+
         <div class="chips">
-          @foreach($kategorien as $kategorie)
-            <span class="chip">{{ $kategorie }}</span>
+          <button class="chip active" data-kategorie="">Alle</button>
+          @foreach($kategorien as $kat)
+            <button class="chip" data-kategorie="{{ $kat->slug }}">{{ $kat->name }}</button>
           @endforeach
         </div>
-        <div class="org-grid">
+
+        <div class="org-grid" id="vereine-grid">
           @forelse($vereine as $verein)
             <div class="org-card">
-              <div class="org-logo">{{ $verein['kuerzel'] }}</div>
+              <img
+                class="org-logo"
+                src="{{ $verein['logo_url'] ?? asset('img/placeholder-verein-logo.svg') }}"
+                alt="{{ $verein['name'] }}"
+                loading="lazy"
+                onerror="this.src='{{ asset('img/placeholder-verein-logo.svg') }}'"
+              >
               <div class="name">{{ $verein['name'] }}</div>
               <div class="place">{{ $verein['ort'] }}</div>
             </div>
