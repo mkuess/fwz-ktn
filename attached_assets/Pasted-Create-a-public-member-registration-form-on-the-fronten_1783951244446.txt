@@ -1,0 +1,82 @@
+Create a public member registration form on the frontend. Do NOT delete the database.
+
+This form is accessible without login at /mitglied-werden
+No user authentication required - just a public form that creates a pending member record.
+
+STEP 1 - Create MemberRegistrationController:
+app/Http/Controllers/MemberRegistrationController.php
+
+public function show() → return view('mitglied-werden.index')
+public function store(Request $request) → validate, create member, redirect to thank-you page
+
+Validation rules:
+- organisation_id: required, exists:organisations,id (only approved+active orgs)
+- first_name: required, string, max:100
+- last_name: required, string, max:100
+- email: required, email, unique:members,email
+- street: nullable, string, max:255
+- zip: nullable, string, max:10
+- city: nullable, string, max:100
+- newsletter_optin: boolean, default false
+
+On store:
+Member::create([
+    'organisation_id' => $request->organisation_id,
+    'first_name' => $request->first_name,
+    'last_name' => $request->last_name,
+    'email' => $request->email,
+    'street' => $request->street,
+    'zip' => $request->zip,
+    'city' => $request->city,
+    'newsletter_optin' => $request->boolean('newsletter_optin'),
+    'status' => 'pending',
+    'source' => 'self',
+    'role' => 'member',
+]);
+
+Then redirect to: /mitglied-werden/danke
+
+STEP 2 - Add routes in routes/web.php:
+Route::get('/mitglied-werden', [MemberRegistrationController::class, 'show'])->name('member.register');
+Route::post('/mitglied-werden', [MemberRegistrationController::class, 'store'])->name('member.register.store');
+Route::get('/mitglied-werden/danke', [MemberRegistrationController::class, 'danke'])->name('member.register.danke');
+
+STEP 3 - Create view resources/views/mitglied-werden/index.blade.php:
+Use the SAME layout as the existing public frontend (layouts/app.blade.php or whatever the main layout is called).
+Match the existing design (colors, fonts, form styles from the organisation registration form).
+
+Form fields:
+1. Organisation auswählen* - searchable dropdown showing only is_approved=true AND is_active=true organisations, ordered by name
+2. Vorname* 
+3. Nachname*
+4. E-Mail-Adresse*
+5. Straße & Hausnummer (optional)
+6. PLZ (optional)
+7. Ort (optional)
+8. Newsletter-Einwilligung checkbox (NOT pre-checked - DSGVO compliance)
+   Label: "Ich möchte den Newsletter des FWZ Kärnten erhalten"
+
+Show validation errors inline below each field.
+Submit button: "Jetzt anmelden"
+
+STEP 4 - Create thank-you view resources/views/mitglied-werden/danke.blade.php:
+Same layout as rest of site.
+Show success message:
+- Heading: "Vielen Dank für deine Anmeldung!"
+- Text: "Wir haben deine Anfrage erhalten und werden sie so bald wie möglich prüfen. Du erhältst eine Bestätigung per E-Mail sobald dein Konto freigeschaltet wurde."
+- Button: "Zurück zur Startseite" → /
+
+STEP 5 - Wire up the "Ich möchte helfen" button/link on the homepage:
+Find in home.blade.php or the navigation the "Ich möchte helfen" or "Mitglied werden" link/button and set href="/mitglied-werden"
+
+STEP 6 - Pass organisations to the form view:
+In MemberRegistrationController::show():
+$organisations = Organisation::where('is_approved', true)
+    ->where('is_active', true)
+    ->orderBy('name')
+    ->pluck('name', 'id');
+return view('mitglied-werden.index', compact('organisations'));
+
+Do NOT delete the database. Do NOT use Livewire for this - use standard Laravel form with POST.
+Do NOT add any Replit-specific dependencies.
+Report when done.

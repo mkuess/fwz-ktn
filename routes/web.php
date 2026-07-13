@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MemberRegistrationController;
 use App\Http\Controllers\OrganisationRegistrationController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,10 @@ Route::prefix('registrieren')->name('registrierung.')->group(function () {
     Route::post('/schritt3',[OrganisationRegistrationController::class, 'schritt3Post'])->name('schritt3.post');
     Route::get('/danke',    [OrganisationRegistrationController::class, 'danke'])->name('danke');
 });
+
+Route::get('/mitglied-werden',       [MemberRegistrationController::class, 'show'])->name('member.register');
+Route::post('/mitglied-werden',      [MemberRegistrationController::class, 'store'])->name('member.register.store');
+Route::get('/mitglied-werden/danke', [MemberRegistrationController::class, 'danke'])->name('member.register.danke');
 
 // TODO: Org-Admin frontend login at /org/login (separate guard)
 // TODO: Member frontend login at /profil/login (separate guard)
