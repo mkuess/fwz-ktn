@@ -1,0 +1,93 @@
+Add info cards and status bar to the MemberResource edit page. Do NOT delete the database.
+
+STEP 1 - Create custom EditMember page with header cards:
+In app/Filament/Resources/MemberResource/Pages/EditMember.php override the page to add a custom header.
+
+Add these fields to members table first (migration):
+$table->text('rejection_reason')->nullable(); // Ablehnungsgrund
+$table->enum('card_status', ['ausstehend', 'zugesendet'])->default('ausstehend'); // Karte zugesendet
+$table->date('card_sent_at')->nullable(); // Datum Karte zugesendet
+Run: php artisan migrate
+
+STEP 2 - Add new fields to Member model fillable:
+'rejection_reason', 'card_status', 'card_sent_at'
+
+STEP 3 - Add 3 info cards at the top of the edit form using a Section with no label:
+Use a disabled/readonly Section as visual cards using Grid layout:
+
+Section::make()
+    ->schema([
+        Placeholder::make('org_card')
+            ->label('')
+            ->content(fn (?Member $record): HtmlString => new HtmlString(
+                '<div style="text-align:center">
+                    <x-heroicon-o-building-office-2 style="width:2rem;height:2rem;margin:0 auto"/>
+                    <div style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Organisation</div>
+                    <div style="font-weight:600">' . ($record?->organisation?->name ?? '—') . '</div>
+                </div>'
+            )),
+        Placeholder::make('address_card')
+            ->label('')
+            ->content(fn (?Member $record): HtmlString => new HtmlString(
+                '<div style="text-align:center">
+                    <x-heroicon-o-map-pin style="width:2rem;height:2rem;margin:0 auto"/>
+                    <div style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Adresse</div>
+                    <div style="font-weight:600">' . ($record?->street ?? '—') . '</div>
+                    <div>' . trim(($record?->zip ?? '') . ' ' . ($record?->city ?? '')) . '</div>
+                </div>'
+            )),
+        Placeholder::make('info_card')
+            ->label('')
+            ->content(fn (?Member $record): HtmlString => new HtmlString(
+                '<div style="text-align:center">
+                    <x-heroicon-o-clock style="width:2rem;height:2rem;margin:0 auto"/>
+                    <div style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Angemeldet</div>
+                    <div style="font-weight:600">' . ($record?->created_at?->diffForHumans() ?? '—') . '</div>
+                </div>'
+            )),
+    ])
+    ->columns(3),
+
+STEP 4 - Add status bar section below the cards:
+Section::make('Status & Verwaltung')
+    ->schema([
+        Select::make('status')
+            ->label('Status')
+            ->options([
+                'pending' => 'Ausstehend',
+                'approved' => 'Geprüft',
+                'rejected' => 'Abgelehnt',
+            ])
+            ->required()
+            ->live(),
+        Textarea::make('rejection_reason')
+            ->label('Ablehnungsgrund')
+            ->placeholder('Bitte Grund angeben...')
+            ->visible(fn (Get $get): bool => $get('status') === 'rejected')
+            ->nullable(),
+        Select::make('card_status')
+            ->label('Karte zugesendet')
+            ->options([
+                'ausstehend' => '📭 Noch ausstehend',
+                'zugesendet' => '📬 Zugesendet',
+            ])
+            ->default('ausstehend')
+            ->live()
+            ->required(),
+        DatePicker::make('card_sent_at')
+            ->label('Karte zugesendet am')
+            ->visible(fn (Get $get): bool => $get('card_status') === 'zugesendet')
+            ->nullable(),
+    ])
+    ->columns(2),
+
+Make sure to import:
+use Filament\Forms\Components\Placeholder;
+use Filament\Support\Html\HtmlString;
+use Filament\Forms\Get;
+
+STEP 5 - Place the cards section and status bar BEFORE the existing form fields in MemberResource form schema.
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.

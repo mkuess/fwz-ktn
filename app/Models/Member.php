@@ -29,6 +29,9 @@ class Member extends Model
         'street',
         'zip',
         'city',
+        'rejection_reason',
+        'card_status',
+        'card_sent_at',
     ];
 
     protected $hidden = [
