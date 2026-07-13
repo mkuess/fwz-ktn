@@ -93,10 +93,21 @@ button { cursor: pointer; font: inherit; border: none; background: none; }
 
 /* =============================================================  HERO  */
 .hero {
-  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 100%);
+  position: relative;
+  background: url('/img/hero-freiwillige.png') center/cover no-repeat;
   color: var(--white); padding: 6rem 0 5rem;
+  overflow: hidden;
 }
-.hero-inner { display: flex; align-items: center; }
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg,
+    rgba(11,49,101,.82) 0%,
+    rgba(11,49,101,.70) 50%,
+    rgba(11,49,101,.30) 100%);
+  z-index: 0;
+}
+.hero-inner { position: relative; z-index: 1; display: flex; align-items: center; }
 .hero-copy { max-width: 680px; }
 .h1 { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.25rem; }
 .h1 span { color: var(--gold); }
