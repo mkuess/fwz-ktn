@@ -91,5 +91,6 @@
 
 <script src="{{ asset('js/main.js') }}" defer></script>
 <script src="{{ asset('js/cookie-consent.js') }}" defer></script>
+@stack('scripts')
 </body>
 </html>

@@ -108,8 +108,7 @@
           </div>
         </div>
         <div class="button-center">
-          {{-- TODO: sobald vorhanden, auf echte Registrierungs-Route umbiegen --}}
-          <a class="btn dark" href="{{ route('in-arbeit') }}">Jetzt Verein registrieren <span class="arrow">→</span></a>
+          <a class="btn dark" href="{{ route('registrierung.schritt1') }}">Jetzt Verein registrieren <span class="arrow">→</span></a>
         </div>
       </div>
     </div>

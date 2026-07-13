@@ -115,4 +115,6 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    'fwz_admin' => env('FWZ_ADMIN_EMAIL', 'office@freiwilligenzentrum-kaernten.at'),
+
 ];
