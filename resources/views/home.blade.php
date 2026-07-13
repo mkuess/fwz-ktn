@@ -211,11 +211,8 @@
         <div class="benefit-grid">
           @forelse($benefits as $benefit)
             <div class="benefit-card">
-              <div>
-                <div class="benefit-logo">{{ $benefit['partner'] }}</div>
-                <p>{{ $benefit['beschreibung'] }}</p>
-              </div>
-              <span class="benefit-code">{{ $benefit['code'] }}</span>
+              <div class="benefit-logo">{{ $benefit['partner'] }}</div>
+              <p>{{ $benefit['beschreibung'] }}</p>
             </div>
           @empty
             <p class="muted">Aktuell sind keine Benefits eingetragen.</p>

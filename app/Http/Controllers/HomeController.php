@@ -55,12 +55,15 @@ class HomeController extends Controller
             ],
         ]);
 
-        // TODO: ersetzen durch z. B. Benefit::active()->get()
-        $benefits = collect([
-            ['partner' => 'RUTAR',      'beschreibung' => '10 % Exklusiv-Rabatt auf fast alles.',                                        'code' => 'mit Code: FWZ10'],
-            ['partner' => 'FEICHTINGER','beschreibung' => '10 % auf ausgewählte Uhren und 20 % auf Schmuck & Eheringe.',                 'code' => 'mit Code: FWZSPORT10'],
-            ['partner' => 'ARBÖ',       'beschreibung' => '€ 25,– Gutschein auf verschiedene Dienstleistungen und Clubleistungen.',      'code' => 'Mitgliedervorteil'],
-        ]);
+        $benefits = \App\Models\Benefit::query()
+            ->where('is_active', true)
+            ->where('is_teaser', true)
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn ($b) => [
+                'partner'      => $b->name,
+                'beschreibung' => $b->description,
+            ]);
 
         $testimonials = [
             ['zitat' => 'Beim Roten Kreuz finde ich Sinn und Gemeinschaft. Jeder Einsatz macht einen Unterschied.',        'person' => 'Maria L.',    'rolle' => 'ÖRK Kärnten'],
