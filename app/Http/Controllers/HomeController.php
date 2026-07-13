@@ -26,8 +26,6 @@ class HomeController extends Controller
         $kategorien = Category::orderBy('sort_order')->get(['name', 'slug']);
 
         $aktionen = \App\Models\Article::where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
             ->limit(3)
             ->get();
