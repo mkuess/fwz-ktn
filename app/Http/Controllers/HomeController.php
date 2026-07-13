@@ -14,6 +14,7 @@ class HomeController extends Controller
             ->where('is_approved', true)
             ->where('is_active', true)
             ->orderBy('name')
+            ->take(8)
             ->get()
             ->map(fn ($org) => [
                 'kuerzel'  => $this->abbreviation($org->name),
