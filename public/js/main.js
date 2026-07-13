@@ -4,13 +4,33 @@
 
   /* ── Mobile nav toggle ── */
   var toggle = document.querySelector('.nav-toggle');
-  var header = document.querySelector('.header');
-  if (toggle && header) {
+  var panel = document.getElementById('mobile-nav-panel');
+
+  function openPanel() {
+    panel.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.querySelector('span').textContent = '✕';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.querySelector('span').textContent = '☰';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle && panel) {
     toggle.addEventListener('click', function () {
-      var open = header.getAttribute('data-open') === 'true';
-      header.setAttribute('data-open', String(!open));
-      toggle.setAttribute('aria-expanded', String(!open));
-      toggle.querySelector('span').textContent = !open ? '✕' : '☰';
+      panel.hidden ? openPanel() : closePanel();
+    });
+
+    panel.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') closePanel();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !panel.hidden) closePanel();
     });
   }
 

@@ -222,41 +222,35 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 /* ── Responsive nav ─────────────────────────────────────────────────────── */
 .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.5rem;color:#fff;padding:6px 10px;line-height:1;z-index:200}
 
+/* Mobile full-screen panel — hidden by default at all widths */
+.mobile-nav-panel{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:var(--blue-dark);
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding:clamp(40px,8vw,80px) clamp(24px,6vw,60px);
+  gap:40px;
+}
+.mobile-nav-panel:not([hidden]){display:flex}
+.mobile-nav-panel__nav{display:flex;flex-direction:column;gap:0;width:100%}
+.mobile-nav-panel__nav a{
+  color:#fff;
+  font-size:clamp(1.25rem,4vw,1.75rem);
+  font-weight:700;
+  padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,.15);
+  text-decoration:none;
+}
+.mobile-nav-panel__nav a:hover{color:var(--yellow)}
+.mobile-nav-panel__actions{display:flex;flex-direction:column;gap:12px;width:100%}
+.mobile-nav-panel__actions .btn{width:100%;text-align:center;justify-content:center}
+
 @media(max-width:1300px){
   .nav .menu{display:none}
-  .nav-toggle{display:block}
-  .header[data-open="true"] .nav{
-    flex-wrap:wrap;
-    align-items:flex-start;
-    padding-bottom:16px;
-  }
-  .header[data-open="true"] .nav-left{width:100%}
-  .header[data-open="true"] .menu{
-    display:flex;
-    flex-direction:column;
-    width:100%;
-    gap:0;
-    padding:8px 0 4px;
-  }
-  .header[data-open="true"] .menu a{
-    padding:12px 0;
-    border-bottom:1px solid rgba(255,255,255,.15);
-    font-size:1rem;
-  }
-  .header[data-open="true"] .nav-actions{
-    width:100%;
-    flex-direction:column;
-    gap:10px;
-    padding:12px 0 4px;
-  }
-  .header[data-open="true"] .nav-actions .btn{
-    width:100%;
-    text-align:center;
-    justify-content:center;
-  }
-}
-
-@media(max-width:640px){
   .nav-actions{display:none}
-  .header[data-open="true"] .nav-actions{display:flex}
+  .nav-toggle{display:block}
 }

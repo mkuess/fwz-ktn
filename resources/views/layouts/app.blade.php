@@ -27,9 +27,23 @@
     <div class="nav-actions">
       <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
     </div>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav-panel" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
   </nav>
 </header>
+
+<div class="mobile-nav-panel" id="mobile-nav-panel" hidden>
+  <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
+    <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
+    <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
+    <a href="{{ route('home') }}#registrieren">Registrieren</a>
+    <a href="{{ route('home') }}#vereine">Vereine</a>
+    <a href="{{ route('home') }}#aktionen">Aktuelles</a>
+  </nav>
+  <div class="mobile-nav-panel__actions">
+    <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
+    <a class="btn light" href="{{ route('home') }}#registrieren">Verein anmelden</a>
+  </div>
+</div>
 
 @yield('hero')
 
