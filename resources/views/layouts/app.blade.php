@@ -17,7 +17,7 @@
   <nav class="nav" aria-label="Hauptnavigation">
     <div class="nav-left">
       <a href="{{ url('/') }}" aria-label="Freiwilligenzentrum Kärnten – Startseite">
-        <img class="logo" src="{{ asset('img/fwz-logo.svg') }}" alt="Freiwilligenzentrum Kärnten" width="168" height="78">
+        <img class="logo" src="{{ asset('img/fwz-logo-hor.svg') }}" alt="Freiwilligenzentrum Kärnten" width="228" height="40">
       </a>
       <ul class="menu" id="mobile-menu">
         <li><a href="{{ url('/') }}#fwz">Was ist FWZ</a></li>

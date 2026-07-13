@@ -60,19 +60,19 @@ button { cursor: pointer; font: inherit; border: none; background: none; }
 }
 .nav {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; max-width: var(--container); margin: 0 auto;
-  padding: .75rem 1.5rem; flex-wrap: wrap;
+  gap: .75rem; width: 100%; margin: 0;
+  padding: .6rem clamp(16px, 3vw, 40px); flex-wrap: nowrap;
 }
-.nav-left { display: flex; align-items: center; gap: 2rem; }
-.logo { height: 48px; width: auto; }
-.menu { display: flex; gap: 1.5rem; }
+.nav-left { display: flex; align-items: center; gap: 1.5rem; flex-shrink: 1; min-width: 0; }
+.logo { height: 40px; width: auto; flex-shrink: 0; }
+.menu { display: flex; gap: 1.1rem; flex-shrink: 1; min-width: 0; }
 .menu a {
-  font-weight: 500; font-size: .9375rem; text-decoration: none;
+  font-weight: 500; font-size: .875rem; text-decoration: none; white-space: nowrap;
   color: var(--blue); transition: color var(--transition);
 }
 .menu a:hover, .menu a:focus-visible { color: var(--gold-dark); }
-.nav-actions { display: flex; gap: .75rem; align-items: center; }
-.nav-toggle { display: none; font-size: 1.25rem; padding: .4rem .8rem; border-radius: var(--radius-sm); }
+.nav-actions { display: flex; gap: .5rem; align-items: center; flex-shrink: 0; }
+.nav-toggle { display: none; font-size: 1.25rem; padding: .4rem .8rem; border-radius: var(--radius-sm); flex-shrink: 0; }
 
 /* Buttons */
 .btn {

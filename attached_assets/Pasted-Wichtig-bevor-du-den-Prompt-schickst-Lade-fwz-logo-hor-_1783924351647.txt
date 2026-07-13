@@ -1,0 +1,23 @@
+Wichtig, bevor du den Prompt schickst: Lade fwz-logo-hor.svg (oben zum Download) selbst in dein Replit-Projekt unter public/img/ hoch — ich kann Dateien nicht direkt in euer Repl schreiben, nur der Agent, wenn die Datei schon da liegt.
+Hier der englische Prompt für Replit:
+
+Prompt for Replit:
+Update the navbar (header/nav) as follows:
+
+New logo file: A new horizontal logo public/img/fwz-logo-hor.svg has been added (viewBox 600×104.48, wide aspect ratio ~5.7:1 — much wider/flatter than the previous logo). Replace the logo used in the navbar (resources/views/layouts/app.blade.php, the <img class="logo"> inside .nav-left) to use this new file instead of fwz-logo.svg. Keep fwz-logo.svg (the old one) unchanged for the footer — only the header/nav logo changes.
+Fix the logo sizing for the new aspect ratio: the old CSS rule .logo { width: 168px; } (and .header--page .logo { width: 130px; }) assumed a near-square logo and will badly distort/oversize the new wide logo. Replace it with height-based sizing instead, e.g.:
+
+css   .logo { height: 40px; width: auto; }
+   .header--page .logo { height: 34px; width: auto; }
+Also update the width/height HTML attributes on the <img class="logo"> tag to roughly match the new ratio (e.g. width="230" height="40") so there's no layout shift while loading.
+
+Make the navbar span the full width of the viewport: currently .nav is constrained to width: min(1360px, calc(100% - 40px)); margin: 0 auto;, which centers it with a max-width like the rest of the page content. Change this so the nav bar itself stretches edge-to-edge across the full browser width, with its own horizontal padding instead of a max-width cap, e.g.:
+
+css   .nav {
+     width: 100%;
+     margin: 0;
+     padding: 0 clamp(20px, 4vw, 48px);
+   }
+The header background (.header, .header--page) should already span full width — just remove the max-width constraint on the inner .nav so the logo/menu/buttons actually spread across the whole bar instead of staying centered in a 1360px column. Keep everything else (mobile menu toggle, responsive breakpoints) working as before.
+
+After the change, verify on both a full-width desktop viewport and a narrow mobile viewport that: the logo isn't stretched/blurry, the nav bar background still spans edge-to-edge, and the mobile menu toggle still appears/works below 640px.
