@@ -222,7 +222,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 /* ── Responsive nav ─────────────────────────────────────────────────────── */
 .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.5rem;color:#fff;padding:6px 10px;line-height:1;z-index:200}
 
-@media(max-width:1080px){
+@media(max-width:1300px){
   .nav .menu{display:none}
   .nav-toggle{display:block}
   .header[data-open="true"] .nav{
