@@ -96,6 +96,21 @@ class MemberResource extends Resource
                 Forms\Components\Toggle::make('newsletter_optin')
                     ->label('Newsletter-Einwilligung')
                     ->default(false),
+                Forms\Components\Section::make('Adresse')
+                    ->schema([
+                        Forms\Components\TextInput::make('street')
+                            ->label('Straße & Hausnummer')
+                            ->nullable(),
+                        Forms\Components\TextInput::make('zip')
+                            ->label('PLZ')
+                            ->maxLength(10)
+                            ->nullable(),
+                        Forms\Components\TextInput::make('city')
+                            ->label('Ort')
+                            ->nullable(),
+                    ])
+                    ->columns(3)
+                    ->collapsible(),
                 Forms\Components\Section::make('Organisationszugang')
                     ->description('Welche Organisationen kann dieses Mitglied verwalten (z. B. als Organisations-Admin)?')
                     ->schema([

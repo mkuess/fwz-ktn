@@ -26,6 +26,9 @@ class Member extends Model
         'approved_by',
         'newsletter_optin',
         'role',
+        'street',
+        'zip',
+        'city',
     ];
 
     protected $hidden = [
