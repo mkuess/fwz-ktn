@@ -174,7 +174,7 @@
         <div class="banner-head">
           <div>
             <span class="eyebrow">News &amp; Aktuelles</span>
-            <h2 class="h2">Aktionen, die jetzt deine Hilfe brauchen.</h2>
+            <h2 class="h2">Aktuelles aus der Freiwilligenarbeit</h2>
           </div>
           <a class="btn dark" href="{{ route('in-arbeit') }}">Alle Aktionen <span class="arrow">→</span></a>
         </div>
