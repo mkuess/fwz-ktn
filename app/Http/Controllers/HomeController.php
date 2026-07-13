@@ -100,7 +100,7 @@ class HomeController extends Controller
         }
 
         return response()->json(
-            $query->orderBy('name')->take(20)->get()
+            $query->orderBy('name')->take(8)->get()
                 ->map(fn ($org) => [
                     'name'     => $org->name,
                     'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
