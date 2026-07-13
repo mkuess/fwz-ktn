@@ -25,35 +25,12 @@ class HomeController extends Controller
 
         $kategorien = Category::orderBy('sort_order')->get(['name', 'slug']);
 
-        $aktionen = collect([
-            [
-                'typ'          => 'Aktion',
-                'titel'        => 'Stammtisch für pflegende Angehörige',
-                'veranstalter' => 'Team Pflegenahversorgung',
-                'ort'          => '9161 Maria Rain',
-                'zeit'         => '14:00 Uhr',
-                'bild'         => asset('img/4.avif'),
-                'bild_alt'     => 'Gemeinschaftliche Unterstützung und Austausch',
-            ],
-            [
-                'typ'          => 'Vortrag',
-                'titel'        => 'Schlaganfall — was tun? Vortrag',
-                'veranstalter' => 'Ergotherapeutin Nicole Daumtschnig',
-                'ort'          => '9161 Maria Rain',
-                'zeit'         => '13:30 Uhr',
-                'bild'         => asset('img/3.avif'),
-                'bild_alt'     => 'Vortrag und Gesundheitsinformation',
-            ],
-            [
-                'typ'          => 'Bewegung',
-                'titel'        => 'Lauftraining Bewegungstreff',
-                'veranstalter' => 'UNION LFL Köstenberg',
-                'ort'          => '9231 Velden am Wörther See',
-                'zeit'         => '18:00 Uhr',
-                'bild'         => asset('img/1.avif'),
-                'bild_alt'     => 'Lauftraining in der Gruppe',
-            ],
-        ]);
+        $aktionen = \App\Models\Article::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
 
         $benefits = \App\Models\Benefit::query()
             ->where('is_active', true)

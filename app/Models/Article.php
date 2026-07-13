@@ -17,6 +17,10 @@ class Article extends Model
         'author_id',
         'published_at',
         'is_published',
+        'location',
+        'event_time',
+        'organisation_name',
+        'article_category',
     ];
 
     protected function casts(): array

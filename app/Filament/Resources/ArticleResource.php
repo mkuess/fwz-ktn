@@ -47,6 +47,20 @@ class ArticleResource extends Resource
                 Forms\Components\Textarea::make('excerpt')
                     ->label('Kurztext')
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('article_category')
+                    ->label('Kategorie-Label')
+                    ->helperText('z.B. AKTION, VORTRAG, BEWEGUNG')
+                    ->nullable(),
+                Forms\Components\TextInput::make('organisation_name')
+                    ->label('Organisation/Veranstalter')
+                    ->nullable(),
+                Forms\Components\TextInput::make('location')
+                    ->label('Ort')
+                    ->nullable(),
+                Forms\Components\TextInput::make('event_time')
+                    ->label('Uhrzeit')
+                    ->placeholder('z.B. 14:00 Uhr')
+                    ->nullable(),
                 Forms\Components\RichEditor::make('body')
                     ->label('Inhalt')
                     ->required()

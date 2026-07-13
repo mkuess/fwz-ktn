@@ -1,0 +1,72 @@
+Add missing fields to articles table and ArticleResource, then wire up the homepage to show real articles from the database. Do NOT delete the database.
+
+STEP 1 - Create migration to add fields to articles table:
+$table->string('location')->nullable()->after('excerpt'); // Ort z.B. "9161 Maria Rain"
+$table->string('event_time')->nullable()->after('location'); // Uhrzeit z.B. "14:00 Uhr"
+$table->string('organisation_name')->nullable()->after('event_time'); // Veranstalter
+$table->string('article_category')->nullable()->after('organisation_name'); // Label z.B. "AKTION", "VORTRAG", "BEWEGUNG"
+Run: php artisan migrate
+
+STEP 2 - Add new fields to Article model fillable array.
+
+STEP 3 - Add new fields to ArticleResource form:
+Add after excerpt field:
+- TextInput::make('article_category')->label('Kategorie-Label')->helperText('z.B. AKTION, VORTRAG, BEWEGUNG')->nullable()
+- TextInput::make('organisation_name')->label('Organisation/Veranstalter')->nullable()
+- TextInput::make('location')->label('Ort')->nullable()
+- TextInput::make('event_time')->label('Uhrzeit')->placeholder('z.B. 14:00 Uhr')->nullable()
+
+STEP 4 - Update HomeController to load real articles:
+In app/Http/Controllers/HomeController.php replace TODO stub with:
+
+$articles = \App\Models\Article::where('is_published', true)
+    ->whereNotNull('published_at')
+    ->where('published_at', '<=', now())
+    ->orderBy('published_at', 'desc')
+    ->limit(3)
+    ->get();
+
+Pass to view: return view('home', compact('articles'));
+
+STEP 5 - Update the homepage Blade view to show real articles:
+In resources/views/home.blade.php find the articles/aktionen section and replace static cards with:
+
+@foreach($articles as $article)
+<div class="card"> {{-- keep existing card CSS classes --}}
+    @if($article->cover_image_path)
+        <img src="{{ Storage::url($article->cover_image_path) }}" alt="{{ $article->title }}">
+    @endif
+    
+    @if($article->article_category)
+        <span class="category-label">{{ strtoupper($article->article_category) }}</span>
+    @endif
+    
+    <h3>{{ $article->title }}</h3>
+    
+    @if($article->excerpt)
+        <p>{{ $article->excerpt }}</p>
+    @endif
+    
+    @if($article->organisation_name)
+        <p>{{ $article->organisation_name }}</p>
+    @endif
+    
+    @if($article->location)
+        <p>{{ $article->location }}</p>
+    @endif
+    
+    @if($article->event_time)
+        <p>{{ $article->event_time }}</p>
+    @endif
+</div>
+@endforeach
+
+@if($articles->isEmpty())
+    <p>Keine aktuellen Aktionen vorhanden.</p>
+@endif
+
+Keep all existing CSS classes from the current template - do NOT change the design, only replace static content with dynamic data.
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.

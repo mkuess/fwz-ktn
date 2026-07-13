@@ -181,15 +181,28 @@
         <div class="news-grid">
           @forelse($aktionen as $aktion)
             <article class="news-card">
-              <img src="{{ $aktion['bild'] }}" alt="{{ $aktion['bild_alt'] }}">
+              @if($aktion->cover_image_path)
+                <img src="{{ Storage::url($aktion->cover_image_path) }}" alt="{{ $aktion->title }}">
+              @endif
               <div class="news-body">
-                <div class="news-meta">{{ $aktion['typ'] }}</div>
-                <h3 class="h3">{{ $aktion['titel'] }}</h3>
+                @if($aktion->article_category)
+                  <div class="news-meta">{{ strtoupper($aktion->article_category) }}</div>
+                @endif
+                <h3 class="h3">{{ $aktion->title }}</h3>
                 <div class="news-data">
-                  <div>{{ $aktion['veranstalter'] }}</div>
-                  <div>{{ $aktion['ort'] }}</div>
-                  <div>{{ $aktion['zeit'] }}</div>
+                  @if($aktion->organisation_name)
+                    <div>{{ $aktion->organisation_name }}</div>
+                  @endif
+                  @if($aktion->location)
+                    <div>{{ $aktion->location }}</div>
+                  @endif
+                  @if($aktion->event_time)
+                    <div>{{ $aktion->event_time }}</div>
+                  @endif
                 </div>
+                @if($aktion->excerpt)
+                  <p>{{ $aktion->excerpt }}</p>
+                @endif
               </div>
             </article>
           @empty

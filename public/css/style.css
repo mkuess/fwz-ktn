@@ -107,7 +107,7 @@ p{margin:0;color:var(--text)}
 .benefit-intro{max-width:860px;margin:0 auto 24px}
 .benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:left}
 .benefit-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 24px;min-height:206px;display:flex;flex-direction:column;justify-content:space-between}
-.benefit-logo{font-size:2.2rem;font-weight:900;letter-spacing:-.04em;color:var(--ink);margin-bottom:18px}
+.benefit-logo{font-size:1.4rem;font-weight:900;letter-spacing:-.04em;color:var(--ink);margin-bottom:18px; line-height:1.6rem;}
 .benefit-card p{font-size:1rem}
 .benefit-code{display:inline-block;margin-top:14px;font-size:.92rem;font-weight:800;color:#5d7390}
 .testimonials{padding:14px 0 0}
