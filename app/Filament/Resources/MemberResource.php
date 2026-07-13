@@ -10,7 +10,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\HtmlString;
+use Illuminate\Support\HtmlString;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -37,31 +37,49 @@ class MemberResource extends Resource
                     ->schema([
                         Placeholder::make('org_card')
                             ->label('')
-                            ->content(fn (?Member $record): HtmlString => new HtmlString(
-                                '<div style="text-align:center">
-                                    <div style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Organisation</div>
-                                    <div style="font-weight:600">' . e($record?->organisation?->name ?? '—') . '</div>
-                                </div>'
-                            )),
+                            ->content(function ($record): HtmlString {
+                                $name = $record?->organisation?->name ?? '—';
+                                return new HtmlString('
+                                    <div style="text-align:center;padding:0.5rem">
+                                        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🏢 Organisation</div>
+                                        <div style="font-weight:600">' . e($name) . '</div>
+                                    </div>
+                                ');
+                            }),
                         Placeholder::make('address_card')
                             ->label('')
-                            ->content(fn (?Member $record): HtmlString => new HtmlString(
-                                '<div style="text-align:center">
-                                    <div style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Adresse</div>
-                                    <div style="font-weight:600">' . e($record?->street ?? '—') . '</div>
-                                    <div>' . e(trim(($record?->zip ?? '') . ' ' . ($record?->city ?? ''))) . '</div>
-                                </div>'
-                            )),
+                            ->content(function ($record): HtmlString {
+                                $street   = $record?->street ?? '—';
+                                $location = trim(($record?->zip ?? '') . ' ' . ($record?->city ?? '')) ?: '—';
+                                return new HtmlString('
+                                    <div style="text-align:center;padding:0.5rem">
+                                        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📍 Adresse</div>
+                                        <div style="font-weight:600">' . e($street) . '</div>
+                                        <div>' . e($location) . '</div>
+                                    </div>
+                                ');
+                            }),
                         Placeholder::make('info_card')
                             ->label('')
-                            ->content(fn (?Member $record): HtmlString => new HtmlString(
-                                '<div style="text-align:center">
-                                    <div style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Angemeldet</div>
-                                    <div style="font-weight:600">' . e($record?->created_at?->diffForHumans() ?? '—') . '</div>
-                                </div>'
-                            )),
+                            ->content(function ($record): HtmlString {
+                                $since  = $record?->created_at?->diffForHumans() ?? '—';
+                                $status = match ($record?->status) {
+                                    'pending'  => 'Ausstehend',
+                                    'approved' => 'Genehmigt',
+                                    'rejected' => 'Abgelehnt',
+                                    default    => '—',
+                                };
+                                return new HtmlString('
+                                    <div style="text-align:center;padding:0.5rem">
+                                        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🕐 Angemeldet</div>
+                                        <div style="font-weight:600">' . e($since) . '</div>
+                                        <div style="font-size:0.75rem">' . e($status) . '</div>
+                                    </div>
+                                ');
+                            }),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->visibleOn('edit'),
 
                 /* ── Status & Verwaltung ────────────────────────────────── */
                 Forms\Components\Section::make('Status & Verwaltung')

@@ -1,0 +1,65 @@
+Fix 500 error in MemberResource edit page. Do NOT delete the database.
+
+The error is in the Placeholder content callbacks - HtmlString class is not found or the closure has wrong type hints.
+
+Fix in app/Filament/Resources/MemberResource.php:
+
+STEP 1 - Check imports at top of file, make sure these are present:
+use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\HtmlString;
+use Filament\Forms\Get;
+
+Note: it must be Illuminate\Support\HtmlString NOT Filament\Support\Html\HtmlString
+
+STEP 2 - Fix the Placeholder content closures:
+The issue is that on the CREATE page, $record is null. Fix all three placeholders to handle null safely:
+
+Placeholder::make('org_card')
+    ->label('')
+    ->content(function ($record): HtmlString {
+        $name = $record?->organisation?->name ?? '—';
+        return new HtmlString('
+            <div style="text-align:center;padding:0.5rem">
+                <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🏢 Organisation</div>
+                <div style="font-weight:600">' . e($name) . '</div>
+            </div>
+        ');
+    }),
+
+Placeholder::make('address_card')
+    ->label('')
+    ->content(function ($record): HtmlString {
+        $street = $record?->street ?? '—';
+        $location = trim(($record?->zip ?? '') . ' ' . ($record?->city ?? '')) ?: '—';
+        return new HtmlString('
+            <div style="text-align:center;padding:0.5rem">
+                <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📍 Adresse</div>
+                <div style="font-weight:600">' . e($street) . '</div>
+                <div>' . e($location) . '</div>
+            </div>
+        ');
+    }),
+
+Placeholder::make('info_card')
+    ->label('')
+    ->content(function ($record): HtmlString {
+        $since = $record?->created_at?->diffForHumans() ?? '—';
+        $status = match($record?->status) {
+            'pending' => 'Ausstehend',
+            'approved' => 'Genehmigt',
+            'rejected' => 'Abgelehnt',
+            default => '—'
+        };
+        return new HtmlString('
+            <div style="text-align:center;padding:0.5rem">
+                <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🕐 Angemeldet</div>
+                <div style="font-weight:600">' . e($since) . '</div>
+                <div style="font-size:0.75rem">' . e($status) . '</div>
+            </div>
+        ');
+    }),
+
+STEP 3 - Make sure the cards Section is only shown on edit, not create:
+->visibleOn('edit')
+
+Do NOT delete the database. Report when done.
