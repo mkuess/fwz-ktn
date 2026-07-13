@@ -18,7 +18,6 @@
       <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-hor.svg') }}" alt="FWZ Kärnten" width="228" height="40"></a>
       <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
-        <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
         <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         <a href="{{ route('home') }}#vereine">Vereine</a>
         <a href="{{ route('home') }}#aktionen">Aktuelles</a>
@@ -34,7 +33,6 @@
 <div class="mobile-nav-panel" id="mobile-nav-panel" hidden>
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
     <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
-    <a href="{{ route('home') }}#willkommen">Herzlich willkommen</a>
     <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
     <a href="{{ route('home') }}#vereine">Vereine</a>
     <a href="{{ route('home') }}#aktionen">Aktuelles</a>
