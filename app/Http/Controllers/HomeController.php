@@ -17,6 +17,7 @@ class HomeController extends Controller
             ->take(8)
             ->get()
             ->map(fn ($org) => [
+                'id'       => $org->id,
                 'kuerzel'  => $this->abbreviation($org->name),
                 'name'     => $org->name,
                 'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),

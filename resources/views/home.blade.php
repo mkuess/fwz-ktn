@@ -149,17 +149,19 @@
 
         <div class="org-grid" id="vereine-grid">
           @forelse($vereine as $verein)
-            <div class="org-card">
-              <img
-                class="org-logo"
-                src="{{ $verein['logo_url'] ?? asset('img/placeholder-verein-logo.svg') }}"
-                alt="{{ $verein['name'] }}"
-                loading="lazy"
-                onerror="this.src='{{ asset('img/placeholder-verein-logo.svg') }}'"
-              >
-              <div class="name">{{ $verein['name'] }}</div>
-              <div class="place">{{ $verein['ort'] }}</div>
-            </div>
+            <a href="{{ route('organisations.show', $verein['id']) }}" style="text-decoration:none;color:inherit;display:block">
+              <div class="org-card" style="cursor:pointer">
+                <img
+                  class="org-logo"
+                  src="{{ $verein['logo_url'] ?? asset('img/placeholder-verein-logo.svg') }}"
+                  alt="{{ $verein['name'] }}"
+                  loading="lazy"
+                  onerror="this.src='{{ asset('img/placeholder-verein-logo.svg') }}'"
+                >
+                <div class="name">{{ $verein['name'] }}</div>
+                <div class="place">{{ $verein['ort'] }}</div>
+              </div>
+            </a>
           @empty
             <p class="muted">Aktuell sind noch keine Vereine im Verzeichnis freigeschaltet.</p>
           @endforelse

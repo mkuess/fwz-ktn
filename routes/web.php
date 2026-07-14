@@ -19,6 +19,7 @@ Route::get('/benefits', [BenefitController::class, 'index'])->name('benefits.ind
 Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
+Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
 
 Route::get('/vereine/{id}', [OrganisationController::class, 'show'])->name('organisations.show');
