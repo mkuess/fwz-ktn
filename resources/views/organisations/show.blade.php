@@ -115,8 +115,9 @@
           @endif
 
           <a href="{{ route('member.register') }}?organisation={{ $organisation->id }}"
-             class="btn primary"
-             style="display:block;text-align:center;border-radius:2rem;text-decoration:none;margin-top:1.5rem">
+             style="display:block;text-align:center;background:#c9a227;color:#1a2e1a;padding:0.875rem 1.5rem;border-radius:2rem;text-decoration:none;font-weight:700;font-size:1rem;margin-top:1.5rem;transition:background 0.2s"
+             onmouseover="this.style.background='#b8911f'"
+             onmouseout="this.style.background='#c9a227'">
             Mitglied werden →
           </a>
         </div>
