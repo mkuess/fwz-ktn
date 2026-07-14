@@ -302,7 +302,8 @@ class MemberResource extends Resource
                             $reason = $record->rejection_reason ? 'title="' . e($record->rejection_reason) . '"' : 'title="Keine Info"';
                             $lines[] = '<span ' . $reason . ' style="color:#ef4444;cursor:help">✗ Abgelehnt</span>';
                         } elseif ($record->card_status === 'zugesendet' && $record->card_sent_at) {
-                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet am ' . e($record->card_sent_at?->format('d.m.Y')) . '</span>';
+                            $sentAt = \Carbon\Carbon::parse($record->card_sent_at)->format('d.m.Y');
+                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet am ' . e($sentAt) . '</span>';
                         } elseif ($record->card_status === 'zugesendet') {
                             $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet</span>';
                         }

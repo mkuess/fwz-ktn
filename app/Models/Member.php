@@ -48,10 +48,11 @@ class Member extends Model
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'password'          => 'hashed',
             'email_verified_at' => 'datetime',
-            'approved_at' => 'datetime',
-            'newsletter_optin' => 'boolean',
+            'approved_at'       => 'datetime',
+            'newsletter_optin'  => 'boolean',
+            'card_sent_at'      => 'date',
         ];
     }
 
