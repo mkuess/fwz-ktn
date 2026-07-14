@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MemberRegistrationController;
@@ -13,6 +14,9 @@ Route::get('/barrierefreiheit', [HomeController::class, 'barrierefreiheit'])->na
 Route::get('/in-arbeit', [HomeController::class, 'inArbeit'])->name('in-arbeit');
 
 Route::get('/benefits', [BenefitController::class, 'index'])->name('benefits.index');
+
+Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
 

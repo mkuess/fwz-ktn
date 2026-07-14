@@ -22,7 +22,7 @@
         <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
         <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         <a href="{{ route('home') }}#vereine">Vereine</a>
-        <a href="{{ route('home') }}#aktionen">Aktuelles</a>
+        <a href="{{ route('articles.index') }}">Aktuelles</a>
       </div>
     </div>
     <div class="nav-actions">
@@ -37,7 +37,7 @@
     <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
     <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
     <a href="{{ route('home') }}#vereine">Vereine</a>
-    <a href="{{ route('home') }}#aktionen">Aktuelles</a>
+    <a href="{{ route('articles.index') }}">Aktuelles</a>
   </nav>
   <div class="mobile-nav-panel__actions">
     <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
@@ -68,7 +68,7 @@
         <li><a href="{{ route('home') }}#fwz">Über das FWZ</a></li>
         <li><a href="{{ route('registrierung.schritt1') }}">Verein registrieren</a></li>
         <li><a href="{{ route('home') }}#vereine">Vereine finden</a></li>
-        <li><a href="{{ route('home') }}#aktionen">Aktionen &amp; Termine</a></li>
+        <li><a href="{{ route('articles.index') }}">Aktionen &amp; Termine</a></li>
       </ul>
     </div>
     <div>

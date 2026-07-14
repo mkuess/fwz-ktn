@@ -176,7 +176,7 @@
             <span class="eyebrow">News &amp; Aktuelles</span>
             <h2 class="h2">Aktuelles aus der Freiwilligenarbeit</h2>
           </div>
-          <a class="btn dark" href="{{ route('in-arbeit') }}">Alle Aktionen <span class="arrow">→</span></a>
+          <a class="btn dark" href="{{ route('articles.index') }}">Alle Beiträge <span class="arrow">→</span></a>
         </div>
         <div class="news-grid">
           @forelse($aktionen as $aktion)
@@ -203,6 +203,7 @@
                 @if($aktion->excerpt)
                   <p>{{ $aktion->excerpt }}</p>
                 @endif
+                <a href="{{ route('articles.show', $aktion->slug) }}" style="font-size:0.875rem;font-weight:600;color:inherit">Artikel lesen →</a>
               </div>
             </article>
           @empty

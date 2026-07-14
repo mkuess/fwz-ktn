@@ -1,0 +1,88 @@
+Improve the articles section on homepage and create article detail/overview pages. Do NOT delete the database.
+
+STEP 1 - Fix homepage articles section:
+In resources/views/home.blade.php:
+- Change button "Alle Aktionen" to "Alle Beiträge"
+- Change the button href to route('articles.index')
+- Add "Artikel lesen →" link below each article card:
+  <a href="{{ route('articles.show', $article->slug) }}">Artikel lesen →</a>
+
+STEP 2 - Create ArticleController:
+app/Http/Controllers/ArticleController.php
+
+public function index() {
+    $articles = \App\Models\Article::where('is_published', true)
+        ->orderBy('created_at', 'desc')
+        ->paginate(9);
+    return view('articles.index', compact('articles'));
+}
+
+public function show($slug) {
+    $article = \App\Models\Article::where('slug', $slug)
+        ->where('is_published', true)
+        ->firstOrFail();
+    return view('articles.show', compact('article'));
+}
+
+STEP 3 - Add routes in routes/web.php:
+Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+
+STEP 4 - Create article overview page resources/views/articles/index.blade.php:
+- Same layout as rest of site
+- Hero header (same dark navy style as /mitglied-werden):
+  Eyebrow: "NEWS & AKTUELLES"
+  Heading: "Aktuelles aus der Freiwilligenarbeit"
+- Grid of article cards (3 columns desktop, 1 mobile):
+  Each card:
+  - Cover image (full width, rounded top)
+  - Title (bold)
+  - Excerpt (truncated to 120 chars)
+  - "Artikel lesen →" link
+- Pagination links at bottom
+- If no articles: "Keine Beiträge vorhanden."
+
+STEP 5 - Create article detail page resources/views/articles/show.blade.php:
+- Same layout as rest of site
+- Hero header with article title and cover image as background (with dark overlay)
+- Article content section:
+  <article>
+    @if($article->cover_image_path)
+      <img src="{{ Storage::url($article->cover_image_path) }}" alt="{{ $article->title }}" style="width:100%;border-radius:0.5rem;margin-bottom:2rem">
+    @endif
+    
+    <h1>{{ $article->title }}</h1>
+    
+    @if($article->excerpt)
+      <p style="font-size:1.125rem;color:#6b7280;margin-bottom:2rem">{{ $article->excerpt }}</p>
+    @endif
+    
+    <div class="article-body">
+      {!! $article->body !!}
+    </div>
+    
+    @if($article->attachments && $article->attachments->count() > 0)
+      <div style="margin-top:2rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem">
+        <h3>Anhänge</h3>
+        <ul>
+          @foreach($article->attachments as $attachment)
+            <li>
+              <a href="{{ Storage::url($attachment->file_path) }}" target="_blank" download="{{ $attachment->original_name }}">
+                📎 {{ $attachment->original_name }}
+              </a>
+            </li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+    
+    <a href="{{ route('articles.index') }}" style="display:inline-block;margin-top:2rem">← Zurück zur Übersicht</a>
+  </article>
+
+STEP 6 - Update "Aktuelles" nav link:
+In the main navigation find "Aktuelles" link and change href to route('articles.index')
+
+STEP 7 - Make sure ArticleAttachment relationship is loaded:
+In Article model make sure: public function attachments() { return $this->hasMany(ArticleAttachment::class); }
+
+Do NOT delete the database. Report when done.
