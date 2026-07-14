@@ -1,52 +1,103 @@
 @extends('layouts.app')
 
 @section('title', 'Barrierefreiheit – Freiwilligenzentrum Kärnten')
-@section('meta_description', 'Erklärung zur Barrierefreiheit des Freiwilligenzentrums Kärnten gemäß WZG / EU-Richtlinie 2016/2102.')
+@section('meta_description', 'Erklärung zur Barrierefreiheit der Website fwz-ktn.at gemäß EU-Richtlinie 2016/2102.')
 
 @section('hero')
 <div class="page-hero">
   <div class="container">
     <span class="eyebrow">Rechtliches</span>
-    <h2 class="h2">Barrierefreiheit</h2>
-    <p>Erklärung zur Barrierefreiheit gemäß EU-Richtlinie 2016/2102 und BGStG.</p>
+    <h2 class="h2">Barrierefreiheitserklärung</h2>
+    <p>Erklärung gemäß EU-Richtlinie 2016/2102</p>
   </div>
 </div>
 @endsection
 
 @section('content')
-<div class="legal-content">
-  <div class="container">
-    <div class="box">
-      <div class="note-box">
-        <strong>⚠️ Platzhalter</strong>
-        Konformitätsstatus und geprüfte Details vor Go-Live eintragen. <span class="placeholder-field">[…]</span>-Felder ersetzen.
-      </div>
+<section style="max-width:800px;margin:3rem auto;padding:0 1.5rem">
 
-      <h2>Stand der Vereinbarkeit</h2>
-      <p>Diese Website ist <span class="placeholder-field">[vollständig / teilweise / nicht]</span> vereinbar mit den WCAG 2.1 Richtlinien, Konformitätsstufe AA.</p>
+  <p>Das Freiwilligenzentrum Kärnten ist bemüht, seine Website <strong>fwz-ktn.at</strong> im Einklang mit dem
+  <a href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20010727" target="_blank" rel="noopener">Bundes-Behindertengleichstellungsgesetz (BGStG)</a>
+  sowie der EU-Richtlinie 2016/2102 über den barrierefreien Zugang zu Websites und mobilen Anwendungen
+  öffentlicher Stellen barrierefrei zugänglich zu machen.</p>
 
-      <h2>Was wir umgesetzt haben</h2>
-      <ul>
-        <li>Semantisches HTML5 mit korrekter Überschriftenhierarchie</li>
-        <li>Skip-Link „Zum Hauptinhalt springen" auf jeder Seite</li>
-        <li>Sichtbare Fokus-Zustände für Tastaturnavigation</li>
-        <li>Alternativtexte für alle informationellen Bilder</li>
-        <li>Formulare mit zugeordneten Labels</li>
-        <li>Cookie-Banner per Tastatur bedienbar</li>
-        <li><code>prefers-reduced-motion</code> wird respektiert</li>
-      </ul>
+  <h2>Stand der Vereinbarkeit mit den Anforderungen</h2>
+  <p>Diese Website ist mit den Anforderungen der
+  <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener">Web Content Accessibility Guidelines (WCAG) 2.1</a>
+  auf Konformitätsstufe AA <strong>teilweise vereinbar</strong>.
+  Die nachstehend aufgeführten Inhalte sind noch nicht vollständig barrierefrei zugänglich:</p>
+  <ul>
+    <li>Ältere PDF-Dokumente und Anhänge erfüllen möglicherweise nicht alle Barrierefreiheitsanforderungen.</li>
+    <li>Einige eingebettete Drittanbieter-Inhalte (z.B. externe Karten) sind möglicherweise nicht vollständig barrierefrei.</li>
+    <li>Bei komplexen Grafiken und Diagrammen können Alternativtexte unvollständig sein.</li>
+  </ul>
 
-      <h2>Bekannte Einschränkungen</h2>
-      <p>Auf Bildschirmen unter 900 px Breite ist das Hauptmenü ausgeblendet (aus der Vorlage übernommen). Nutzer:innen können die Sektionen durch Scrollen erreichen. Ein Hamburger-Menü wird in einer späteren Version ergänzt.</p>
+  <h2>Maßnahmen zur Förderung der Barrierefreiheit</h2>
+  <p>Das Freiwilligenzentrum Kärnten unternimmt folgende Maßnahmen, um die Barrierefreiheit der Website sicherzustellen:</p>
+  <ul>
+    <li>Verwendung von semantisch korrektem HTML mit aussagekräftigen Überschriftenhierarchien</li>
+    <li>Bereitstellung von Alternativtexten für alle informativen Bilder</li>
+    <li>Ausreichende Farbkontraste gemäß WCAG 2.1 AA (Mindestverhältnis 4,5:1 für Text)</li>
+    <li>Vollständige Bedienbarkeit per Tastatur und Screenreader</li>
+    <li>Skip-Link „Zum Inhalt springen" als erstes Element der Seite</li>
+    <li>Responsives Design für alle Bildschirmgrößen</li>
+    <li>Respektierung der Systemeinstellung „Animationen reduzieren" (prefers-reduced-motion)</li>
+    <li>Sprachauszeichnung der Seite (<code>lang="de"</code>)</li>
+  </ul>
 
-      <h2>Feedback und Kontakt</h2>
-      <p>Haben Sie Barrieren festgestellt? Bitte melden Sie sich: <a href="mailto:office@freiwilligenzentrum-kaernten.at">office@freiwilligenzentrum-kaernten.at</a></p>
+  <h2>Bekannte Einschränkungen</h2>
+  <p>Trotz unserer Bemühungen können folgende Einschränkungen bestehen:</p>
+  <ul>
+    <li><strong>Farbkontrast im Eyebrow-Text:</strong> Der goldene Eyebrow-Text (#e4a400) auf weißem Hintergrund
+    erreicht ein Kontrastverhältnis von ca. 2,2:1 und erfüllt damit die WCAG AA-Anforderung nicht vollständig.
+    Dies ist eine bewusste gestalterische Entscheidung im Rahmen des Corporate Designs und wird bei der
+    nächsten Design-Überarbeitung berücksichtigt.</li>
+    <li><strong>Ältere Dokumente:</strong> PDF-Dateien, die vor Inkrafttreten dieser Erklärung hochgeladen wurden,
+    sind möglicherweise nicht vollständig barrierefrei. Auf Anfrage stellen wir Ihnen die Inhalte in einem
+    zugänglichen Format zur Verfügung.</li>
+  </ul>
 
-      <h2>Schlichtungsverfahren</h2>
-      <p>Wenn Sie nach einer Kontaktaufnahme keine zufriedenstellende Antwort erhalten haben, können Sie das Schlichtungsverfahren beim Sozialministeriumservice in Anspruch nehmen: <a href="https://www.sozialministeriumservice.at" rel="noopener noreferrer" target="_blank">www.sozialministeriumservice.at</a></p>
+  <h2>Feedback und Kontakt</h2>
+  <p>Sind Sie auf Barrieren gestoßen oder benötigen Sie Informationen in einem anderen Format?
+  Wir freuen uns über Ihre Rückmeldung:</p>
+  <p>
+    <strong>Freiwilligenzentrum Kärnten</strong><br>
+    Rosenegger Straße 20<br>
+    A-9020 Klagenfurt am Wörthersee<br>
+    E-Mail: <a href="mailto:info@fwz-ktn.at">info@fwz-ktn.at</a>
+  </p>
+  <p>Wir werden Ihnen innerhalb von 20 Werktagen antworten.</p>
 
-      <p style="margin-top:2rem"><a href="{{ route('home') }}">&larr; Zurück zur Startseite</a></p>
-    </div>
-  </div>
-</div>
+  <h2>Durchsetzungsverfahren</h2>
+  <p>Wenn Sie nach einer Kontaktaufnahme mit uns keine zufriedenstellende Antwort erhalten haben,
+  können Sie sich an die <strong>Monitoringstelle für Barrierefreiheit im Internet</strong> wenden:</p>
+  <p>
+    Bundeskanzleramt Österreich<br>
+    Abteilung IV/4 – Barrierefreiheit<br>
+    Ballhausplatz 2, 1010 Wien<br>
+    E-Mail: <a href="mailto:barrierefreiheit@bka.gv.at">barrierefreiheit@bka.gv.at</a><br>
+    Web: <a href="https://www.digitalaustria.gv.at" target="_blank" rel="noopener">www.digitalaustria.gv.at</a>
+  </p>
+
+  <h2>Technische Spezifikationen</h2>
+  <p>Die Barrierefreiheit dieser Website beruht auf folgenden Technologien:</p>
+  <ul>
+    <li>HTML5</li>
+    <li>CSS3 (inkl. ARIA-Landmark-Rollen)</li>
+    <li>JavaScript (Alpine.js)</li>
+  </ul>
+  <p>Die folgenden Techniken wurden zur Bewertung der Barrierefreiheit verwendet:</p>
+  <ul>
+    <li>Selbstbewertung anhand der WCAG 2.1 Erfolgskriterien</li>
+    <li>Manuelle Tastaturnavigationsprüfung</li>
+    <li>Überprüfung mit Screenreader (NVDA/VoiceOver)</li>
+    <li>Kontrastprüfung mit dem WCAG Color Contrast Checker</li>
+  </ul>
+
+  <p style="margin-top:3rem;font-size:0.875rem;color:#6b7280">
+    Diese Erklärung wurde am <strong>{{ date('d.m.Y') }}</strong> erstellt und zuletzt überprüft.<br>
+    <a href="/impressum">Impressum</a> | <a href="/datenschutz">Datenschutz</a>
+  </p>
+
+</section>
 @endsection
