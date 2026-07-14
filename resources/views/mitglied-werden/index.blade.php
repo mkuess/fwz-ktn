@@ -21,6 +21,8 @@
   .ts-dropdown .active { background-color: #c9a227 !important; color: #fff !important; }
   .ts-dropdown-content .option:hover { background-color: #f5e9c0; }
   .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
+  .ts-dropdown { z-index: 9999 !important; position: absolute !important; }
+  .ts-wrapper { position: relative; }
 </style>
 
 <section class="reg-section">

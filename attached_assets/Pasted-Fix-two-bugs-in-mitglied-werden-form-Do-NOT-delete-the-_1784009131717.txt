@@ -1,0 +1,47 @@
+Fix two bugs in /mitglied-werden form. Do NOT delete the database.
+
+BUG 1 - Tom Select dropdown overlaps other fields:
+The dropdown z-index is too low or the form layout causes it to render behind other elements.
+
+Fix by adding CSS:
+.ts-dropdown {
+    z-index: 9999 !important;
+    position: absolute !important;
+}
+
+Also make sure the organisation field container has position: relative:
+#organisation_id + .ts-wrapper {
+    position: relative;
+}
+
+BUG 2 - "validation.required" shows as raw translation key instead of German error message:
+This means the Laravel validation messages are not translated.
+
+Fix in MemberRegistrationController::store() - add explicit custom messages to the validate() call:
+
+$request->validate([
+    'organisation_id' => 'required|exists:organisations,id',
+    'first_name' => 'required|string|max:100',
+    'last_name' => 'required|string|max:100',
+    'email' => 'required|email|unique:members,email',
+    'street' => 'nullable|string|max:255',
+    'zip' => 'nullable|string|max:10',
+    'city' => 'nullable|string|max:100',
+    'confirm_membership' => 'required|accepted',
+    'confirm_privacy' => 'required|accepted',
+    'newsletter_optin' => 'nullable|boolean',
+], [
+    'organisation_id.required' => 'Bitte wähle eine Organisation aus.',
+    'organisation_id.exists' => 'Die gewählte Organisation ist ungültig.',
+    'first_name.required' => 'Bitte gib deinen Vornamen an.',
+    'last_name.required' => 'Bitte gib deinen Nachnamen an.',
+    'email.required' => 'Bitte gib deine E-Mail-Adresse an.',
+    'email.email' => 'Bitte gib eine gültige E-Mail-Adresse an.',
+    'email.unique' => 'Diese E-Mail-Adresse ist bereits registriert.',
+    'confirm_membership.required' => 'Bitte bestätige deine Vereinszugehörigkeit.',
+    'confirm_membership.accepted' => 'Bitte bestätige deine Vereinszugehörigkeit.',
+    'confirm_privacy.required' => 'Bitte stimme der Datenschutzerklärung zu.',
+    'confirm_privacy.accepted' => 'Bitte stimme der Datenschutzerklärung zu.',
+]);
+
+Do NOT delete the database. Report when done.
