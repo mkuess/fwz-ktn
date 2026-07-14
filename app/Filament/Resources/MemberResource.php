@@ -323,6 +323,12 @@ class MemberResource extends Resource
                         'approved' => 'Genehmigt',
                         'rejected' => 'Abgelehnt',
                     ]),
+                Tables\Filters\SelectFilter::make('card_status')
+                    ->label('Karte zugesendet')
+                    ->options([
+                        'ausstehend' => '📭 Noch ausstehend',
+                        'zugesendet' => '📬 Zugesendet',
+                    ]),
                 Tables\Filters\SelectFilter::make('organisation_id')
                     ->label('Organisation')
                     ->relationship('organisation', 'name')
