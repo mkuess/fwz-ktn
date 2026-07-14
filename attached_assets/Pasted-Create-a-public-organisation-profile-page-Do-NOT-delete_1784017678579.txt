@@ -1,0 +1,142 @@
+Create a public organisation profile page. Do NOT delete the database.
+
+STEP 1 - Create OrganisationController with show method:
+app/Http/Controllers/OrganisationController.php
+
+public function show($id) {
+    $organisation = \App\Models\Organisation::where('id', $id)
+        ->where('is_approved', true)
+        ->where('is_active', true)
+        ->with(['categories', 'volunteerListings' => function($q) {
+            $q->where('is_active', true)->orderBy('created_at', 'desc');
+        }])
+        ->firstOrFail();
+    return view('organisations.show', compact('organisation'));
+}
+
+STEP 2 - Add route in routes/web.php:
+Route::get('/vereine/{id}', [OrganisationController::class, 'show'])->name('organisations.show');
+
+STEP 3 - Create view resources/views/organisations/show.blade.php:
+Use same layout as rest of site. Modern, clean design reusing existing CSS classes.
+
+Structure:
+
+<!-- Hero Header - dark navy with org name -->
+<section class="...hero classes...">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem;display:flex;align-items:center;gap:2rem">
+        @if($organisation->logo_path)
+            <img src="{{ Storage::url($organisation->logo_path) }}" 
+                 alt="{{ $organisation->name }}"
+                 style="width:100px;height:100px;object-fit:contain;background:#fff;border-radius:0.75rem;padding:0.5rem">
+        @endif
+        <div>
+            @foreach($organisation->categories as $cat)
+                <span style="background:#c9a227;color:#fff;padding:0.2rem 0.75rem;border-radius:1rem;font-size:0.75rem;font-weight:600;margin-right:0.5rem">
+                    {{ $cat->name }}
+                </span>
+            @endforeach
+            <h1 style="color:#fff;margin:0.5rem 0 0;font-size:2rem">{{ $organisation->name }}</h1>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section style="max-width:1200px;margin:3rem auto;padding:0 1.5rem;display:grid;grid-template-columns:2fr 1fr;gap:2rem">
+    
+    <!-- Left: About -->
+    <div>
+        @if($organisation->description)
+        <div style="background:#fff;border-radius:1rem;padding:2rem;margin-bottom:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+            <h2 style="margin-top:0">Über uns</h2>
+            <p style="color:#374151;line-height:1.7">{{ $organisation->description }}</p>
+        </div>
+        @endif
+
+        <!-- Active Volunteer Listings -->
+        @if($organisation->volunteerListings->count() > 0)
+        <div style="background:#fff;border-radius:1rem;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+            <h2 style="margin-top:0">Aktuelle Gesuche</h2>
+            @foreach($organisation->volunteerListings as $listing)
+            <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb">
+                <h3 style="margin:0 0 0.5rem;font-size:1rem">{{ $listing->title }}</h3>
+                <p style="margin:0;color:#6b7280;font-size:0.875rem">{{ Str::limit($listing->description, 150) }}</p>
+                @if($listing->city)
+                    <span style="font-size:0.75rem;color:#9ca3af">📍 {{ $listing->zip }} {{ $listing->city }}</span>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        @endif
+    </div>
+
+    <!-- Right: Contact Card -->
+    <div>
+        <div style="background:#fff;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);position:sticky;top:2rem">
+            <h3 style="margin-top:0;font-size:1rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em">Kontakt & Infos</h3>
+            
+            @if($organisation->contact_person)
+            <div style="margin-bottom:1rem">
+                <div style="font-size:0.75rem;color:#9ca3af">Ansprechpartner:in</div>
+                <div style="font-weight:600">{{ $organisation->contact_person }}</div>
+            </div>
+            @endif
+
+            @if($organisation->street || $organisation->city)
+            <div style="margin-bottom:1rem;display:flex;gap:0.5rem">
+                <span>📍</span>
+                <div>
+                    @if($organisation->street)<div>{{ $organisation->street }}</div>@endif
+                    @if($organisation->zip || $organisation->city)<div>{{ $organisation->zip }} {{ $organisation->city }}</div>@endif
+                </div>
+            </div>
+            @endif
+
+            @if($organisation->email)
+            <div style="margin-bottom:1rem;display:flex;gap:0.5rem;align-items:center">
+                <span>✉️</span>
+                <a href="mailto:{{ $organisation->email }}" style="color:#1a2e1a">{{ $organisation->email }}</a>
+            </div>
+            @endif
+
+            @if($organisation->phone)
+            <div style="margin-bottom:1rem;display:flex;gap:0.5rem;align-items:center">
+                <span>📞</span>
+                <a href="tel:{{ $organisation->phone }}" style="color:#1a2e1a">{{ $organisation->phone }}</a>
+            </div>
+            @endif
+
+            @if($organisation->website)
+            <div style="margin-bottom:1.5rem;display:flex;gap:0.5rem;align-items:center">
+                <span>🌐</span>
+                <a href="{{ $organisation->website }}" target="_blank" rel="noopener" style="color:#c9a227">
+                    {{ $organisation->website }}
+                </a>
+            </div>
+            @endif
+
+            <a href="{{ route('member.register') }}?organisation={{ $organisation->id }}" 
+               style="display:block;text-align:center;background:#c9a227;color:#fff;padding:0.75rem;border-radius:2rem;text-decoration:none;font-weight:600">
+                Mitglied werden →
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Back link -->
+<div style="max-width:1200px;margin:0 auto 3rem;padding:0 1.5rem">
+    <a href="/" style="color:#6b7280">← Zurück zur Startseite</a>
+</div>
+
+STEP 4 - Pre-select organisation in member registration:
+In MemberRegistrationController::show() check for ?organisation= query param:
+$preselectedOrg = request('organisation');
+Pass to view: compact('organisations', 'preselectedOrg')
+
+In mitglied-werden/index.blade.php on the organisation select:
+<option value="{{ $id }}" 
+    {{ (old('organisation_id', $preselectedOrg) == $id) ? 'selected' : '' }}>
+    {{ $name }}
+</option>
+
+Do NOT delete the database. Report when done.

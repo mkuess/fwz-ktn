@@ -15,7 +15,8 @@ class MemberRegistrationController extends Controller
             ->orderBy('name')
             ->pluck('name', 'id');
 
-        return view('mitglied-werden.index', compact('organisations'));
+        $preselectedOrg = request('organisation');
+        return view('mitglied-werden.index', compact('organisations', 'preselectedOrg'));
     }
 
     public function store(Request $request)

@@ -40,7 +40,7 @@
             <select class="form-control @error('organisation_id') is-error @enderror" id="organisation_id" name="organisation_id" required>
               <option value="" disabled selected>Organisation auswählen...</option>
               @foreach($organisations as $id => $name)
-                <option value="{{ $id }}" {{ old('organisation_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                <option value="{{ $id }}" {{ old('organisation_id', $preselectedOrg) == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
             </select>
             @error('organisation_id')<p class="form-error">{{ $message }}</p>@enderror

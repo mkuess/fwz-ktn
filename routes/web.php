@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MemberRegistrationController;
+use App\Http\Controllers\OrganisationController;
 use App\Http\Controllers\OrganisationRegistrationController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.in
 Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
+
+Route::get('/vereine/{id}', [OrganisationController::class, 'show'])->name('organisations.show');
 
 Route::prefix('registrieren')->name('registrierung.')->group(function () {
     Route::get('/',         [OrganisationRegistrationController::class, 'schritt1'])->name('schritt1');
