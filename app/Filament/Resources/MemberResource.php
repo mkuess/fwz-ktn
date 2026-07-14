@@ -114,76 +114,74 @@ class MemberResource extends Resource
                     ])
                     ->columns(2),
 
-                /* ── Stammdaten ─────────────────────────────────────────── */
-                Forms\Components\Select::make('organisation_id')
-                    ->label('Organisation')
-                    ->relationship('organisation', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->nullable()
-                    ->placeholder('Keine Organisation'),
-                Forms\Components\TextInput::make('first_name')
-                    ->label('Vorname')
-                    ->nullable()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('last_name')
-                    ->label('Nachname')
-                    ->nullable()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('E-Mail')
-                    ->email()
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                Forms\Components\Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        'pending'  => 'Ausstehend',
-                        'approved' => 'Genehmigt',
-                        'rejected' => 'Abgelehnt',
+                /* ── Persönliche Daten ──────────────────────────────────── */
+                Forms\Components\Section::make('Persönliche Daten')
+                    ->schema([
+                        Forms\Components\TextInput::make('first_name')
+                            ->label('Vorname')
+                            ->nullable()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('last_name')
+                            ->label('Nachname')
+                            ->nullable()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label('E-Mail')
+                            ->email()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\Select::make('organisation_id')
+                            ->label('Organisation')
+                            ->relationship('organisation', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->nullable()
+                            ->placeholder('Keine Organisation'),
                     ])
-                    ->default('pending')
-                    ->required()
-                    ->hidden(),
-                Forms\Components\Select::make('role')
-                    ->label('Rolle')
-                    ->options([
-                        'member'    => '👤 Mitglied',
-                        'org_admin' => '🏢 Organisations-Admin',
-                        'admin'     => '🔑 FWZ Admin',
+                    ->columns(2),
+
+                /* ── Konto & Rolle ───────────────────────────────────────── */
+                Forms\Components\Section::make('Konto & Rolle')
+                    ->schema([
+                        Forms\Components\Select::make('role')
+                            ->label('Rolle')
+                            ->options([
+                                'member'    => '👤 Mitglied',
+                                'org_admin' => '🏢 Organisations-Admin',
+                                'admin'     => '🔑 FWZ Admin',
+                            ])
+                            ->default('member')
+                            ->live()
+                            ->required(),
+                        Forms\Components\TextInput::make('membership_number')
+                            ->label('Mitgliedsnummer')
+                            ->disabled()
+                            ->dehydrated(),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Passwort')
+                            ->password()
+                            ->revealable()
+                            ->dehydrateStateUsing(fn ($state) => ! empty($state) ? bcrypt($state) : null)
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->helperText(fn (string $operation): string => $operation === 'edit'
+                                ? 'Nur ausfüllen wenn das Passwort geändert werden soll'
+                                : 'Pflichtfeld beim Erstellen')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password_confirmation')
+                            ->label('Passwort bestätigen')
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(false)
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->same('password')
+                            ->maxLength(255),
+                        Forms\Components\Toggle::make('newsletter_optin')
+                            ->label('Newsletter-Einwilligung')
+                            ->default(false),
                     ])
-                    ->default('member')
-                    ->live()
-                    ->required(),
-                Forms\Components\Hidden::make('source')
-                    ->default('self'),
-                Forms\Components\TextInput::make('password')
-                    ->label('Passwort')
-                    ->password()
-                    ->revealable()
-                    ->dehydrateStateUsing(fn ($state) => ! empty($state) ? bcrypt($state) : null)
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create')
-                    ->helperText(fn (string $operation): string => $operation === 'edit'
-                        ? 'Nur ausfüllen wenn das Passwort geändert werden soll'
-                        : 'Pflichtfeld beim Erstellen')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password_confirmation')
-                    ->label('Passwort bestätigen')
-                    ->password()
-                    ->revealable()
-                    ->dehydrated(false)
-                    ->required(fn (string $operation): bool => $operation === 'create')
-                    ->same('password')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('membership_number')
-                    ->label('Mitgliedsnummer')
-                    ->disabled()
-                    ->dehydrated(),
-                Forms\Components\Toggle::make('newsletter_optin')
-                    ->label('Newsletter-Einwilligung')
-                    ->default(false),
+                    ->columns(2),
 
                 /* ── Adresse ────────────────────────────────────────────── */
                 Forms\Components\Section::make('Adresse')
