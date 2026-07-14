@@ -2,17 +2,17 @@
 
 @section('title', 'Benefits für Mitglieder – Freiwilligenzentrum Kärnten')
 
-@section('content')
+@section('hero')
+<div class="page-hero">
+  <div class="container">
+    <span class="eyebrow">EXKLUSIVE VORTEILE</span>
+    <h1 class="h2">Benefits für Mitglieder.</h1>
+    <p>Als Mitglied eines registrierten Vereins erhältst du Zugang zu Vergünstigungen bei ausgewählten Kärntner Partnerbetrieben.</p>
+  </div>
+</div>
+@endsection
 
-  <section class="section hero-small">
-    <div class="container">
-      <div class="section-title center">
-        <span class="eyebrow">EXKLUSIVE VORTEILE</span>
-        <h1 class="h2">Benefits für Mitglieder.</h1>
-        <p class="lead">Als Mitglied eines registrierten Vereins erhältst du Zugang zu Vergünstigungen bei ausgewählten Kärntner Partnerbetrieben.</p>
-      </div>
-    </div>
-  </section>
+@section('content')
 
   <section class="section">
     <div class="container">
