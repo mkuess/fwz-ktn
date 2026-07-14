@@ -180,32 +180,33 @@
         </div>
         <div class="news-grid">
           @forelse($aktionen as $aktion)
-            <article class="news-card">
-              @if($aktion->cover_image_path)
-                <img src="{{ Storage::url($aktion->cover_image_path) }}" alt="{{ $aktion->title }}">
-              @endif
-              <div class="news-body">
-                @if($aktion->article_category)
-                  <div class="news-meta">{{ strtoupper($aktion->article_category) }}</div>
+            <a href="{{ route('articles.show', $aktion->slug) }}" style="text-decoration:none;color:inherit;display:block">
+              <article class="news-card">
+                @if($aktion->cover_image_path)
+                  <img src="{{ Storage::url($aktion->cover_image_path) }}" alt="{{ $aktion->title }}">
                 @endif
-                <h3 class="h3">{{ $aktion->title }}</h3>
-                <div class="news-data">
-                  @if($aktion->organisation_name)
-                    <div>{{ $aktion->organisation_name }}</div>
+                <div class="news-body">
+                  @if($aktion->article_category)
+                    <div class="news-meta">{{ strtoupper($aktion->article_category) }}</div>
                   @endif
-                  @if($aktion->location)
-                    <div>{{ $aktion->location }}</div>
-                  @endif
-                  @if($aktion->event_time)
-                    <div>{{ $aktion->event_time }}</div>
+                  <h3 class="h3">{{ $aktion->title }}</h3>
+                  <div class="news-data">
+                    @if($aktion->organisation_name)
+                      <div>{{ $aktion->organisation_name }}</div>
+                    @endif
+                    @if($aktion->location)
+                      <div>{{ $aktion->location }}</div>
+                    @endif
+                    @if($aktion->event_time)
+                      <div>{{ $aktion->event_time }}</div>
+                    @endif
+                  </div>
+                  @if($aktion->excerpt)
+                    <p>{{ $aktion->excerpt }}</p>
                   @endif
                 </div>
-                @if($aktion->excerpt)
-                  <p>{{ $aktion->excerpt }}</p>
-                @endif
-                <a href="{{ route('articles.show', $aktion->slug) }}" style="font-size:0.875rem;font-weight:600;color:inherit">Artikel lesen →</a>
-              </div>
-            </article>
+              </article>
+            </a>
           @empty
             <p class="muted">Aktuell sind keine Aktionen eingetragen.</p>
           @endforelse

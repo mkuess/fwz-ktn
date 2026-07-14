@@ -40,6 +40,13 @@
             @endif
           </div>
 
+          @if($article->cover_image_path)
+            <img
+              src="{{ Storage::url($article->cover_image_path) }}"
+              alt="{{ $article->title }}"
+              style="width:100%;max-height:500px;object-fit:cover;border-radius:0.75rem;margin-bottom:2rem;display:block">
+          @endif
+
           <div class="article-body" style="line-height:1.75;color:#374151">
             {!! $article->body !!}
           </div>

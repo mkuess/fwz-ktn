@@ -17,32 +17,33 @@
     <div class="container">
       <div class="news-grid">
         @forelse($articles as $article)
-          <article class="news-card">
-            @if($article->cover_image_path)
-              <img src="{{ Storage::url($article->cover_image_path) }}" alt="{{ $article->title }}">
-            @endif
-            <div class="news-body">
-              @if($article->article_category)
-                <div class="news-meta">{{ strtoupper($article->article_category) }}</div>
+          <a href="{{ route('articles.show', $article->slug) }}" style="text-decoration:none;color:inherit;display:block">
+            <article class="news-card">
+              @if($article->cover_image_path)
+                <img src="{{ Storage::url($article->cover_image_path) }}" alt="{{ $article->title }}">
               @endif
-              <h3 class="h3">{{ $article->title }}</h3>
-              <div class="news-data">
-                @if($article->organisation_name)
-                  <div>{{ $article->organisation_name }}</div>
+              <div class="news-body">
+                @if($article->article_category)
+                  <div class="news-meta">{{ strtoupper($article->article_category) }}</div>
                 @endif
-                @if($article->location)
-                  <div>{{ $article->location }}</div>
-                @endif
-                @if($article->event_time)
-                  <div>{{ $article->event_time }}</div>
+                <h3 class="h3">{{ $article->title }}</h3>
+                <div class="news-data">
+                  @if($article->organisation_name)
+                    <div>{{ $article->organisation_name }}</div>
+                  @endif
+                  @if($article->location)
+                    <div>{{ $article->location }}</div>
+                  @endif
+                  @if($article->event_time)
+                    <div>{{ $article->event_time }}</div>
+                  @endif
+                </div>
+                @if($article->excerpt)
+                  <p>{{ Str::limit($article->excerpt, 120) }}</p>
                 @endif
               </div>
-              @if($article->excerpt)
-                <p>{{ Str::limit($article->excerpt, 120) }}</p>
-              @endif
-              <a href="{{ route('articles.show', $article->slug) }}" style="font-size:0.875rem;font-weight:600;color:inherit">Artikel lesen →</a>
-            </div>
-          </article>
+            </article>
+          </a>
         @empty
           <p class="muted">Keine Beiträge vorhanden.</p>
         @endforelse

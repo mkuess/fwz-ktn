@@ -409,6 +409,16 @@ textarea.form-control{resize:vertical;min-height:110px}
 .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
 .form-group, .reg-section, .reg-main, .container { overflow: visible !important; }
 
+/* ── Article card hover ─────────────────────────────────── */
+a:hover .news-card {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transition: all 0.2s ease;
+}
+.news-card {
+  transition: all 0.2s ease;
+}
+
 /* ── Testimonials Swiper ─────────────────────────────────── */
 .testimonials-swiper {
   padding-left: 50px !important;
