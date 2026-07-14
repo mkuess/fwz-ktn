@@ -409,33 +409,6 @@ textarea.form-control{resize:vertical;min-height:110px}
 .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
 .form-group, .reg-section, .reg-main, .container { overflow: visible !important; }
 
-/* ── Footer ─────────────────────────────────────────────── */
-.footer-cols {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3rem;
-  padding-bottom: 3rem;
-}
-.footer-link {
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s;
-}
-.footer-link:hover { color: #fff; }
-.footer-legal-link {
-  color: rgba(255,255,255,0.5);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.footer-legal-link:hover { color: #fff; }
-@media (max-width: 768px) {
-  .footer-cols {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
 /* ── Org profile page layout ────────────────────────────── */
 .org-profile-grid {
   display: grid;
