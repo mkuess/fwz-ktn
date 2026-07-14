@@ -2,28 +2,25 @@
     x-data="cookieConsent()"
     x-show="!decided"
     x-cloak
-    style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem"
+    style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,0,0.6)"
     role="dialog"
     aria-modal="true"
     aria-label="Cookie-Einstellungen">
 
-    <!-- Backdrop -->
-    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5)"></div>
-
     <!-- Modal box -->
-    <div style="position:relative;background:#fff;border-radius:1rem;padding:2rem;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto">
+    <div style="background:#ffffff;border-radius:1rem;padding:2rem;width:100%;max-width:500px;box-shadow:0 25px 50px rgba(0,0,0,0.4);max-height:85vh;overflow-y:auto;position:relative;z-index:1">
 
         <!-- Header -->
         <div style="margin-bottom:1.5rem">
             <h2 style="margin:0 0 0.5rem;font-size:1.25rem;color:#1a2e1a;font-weight:700">Cookie-Einstellungen</h2>
-            <p style="margin:0;font-size:0.875rem;color:#6b7280;line-height:1.5">
+            <p style="margin:0;font-size:0.875rem;color:#374151;line-height:1.5">
                 Wir verwenden Cookies, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen.
                 Technisch notwendige Cookies werden immer gesetzt.
                 <a href="/datenschutz" style="color:#c9a227">Mehr erfahren</a>
             </p>
         </div>
 
-        <!-- Notwendig -->
+        <!-- Technisch notwendig -->
         <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
             <div>
                 <div style="font-weight:600;font-size:0.9rem;color:#111827">Technisch notwendig</div>
@@ -32,7 +29,7 @@
             <span style="background:#22c55e;color:#fff;padding:0.2rem 0.75rem;border-radius:1rem;font-size:0.75rem;white-space:nowrap;flex-shrink:0">Immer aktiv</span>
         </div>
 
-        <!-- Analyse -->
+        <!-- Analyse & Statistik -->
         <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
             <div>
                 <div style="font-weight:600;font-size:0.9rem;color:#111827">Analyse &amp; Statistik</div>
@@ -40,19 +37,19 @@
             </div>
             <button
                 @click="preferences.analytics = !preferences.analytics"
-                :style="preferences.analytics ? 'background:#c9a227' : 'background:#d1d5db'"
-                style="width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0"
                 :aria-checked="preferences.analytics.toString()"
                 role="switch"
-                aria-label="Analyse & Statistik">
+                aria-label="Analyse und Statistik"
+                :style="preferences.analytics ? 'background:#c9a227' : 'background:#d1d5db'"
+                style="position:relative;display:inline-block;width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;flex-shrink:0;padding:0;transition:background-color 0.2s">
                 <span
-                    :style="preferences.analytics ? 'transform:translateX(22px)' : 'transform:translateX(2px)'"
-                    style="position:absolute;top:3px;left:0;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.2)">
+                    :style="preferences.analytics ? 'left:25px' : 'left:3px'"
+                    style="display:block;width:20px;height:20px;background:#ffffff;border-radius:50%;position:absolute;top:3px;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3)">
                 </span>
             </button>
         </div>
 
-        <!-- Komfort -->
+        <!-- Komfort & Karten -->
         <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
             <div>
                 <div style="font-weight:600;font-size:0.9rem;color:#111827">Komfort &amp; Karten</div>
@@ -60,27 +57,30 @@
             </div>
             <button
                 @click="preferences.comfort = !preferences.comfort"
-                :style="preferences.comfort ? 'background:#c9a227' : 'background:#d1d5db'"
-                style="width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0"
                 :aria-checked="preferences.comfort.toString()"
                 role="switch"
-                aria-label="Komfort & Karten">
+                aria-label="Komfort und Karten"
+                :style="preferences.comfort ? 'background:#c9a227' : 'background:#d1d5db'"
+                style="position:relative;display:inline-block;width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;flex-shrink:0;padding:0;transition:background-color 0.2s">
                 <span
-                    :style="preferences.comfort ? 'transform:translateX(22px)' : 'transform:translateX(2px)'"
-                    style="position:absolute;top:3px;left:0;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.2)">
+                    :style="preferences.comfort ? 'left:25px' : 'left:3px'"
+                    style="display:block;width:20px;height:20px;background:#ffffff;border-radius:50%;position:absolute;top:3px;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3)">
                 </span>
             </button>
         </div>
 
         <!-- Buttons -->
         <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:1.5rem">
-            <button @click="rejectAll()" style="padding:0.625rem 1.25rem;border:2px solid #d1d5db;background:transparent;color:#374151;border-radius:2rem;cursor:pointer;font-size:0.875rem;flex:1;min-width:120px">
+            <button @click="rejectAll()"
+                style="padding:0.625rem 1.25rem;border:2px solid #d1d5db;background:transparent;color:#6b7280;border-radius:2rem;cursor:pointer;font-size:0.875rem;flex:1;min-width:120px">
                 Alle ablehnen
             </button>
-            <button @click="savePreferences()" style="padding:0.625rem 1.25rem;border:2px solid #1a2e1a;background:transparent;color:#1a2e1a;border-radius:2rem;cursor:pointer;font-size:0.875rem;flex:1;min-width:120px">
+            <button @click="savePreferences()"
+                style="padding:0.625rem 1.25rem;border:2px solid #1a2e1a;background:transparent;color:#1a2e1a;border-radius:2rem;cursor:pointer;font-size:0.875rem;flex:1;min-width:120px">
                 Auswahl speichern
             </button>
-            <button @click="acceptAll()" style="padding:0.625rem 1.25rem;border:2px solid #c9a227;background:#c9a227;color:#1a2e1a;border-radius:2rem;cursor:pointer;font-size:0.875rem;font-weight:700;flex:1;min-width:120px">
+            <button @click="acceptAll()"
+                style="padding:0.625rem 1.25rem;border:2px solid #c9a227;background:#c9a227;color:#1a2e1a;border-radius:2rem;cursor:pointer;font-size:0.875rem;font-weight:700;flex:1;min-width:120px">
                 Alle akzeptieren
             </button>
         </div>
@@ -129,12 +129,11 @@ function cookieConsent() {
             this.save();
         },
         save() {
-            const consent = {
+            localStorage.setItem('fwz_cookie_consent', JSON.stringify({
                 decided: true,
                 timestamp: new Date().toISOString(),
                 preferences: this.preferences
-            };
-            localStorage.setItem('fwz_cookie_consent', JSON.stringify(consent));
+            }));
             this.decided = true;
             this.applyConsent();
         },
