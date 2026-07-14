@@ -251,19 +251,84 @@
         <span class="eyebrow">Stimmen aus dem Ehrenamt</span>
         <h2 class="h2">Das sagen unsere Mitglieder</h2>
       </div>
-      <div class="testi-grid">
-        @foreach($testimonials as $t)
-          <article class="testi-card">
-            <div class="avatar">🙂</div>
-            <div>
-              <div class="quote">„{{ $t['zitat'] }}"</div>
-              <div class="person">{{ $t['person'] }}</div>
-              <div class="role">{{ $t['rolle'] }}</div>
-            </div>
-          </article>
-        @endforeach
+      <div class="swiper testimonials-swiper">
+        <div class="swiper-wrapper">
+          @foreach($testimonials as $testimonial)
+          <div class="swiper-slide">
+            <article class="testi-card" onclick="openTestimonialModal({{ $testimonial->id }})" style="cursor:pointer">
+              @if($testimonial->photo_path)
+                <img src="{{ Storage::url($testimonial->photo_path) }}" alt="{{ $testimonial->name }}" class="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover">
+              @else
+                <div class="avatar">🙂</div>
+              @endif
+              <div>
+                <div class="quote">„{{ Str::limit($testimonial->quote, 100) }}"</div>
+                <div class="person">{{ $testimonial->name }}</div>
+                @if($testimonial->organisation)
+                  <div class="role">{{ $testimonial->organisation }}</div>
+                @endif
+              </div>
+            </article>
+          </div>
+          @endforeach
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
       </div>
     </div>
   </section>
+
+  <!-- Testimonial Modal -->
+  <div id="testimonial-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:1rem;padding:2rem;max-width:500px;width:90%;position:relative">
+      <button onclick="closeTestimonialModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer">✕</button>
+      <div id="modal-photo"></div>
+      <p id="modal-quote" style="font-size:1.1rem;font-style:italic;margin:1rem 0"></p>
+      <strong id="modal-name"></strong>
+      <div id="modal-org" style="color:#6b7280"></div>
+    </div>
+  </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+new Swiper('.testimonials-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    autoplay: { delay: 5000, disableOnInteraction: false },
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    breakpoints: {
+        768:  { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+    }
+});
+
+const testimonialData = {!! json_encode($testimonials->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'organisation' => $t->organisation, 'quote' => $t->quote, 'photo' => $t->photo_path ? asset('storage/' . $t->photo_path) : null])->values()) !!};
+
+function openTestimonialModal(id) {
+    const t = testimonialData.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('modal-quote').textContent = '„' + t.quote + '"';
+    document.getElementById('modal-name').textContent  = t.name;
+    document.getElementById('modal-org').textContent   = t.organisation || '';
+    document.getElementById('modal-photo').innerHTML   = t.photo
+        ? '<img src="' + t.photo + '" style="width:60px;height:60px;border-radius:50%;object-fit:cover">'
+        : '<div style="font-size:2rem">🙂</div>';
+    const modal = document.getElementById('testimonial-modal');
+    modal.style.display = 'flex';
+}
+
+function closeTestimonialModal() {
+    document.getElementById('testimonial-modal').style.display = 'none';
+}
+
+document.getElementById('testimonial-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeTestimonialModal();
+});
+</script>
+@endpush
 
 @endsection

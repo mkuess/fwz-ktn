@@ -43,11 +43,9 @@ class HomeController extends Controller
                 ->get();
         }
 
-        $testimonials = [
-            ['zitat' => 'Beim Roten Kreuz finde ich Sinn und Gemeinschaft. Jeder Einsatz macht einen Unterschied.',        'person' => 'Maria L.',    'rolle' => 'ÖRK Kärnten'],
-            ['zitat' => 'Die Bergrettung ist mehr als ein Hobby — sie ist Verantwortung, Teamgeist und Dankbarkeit.',        'person' => 'Thomas R.',   'rolle' => 'Bergrettung Kärnten'],
-            ['zitat' => 'Im Verein begleiten wir Kinder beim Aufwachsen und schaffen Chancen für alle.',                    'person' => 'Sophie K.',   'rolle' => 'Naturfreunde Kärnten'],
-        ];
+        $testimonials = \App\Models\Testimonial::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
         $stats = [
             'vereine'          => Organisation::where('is_approved', true)->count() . '+',

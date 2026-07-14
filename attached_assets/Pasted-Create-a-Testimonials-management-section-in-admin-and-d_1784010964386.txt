@@ -1,0 +1,144 @@
+Create a "Testimonials" management section in admin and display as slider on frontend. Do NOT delete the database.
+
+STEP 1 - Create migration for testimonials table:
+Schema::create('testimonials', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('organisation')->nullable();
+    $table->text('quote');
+    $table->string('photo_path')->nullable();
+    $table->boolean('is_active')->default(true);
+    $table->integer('sort_order')->default(0);
+    $table->timestamps();
+});
+Run: php artisan migrate
+
+STEP 2 - Create Testimonial model:
+app/Models/Testimonial.php
+fillable: name, organisation, quote, photo_path, is_active, sort_order
+
+STEP 3 - Create TestimonialResource in Filament:
+Navigation label: 'Stimmen'
+Navigation icon: 'heroicon-o-chat-bubble-left-right'
+Navigation group: 'Sonstiges'
+Navigation sort: 3
+Model label: 'Stimme' / plural: 'Stimmen'
+
+Form fields:
+- FileUpload::make('photo_path')->label('Foto')->image()->nullable()
+- TextInput::make('name')->label('Name')->required()
+- TextInput::make('organisation')->label('Organisation')->nullable()
+- Textarea::make('quote')->label('Zitat')->required()->rows(4)
+- Toggle::make('is_active')->label('Aktiv')->default(true)
+- TextInput::make('sort_order')->label('Reihenfolge')->numeric()->default(0)
+
+List columns: photo (image), name, organisation, quote (limit 60), is_active badge, sort_order
+
+STEP 4 - Seed 3 example testimonials from the screenshot:
+Testimonial::create(['name' => 'Maria L.', 'organisation' => 'ÖRK Kärnten', 'quote' => 'Beim Roten Kreuz finde ich Sinn und Gemeinschaft. Jeder Einsatz macht einen Unterschied.', 'is_active' => true, 'sort_order' => 1]);
+Testimonial::create(['name' => 'Thomas R.', 'organisation' => 'Bergrettung Kärnten', 'quote' => 'Die Bergrettung ist mehr als ein Hobby — sie ist Verantwortung, Teamgeist und Dankbarkeit.', 'is_active' => true, 'sort_order' => 2]);
+Testimonial::create(['name' => 'Sophie K.', 'organisation' => 'Naturfreunde Kärnten', 'quote' => 'Im Verein begleiten wir Kinder beim Aufwachsen und schaffen Chancen für alle.', 'is_active' => true, 'sort_order' => 3]);
+
+STEP 5 - Update HomeController:
+$testimonials = \App\Models\Testimonial::where('is_active', true)
+    ->orderBy('sort_order')
+    ->get();
+Pass to view: add $testimonials to compact()
+
+STEP 6 - Update home.blade.php testimonials section:
+Replace static cards with a slider using Swiper.js (CDN, no npm needed):
+
+Add to <head>:
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
+Add before </body>:
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+new Swiper('.testimonials-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    autoplay: { delay: 5000, disableOnInteraction: false },
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+    }
+});
+</script>
+
+Replace existing testimonial cards with:
+<div class="swiper testimonials-swiper">
+    <div class="swiper-wrapper">
+        @foreach($testimonials as $testimonial)
+        <div class="swiper-slide">
+            <div class="testimonial-card" onclick="openTestimonialModal({{ $testimonial->id }})" style="cursor:pointer">
+                @if($testimonial->photo_path)
+                    <img src="{{ Storage::url($testimonial->photo_path) }}" alt="{{ $testimonial->name }}" class="testimonial-photo">
+                @else
+                    <div class="testimonial-avatar">🙂</div>
+                @endif
+                <p class="testimonial-quote">
+                    „{{ Str::limit($testimonial->quote, 100) }}"
+                </p>
+                <strong>{{ $testimonial->name }}</strong>
+                @if($testimonial->organisation)
+                    <span>{{ $testimonial->organisation }}</span>
+                @endif
+            </div>
+        </div>
+        @endforeach
+    </div>
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+
+STEP 7 - Add lightbox modal for full quote:
+Add before </body>:
+<!-- Testimonial Modal -->
+<div id="testimonial-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:1rem;padding:2rem;max-width:500px;width:90%;position:relative">
+        <button onclick="closeTestimonialModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer">✕</button>
+        <div id="modal-photo"></div>
+        <p id="modal-quote" style="font-size:1.1rem;font-style:italic;margin:1rem 0"></p>
+        <strong id="modal-name"></strong>
+        <div id="modal-org" style="color:#6b7280"></div>
+    </div>
+</div>
+
+<script>
+const testimonials = @json($testimonials->map(fn($t) => [
+    'id' => $t->id,
+    'name' => $t->name,
+    'organisation' => $t->organisation,
+    'quote' => $t->quote,
+    'photo' => $t->photo_path ? "{{ Storage::url('') }}" + $t->photo_path : null,
+]));
+
+function openTestimonialModal(id) {
+    const t = testimonials.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('modal-quote').textContent = '„' + t.quote + '"';
+    document.getElementById('modal-name').textContent = t.name;
+    document.getElementById('modal-org').textContent = t.organisation || '';
+    document.getElementById('modal-photo').innerHTML = t.photo 
+        ? '<img src="' + t.photo + '" style="width:60px;height:60px;border-radius:50%;object-fit:cover">'
+        : '<div style="font-size:2rem">🙂</div>';
+    const modal = document.getElementById('testimonial-modal');
+    modal.style.display = 'flex';
+}
+
+function closeTestimonialModal() {
+    document.getElementById('testimonial-modal').style.display = 'none';
+}
+
+document.getElementById('testimonial-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeTestimonialModal();
+});
+</script>
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.
