@@ -1,5 +1,17 @@
-<div
-    x-data="cookieConsent()"
+Convert the cookie banner from a sticky bottom bar to a centered modal overlay. Do NOT delete the database.
+
+In resources/views/partials/cookie-banner.blade.php replace the entire banner with a modal design:
+
+The modal should:
+- Cover the screen with a dark semi-transparent overlay (backdrop)
+- Show a centered white modal box (max-width: 520px)
+- Appear on first visit / after reset
+- Be fully keyboard accessible (focus trap)
+
+Replace the current banner HTML with:
+
+<div 
+    x-data="cookieConsent()" 
     x-show="!decided"
     x-cloak
     style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem"
@@ -12,17 +24,18 @@
 
     <!-- Modal box -->
     <div style="position:relative;background:#fff;border-radius:1rem;padding:2rem;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto">
-
+        
         <!-- Header -->
         <div style="margin-bottom:1.5rem">
             <h2 style="margin:0 0 0.5rem;font-size:1.25rem;color:#1a2e1a;font-weight:700">Cookie-Einstellungen</h2>
             <p style="margin:0;font-size:0.875rem;color:#6b7280;line-height:1.5">
-                Wir verwenden Cookies, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen.
-                Technisch notwendige Cookies werden immer gesetzt.
+                Wir verwenden Cookies, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen. 
+                Technisch notwendige Cookies werden immer gesetzt. 
                 <a href="/datenschutz" style="color:#c9a227">Mehr erfahren</a>
             </p>
         </div>
 
+        <!-- Categories -->
         <!-- Notwendig -->
         <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
             <div>
@@ -35,17 +48,17 @@
         <!-- Analyse -->
         <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
             <div>
-                <div style="font-weight:600;font-size:0.9rem;color:#111827">Analyse &amp; Statistik</div>
+                <div style="font-weight:600;font-size:0.9rem;color:#111827">Analyse & Statistik</div>
                 <div style="font-size:0.8rem;color:#6b7280;margin-top:0.25rem">Hilft uns zu verstehen, wie Besucher unsere Website nutzen (z.B. Matomo).</div>
             </div>
-            <button
+            <button 
                 @click="preferences.analytics = !preferences.analytics"
                 :style="preferences.analytics ? 'background:#c9a227' : 'background:#d1d5db'"
                 style="width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0"
                 :aria-checked="preferences.analytics.toString()"
                 role="switch"
                 aria-label="Analyse & Statistik">
-                <span
+                <span 
                     :style="preferences.analytics ? 'transform:translateX(22px)' : 'transform:translateX(2px)'"
                     style="position:absolute;top:3px;left:0;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.2)">
                 </span>
@@ -55,17 +68,17 @@
         <!-- Komfort -->
         <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
             <div>
-                <div style="font-weight:600;font-size:0.9rem;color:#111827">Komfort &amp; Karten</div>
+                <div style="font-weight:600;font-size:0.9rem;color:#111827">Komfort & Karten</div>
                 <div style="font-size:0.8rem;color:#6b7280;margin-top:0.25rem">Ermöglicht eingebettete Karten und Komfortfunktionen (z.B. OpenStreetMap).</div>
             </div>
-            <button
+            <button 
                 @click="preferences.comfort = !preferences.comfort"
                 :style="preferences.comfort ? 'background:#c9a227' : 'background:#d1d5db'"
                 style="width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0"
                 :aria-checked="preferences.comfort.toString()"
                 role="switch"
                 aria-label="Komfort & Karten">
-                <span
+                <span 
                     :style="preferences.comfort ? 'transform:translateX(22px)' : 'transform:translateX(2px)'"
                     style="position:absolute;top:3px;left:0;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.2)">
                 </span>
@@ -149,3 +162,10 @@ function cookieConsent() {
     }
 }
 </script>
+
+Keep the [x-cloak] CSS rule:
+[x-cloak] { display: none !important; }
+
+Keep the resetCookieConsent() global function in the main layout for the footer link.
+
+Do NOT delete the database. Report when done.
