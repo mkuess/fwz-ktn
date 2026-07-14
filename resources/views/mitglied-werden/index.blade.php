@@ -15,16 +15,6 @@
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
-<style>
-  .ts-control { border-radius: 0.375rem !important; border-color: #d1d5db !important; min-height: 42px; }
-  .ts-control:focus-within { border-color: #c9a227 !important; box-shadow: 0 0 0 2px rgba(201,162,39,0.2) !important; outline: none; }
-  .ts-dropdown .active { background-color: #c9a227 !important; color: #fff !important; }
-  .ts-dropdown-content .option:hover { background-color: #f5e9c0; }
-  .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
-  .ts-wrapper { position: relative; }
-  .ts-dropdown { z-index: 9999 !important; position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important; }
-  form, .form-container, .form-group, .reg-main, .reg-section, .container { overflow: visible !important; }
-</style>
 
 <section class="reg-section">
   <div class="container">
