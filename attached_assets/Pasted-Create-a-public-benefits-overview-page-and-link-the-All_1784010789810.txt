@@ -1,0 +1,72 @@
+Create a public benefits overview page and link the "Alle Benefits" button to it. Do NOT delete the database.
+
+STEP 1 - Create BenefitController:
+app/Http/Controllers/BenefitController.php
+
+public function index() {
+    $benefits = \App\Models\Benefit::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+    return view('benefits.index', compact('benefits'));
+}
+
+STEP 2 - Add route in routes/web.php:
+Route::get('/benefits', [BenefitController::class, 'index'])->name('benefits.index');
+
+STEP 3 - Create view resources/views/benefits/index.blade.php:
+Use the same layout as the rest of the public frontend.
+
+Page structure:
+- Hero section at top: 
+  Eyebrow: "EXKLUSIVE VORTEILE"
+  Heading: "Benefits für Mitglieder."
+  Subtext: "Als Mitglied eines registrierten Vereins erhältst du Zugang zu Vergünstigungen bei ausgewählten Kärntner Partnerbetrieben."
+
+- Grid of all active benefits (3 columns on desktop, 1 on mobile):
+  Each card shows:
+  - Logo (if available): <img src="{{ Storage::url($benefit->logo_path) }}" alt="{{ $benefit->name }}">
+  - Name (bold, uppercase like on homepage)
+  - Description text
+  - If website set: Link "Zum Partner →" opening in new tab
+
+Use the EXACT same card style as on the homepage benefits section - same CSS classes, same design.
+
+@forelse($benefits as $benefit)
+    <div class="benefit-card"> {{-- use existing CSS classes from homepage --}}
+        @if($benefit->logo_path)
+            <img src="{{ Storage::url($benefit->logo_path) }}" alt="{{ $benefit->name }}">
+        @endif
+        <h3>{{ $benefit->name }}</h3>
+        <p>{{ $benefit->description }}</p>
+        @if($benefit->website)
+            <a href="{{ $benefit->website }}" target="_blank" rel="noopener">Zum Partner →</a>
+        @endif
+    </div>
+@empty
+    <p>Derzeit sind keine Benefits verfügbar.</p>
+@endforelse
+
+STEP 4 - Wire up homepage "Alle Benefits" button:
+In resources/views/home.blade.php find the "Alle Benefits" button/link in the benefits section and change href to:
+href="{{ route('benefits.index') }}"
+
+STEP 5 - Also update the HomeController to load teaser benefits for homepage:
+$featuredBenefits = \App\Models\Benefit::where('is_active', true)
+    ->where('is_teaser', true)
+    ->orderBy('sort_order')
+    ->limit(3)
+    ->get();
+
+// Fallback: if no teaser benefits, show first 3 active benefits
+if ($featuredBenefits->isEmpty()) {
+    $featuredBenefits = \App\Models\Benefit::where('is_active', true)
+        ->orderBy('sort_order')
+        ->limit(3)
+        ->get();
+}
+
+Pass to view: compact('articles', 'featuredBenefits')
+And update home.blade.php benefits section to use $featuredBenefits instead of static data.
+
+Do NOT delete the database. Report when done.

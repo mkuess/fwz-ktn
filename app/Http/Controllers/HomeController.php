@@ -30,15 +30,18 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        $benefits = \App\Models\Benefit::query()
-            ->where('is_active', true)
+        $featuredBenefits = \App\Models\Benefit::where('is_active', true)
             ->where('is_teaser', true)
             ->orderBy('sort_order')
-            ->get()
-            ->map(fn ($b) => [
-                'partner'      => $b->name,
-                'beschreibung' => $b->description,
-            ]);
+            ->limit(3)
+            ->get();
+
+        if ($featuredBenefits->isEmpty()) {
+            $featuredBenefits = \App\Models\Benefit::where('is_active', true)
+                ->orderBy('sort_order')
+                ->limit(3)
+                ->get();
+        }
 
         $testimonials = [
             ['zitat' => 'Beim Roten Kreuz finde ich Sinn und Gemeinschaft. Jeder Einsatz macht einen Unterschied.',        'person' => 'Maria L.',    'rolle' => 'ÖRK Kärnten'],
@@ -53,7 +56,7 @@ class HomeController extends Controller
             'engagementFelder' => Category::count(),
         ];
 
-        return view('home', compact('vereine', 'kategorien', 'aktionen', 'benefits', 'testimonials', 'stats'));
+        return view('home', compact('vereine', 'kategorien', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
     }
 
     public function vereineSuche(Request $request)

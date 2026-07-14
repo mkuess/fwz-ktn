@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MemberRegistrationController;
 use App\Http\Controllers\OrganisationRegistrationController;
@@ -10,6 +11,8 @@ Route::get('/impressum', [HomeController::class, 'impressum'])->name('impressum'
 Route::get('/datenschutz', [HomeController::class, 'datenschutz'])->name('datenschutz');
 Route::get('/barrierefreiheit', [HomeController::class, 'barrierefreiheit'])->name('barrierefreiheit');
 Route::get('/in-arbeit', [HomeController::class, 'inArbeit'])->name('in-arbeit');
+
+Route::get('/benefits', [BenefitController::class, 'index'])->name('benefits.index');
 
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
 

@@ -222,17 +222,24 @@
           <p class="benefit-intro lead">Als Mitglied eines registrierten Vereins erhältst du Zugang zu Vergünstigungen bei ausgewählten Kärntner Partnerbetrieben.</p>
         </div>
         <div class="benefit-grid">
-          @forelse($benefits as $benefit)
+          @forelse($featuredBenefits as $benefit)
             <div class="benefit-card">
-              <div class="benefit-logo">{{ $benefit['partner'] }}</div>
-              <p>{{ $benefit['beschreibung'] }}</p>
+              @if($benefit->logo_path)
+                <img src="{{ Storage::url($benefit->logo_path) }}" alt="{{ $benefit->name }}" style="max-height:48px;object-fit:contain;margin-bottom:0.5rem">
+              @else
+                <div class="benefit-logo">{{ $benefit->name }}</div>
+              @endif
+              <p>{{ $benefit->description }}</p>
+              @if($benefit->website)
+                <a href="{{ $benefit->website }}" target="_blank" rel="noopener" style="font-size:0.875rem;color:inherit">Zum Partner →</a>
+              @endif
             </div>
           @empty
             <p class="muted">Aktuell sind keine Benefits eingetragen.</p>
           @endforelse
         </div>
         <div class="button-center">
-          <a class="btn dark" href="{{ route('in-arbeit') }}">Alle Benefits <span class="arrow">→</span></a>
+          <a class="btn dark" href="{{ route('benefits.index') }}">Alle Benefits <span class="arrow">→</span></a>
         </div>
       </div>
     </div>
