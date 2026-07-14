@@ -14,40 +14,54 @@
 @endsection
 
 @section('content')
-<div class="legal-content">
-  <div class="container">
-    <div class="box">
-      <div class="note-box">
-        <strong>⚠️ Platzhalter</strong>
-        Vor Go-Live mit echten Rechts- und Kontaktdaten befüllen. Alle <span class="placeholder-field">[…]</span>-Felder ersetzen.
-      </div>
+<section style="max-width:800px;margin:3rem auto;padding:0 1.5rem">
+  <h2>Herausgeber und für den Inhalt verantwortlich</h2>
 
-      <h2>Medieninhaber und Herausgeber</h2>
-      <p>
-        <span class="placeholder-field">[Name des Rechtsträgers / Vereins]</span><br>
-        ZVR-Zahl: <span class="placeholder-field">[ZVR-Zahl]</span><br>
-        <span class="placeholder-field">[Straße und Hausnummer]</span><br>
-        <span class="placeholder-field">[PLZ] [Ort]</span><br>
-        Österreich
-      </p>
+  <h3>Amt der Kärntner Landesregierung</h3>
+  <p>
+    Abteilung 3 – Gemeinden und Katastrophenschutz<br>
+    Unterabteilung Feuerwehrwesen, Katastrophenschutz und Zivildienst<br>
+    Rosenegger Straße 20<br>
+    A-9021 Klagenfurt am Wörthersee<br>
+    E-Mail: <a href="mailto:info@fwz-ktn.at">info@fwz-ktn.at</a>
+  </p>
 
-      <h2>Kontakt</h2>
-      <p>
-        Telefon: <span class="placeholder-field">[+43 …]</span><br>
-        E-Mail: <span class="placeholder-field">[office@freiwilligenzentrum-kaernten.at]</span>
-      </p>
+  <h3>Freiwilligenzentrum Kärnten</h3>
+  <p>
+    Rosenegger Straße 20<br>
+    A-9020 Klagenfurt am Wörthersee<br>
+    E-Mail: <a href="mailto:info@fwz-ktn.at">info@fwz-ktn.at</a>
+  </p>
 
-      <h2>Zweck der Website</h2>
-      <p>Das Freiwilligenzentrum Kärnten ist die zentrale Anlaufstelle des Landes Kärnten für ehrenamtliches Engagement. Diese Website dient der Information von Freiwilligen und Organisationen sowie der Vernetzung im Bereich des Ehrenamts.</p>
+  <h2>Technischer Betrieb</h2>
+  <p>
+    oja.at GmbH<br>
+    Rosentaler Straße 148<br>
+    9020 Klagenfurt
+  </p>
 
-      <h2>Grundlegende Richtung</h2>
-      <p>Informationsangebot zu freiwilligem Engagement, Vereinsverzeichnis und Benefits für Mitglieder des Freiwilligenzentrums Kärnten.</p>
+  <h2>Haftungsausschluss</h2>
+  <p>
+    Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt.
+    Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte übernehmen wir jedoch keine Gewähr.
+    Als Diensteanbieter sind wir gemäß § 17 ECG für eigene Inhalte auf diesen Seiten nach den allgemeinen
+    Gesetzen verantwortlich.
+  </p>
 
-      <h2>Haftungsausschluss</h2>
-      <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
+  <h2>Urheberrecht</h2>
+  <p>
+    Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen
+    Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen
+    des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+  </p>
 
-      <p style="margin-top:2rem"><a href="{{ route('home') }}">&larr; Zurück zur Startseite</a></p>
-    </div>
-  </div>
-</div>
+  <h2>Links</h2>
+  <p>
+    Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben.
+    Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der
+    verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.
+  </p>
+
+  <p style="margin-top:2rem"><a href="{{ route('home') }}" style="color:#6b7280">← Zurück zur Startseite</a></p>
+</section>
 @endsection
