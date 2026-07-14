@@ -163,6 +163,9 @@ p{margin:0;color:var(--text)}
    AB HIER: reine ERGÄNZUNGEN — keine Zeile oberhalb verändert.
    ========================================================================== */
 
+/* Alpine.js: x-cloak verhindert Flash-of-unstyled-content */
+[x-cloak] { display: none !important; }
+
 /* Sichtbarer Fokusring für Tastaturnutzung */
 a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{
   outline:3px solid #ff8a00;outline-offset:3px;border-radius:6px;
