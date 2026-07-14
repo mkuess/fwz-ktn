@@ -1,0 +1,99 @@
+Restructure OrganisationResource edit form to be cleaner and more organized, similar to the Member edit page with info cards. Do NOT delete the database.
+
+In app/Filament/Resources/OrganisationResource.php restructure the form schema:
+
+STEP 1 - Add info cards at the top (only visible on edit, visibleOn('edit')):
+
+Section::make()
+    ->schema([
+        Placeholder::make('card_members')
+            ->label('')
+            ->content(function ($record): HtmlString {
+                $count = $record?->members()->count() ?? 0;
+                return new HtmlString('
+                    <div style="text-align:center;padding:0.5rem">
+                        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">👥 Mitglieder</div>
+                        <div style="font-weight:600;font-size:1.25rem">' . $count . '</div>
+                    </div>
+                ');
+            }),
+        Placeholder::make('card_status')
+            ->label('')
+            ->content(function ($record): HtmlString {
+                $approved = $record?->is_approved ? '✓ Freigeschaltet' : '✗ Ausstehend';
+                $color = $record?->is_approved ? '#22c55e' : '#f59e0b';
+                $since = $record?->created_at?->diffForHumans() ?? '—';
+                return new HtmlString('
+                    <div style="text-align:center;padding:0.5rem">
+                        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📋 Status</div>
+                        <div style="font-weight:600;color:' . $color . '">' . $approved . '</div>
+                        <div style="font-size:0.75rem;color:#6b7280">Angemeldet ' . $since . '</div>
+                    </div>
+                ');
+            }),
+        Placeholder::make('card_location')
+            ->label('')
+            ->content(function ($record): HtmlString {
+                $location = trim(($record?->zip ?? '') . ' ' . ($record?->city ?? '')) ?: '—';
+                $phone = $record?->phone ?? '—';
+                return new HtmlString('
+                    <div style="text-align:center;padding:0.5rem">
+                        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📍 Standort</div>
+                        <div style="font-weight:600">' . e($location) . '</div>
+                        <div style="font-size:0.75rem">' . e($phone) . '</div>
+                    </div>
+                ');
+            }),
+    ])
+    ->columns(3)
+    ->visibleOn('edit'),
+
+STEP 2 - Organize form into clear sections:
+
+Section::make('Grunddaten')
+    ->schema([
+        Radio::make('type') // existing
+        TextInput::make('name') // existing
+        TextInput::make('zvr_number') // existing, conditional
+        TextInput::make('email') // existing
+        TextInput::make('password') // existing, only on create
+    ])
+    ->columns(2),
+
+Section::make('Profil')
+    ->schema([
+        Textarea::make('description') // existing
+        FileUpload::make('logo_path') // existing
+    ])
+    ->columns(2),
+
+Section::make('Standort & Kontakt')
+    ->schema([
+        TextInput::make('street')
+        TextInput::make('zip')
+        TextInput::make('city')
+        TextInput::make('phone')
+        TextInput::make('website')
+    ])
+    ->columns(2),
+
+Section::make('Ansprechpersonen')
+    ->schema([
+        TextInput::make('representative')
+        TextInput::make('contact_person')
+    ])
+    ->columns(2),
+
+Section::make('Einstellungen')
+    ->schema([
+        Select::make('categories') // existing
+        Toggle::make('is_approved') // existing with helperText
+        Toggle::make('is_active') // existing with helperText
+    ])
+    ->columns(2),
+
+Keep all existing field configurations (labels, helperTexts, conditions etc.) - only reorganize into sections.
+Use existing Filament styles - no custom CSS needed.
+Make sure to import: use Illuminate\Support\HtmlString;
+
+Do NOT delete the database. Report when done.
