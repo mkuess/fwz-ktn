@@ -154,6 +154,7 @@ class MemberResource extends Resource
                         'admin'     => '🔑 FWZ Admin',
                     ])
                     ->default('member')
+                    ->live()
                     ->required(),
                 Forms\Components\Hidden::make('source')
                     ->default('self'),
@@ -204,6 +205,7 @@ class MemberResource extends Resource
                 /* ── Organisationszugang ────────────────────────────────── */
                 Forms\Components\Section::make('Organisationszugang')
                     ->description('Welche Organisationen kann dieses Mitglied verwalten (z. B. als Organisations-Admin)?')
+                    ->visible(fn (Get $get): bool => in_array($get('role'), ['org_admin', 'admin']))
                     ->schema([
                         Forms\Components\Select::make('managedOrganisations')
                             ->label('Organisationszugang')
