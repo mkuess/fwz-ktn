@@ -77,7 +77,7 @@
         <li><a href="{{ route('impressum') }}">Impressum</a></li>
         <li><a href="{{ route('datenschutz') }}">Datenschutz</a></li>
         <li><a href="{{ route('barrierefreiheit') }}">Barrierefreiheit</a></li>
-        <li><a href="#" onclick="localStorage.removeItem('fwz_cookie_consent'); location.reload(); return false;" style="font-size:0.75rem;color:#9ca3af">Cookie-Einstellungen</a></li>
+        <li><a href="#" onclick="resetCookieConsent(); return false;" style="font-size:0.75rem;color:#9ca3af">Cookie-Einstellungen</a></li>
       </ul>
       <div class="socials">
         <span class="social">f</span>
@@ -93,5 +93,11 @@
 <script src="{{ asset('js/main.js') }}" defer></script>
 <script src="{{ asset('js/vereine-suche.js') }}" defer></script>
 @stack('scripts')
+<script>
+function resetCookieConsent() {
+    localStorage.removeItem('fwz_cookie_consent');
+    window.location.reload();
+}
+</script>
 </body>
 </html>
