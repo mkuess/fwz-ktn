@@ -99,10 +99,18 @@ function cookieConsent() {
         init() {
             const stored = localStorage.getItem('fwz_cookie_consent');
             if (stored) {
-                const data = JSON.parse(stored);
-                this.decided = true;
-                this.preferences = data.preferences || { analytics: false, comfort: false };
-                this.applyConsent();
+                try {
+                    const data = JSON.parse(stored);
+                    this.decided = true;
+                    this.preferences = data.preferences || { analytics: false, comfort: false };
+                    this.applyConsent();
+                } catch(e) {
+                    // Invalid JSON — treat as undecided, show banner
+                    localStorage.removeItem('fwz_cookie_consent');
+                    this.decided = false;
+                }
+            } else {
+                this.decided = false;
             }
         },
         acceptAll() {
