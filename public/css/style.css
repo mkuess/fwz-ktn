@@ -408,3 +408,37 @@ textarea.form-control{resize:vertical;min-height:110px}
 }
 .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
 .form-group, .reg-section, .reg-main, .container { overflow: visible !important; }
+
+/* ── Testimonials Swiper ─────────────────────────────────── */
+.testimonials-swiper {
+  padding-left: 50px !important;
+  padding-right: 50px !important;
+  padding-bottom: 3rem !important;
+}
+.testimonials-swiper .swiper-button-prev,
+.testimonials-swiper .swiper-button-next {
+  color: #1a2e1a;
+  background: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  top: 45%;
+}
+.testimonials-swiper .swiper-button-prev::after,
+.testimonials-swiper .swiper-button-next::after {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.testimonials-swiper .swiper-pagination-bullet-active {
+  background: #c9a227;
+}
+.testimonials-swiper .swiper-slide {
+  height: auto;
+}
+.testi-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

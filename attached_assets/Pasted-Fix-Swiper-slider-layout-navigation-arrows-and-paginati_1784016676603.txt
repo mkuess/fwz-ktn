@@ -1,0 +1,66 @@
+Fix Swiper slider layout - navigation arrows and pagination dots should be OUTSIDE the cards, not inside them. Do NOT delete the database.
+
+In resources/views/home.blade.php find the testimonials swiper section and fix the layout:
+
+STEP 1 - Move navigation arrows outside the swiper-wrapper:
+The swiper-button-prev and swiper-button-next must be siblings of swiper-wrapper, not inside slides.
+The swiper-pagination must also be outside swiper-wrapper.
+
+Correct structure:
+<div class="swiper testimonials-swiper" style="position:relative;padding-bottom:3rem">
+    <div class="swiper-wrapper">
+        @foreach($testimonials as $testimonial)
+        <div class="swiper-slide">
+            <div class="testimonial-card" onclick="openTestimonialModal({{ $testimonial->id }})" style="cursor:pointer;height:100%">
+                ... card content ...
+            </div>
+        </div>
+        @endforeach
+    </div>
+    
+    <!-- Pagination BELOW the slides -->
+    <div class="swiper-pagination" style="bottom:0"></div>
+    
+    <!-- Arrows OUTSIDE cards, vertically centered on slides -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+</div>
+
+STEP 2 - Style the navigation arrows to match FWZ design:
+Add to CSS (app.css or inline style block):
+.testimonials-swiper .swiper-button-prev,
+.testimonials-swiper .swiper-button-next {
+    color: #1a2e1a;
+    background: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    top: 45%;
+}
+.testimonials-swiper .swiper-button-prev::after,
+.testimonials-swiper .swiper-button-next::after {
+    font-size: 1rem;
+    font-weight: 700;
+}
+.testimonials-swiper .swiper-pagination-bullet-active {
+    background: #c9a227;
+}
+.testimonials-swiper {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+}
+
+STEP 3 - Fix card height consistency:
+Make all cards same height:
+.testimonials-swiper .swiper-slide {
+    height: auto;
+}
+.testimonial-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+Do NOT delete the database. Report when done.
