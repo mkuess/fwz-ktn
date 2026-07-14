@@ -28,15 +28,21 @@ class MemberRegistrationController extends Controller
             'street'           => ['nullable', 'string', 'max:255'],
             'zip'              => ['nullable', 'string', 'max:10'],
             'city'             => ['nullable', 'string', 'max:100'],
-            'newsletter_optin' => ['boolean'],
+            'newsletter_optin'  => ['boolean'],
+            'confirm_membership' => ['required', 'accepted'],
+            'confirm_privacy'    => ['required', 'accepted'],
         ], [
             'organisation_id.required' => 'Bitte wähle eine Organisation aus.',
             'organisation_id.exists'   => 'Die gewählte Organisation ist nicht gültig.',
             'first_name.required'      => 'Bitte gib deinen Vornamen an.',
             'last_name.required'       => 'Bitte gib deinen Nachnamen an.',
-            'email.required'           => 'Bitte gib deine E-Mail-Adresse an.',
-            'email.email'              => 'Bitte gib eine gültige E-Mail-Adresse ein.',
-            'email.unique'             => 'Diese E-Mail-Adresse ist bereits registriert.',
+            'email.required'               => 'Bitte gib deine E-Mail-Adresse an.',
+            'email.email'                  => 'Bitte gib eine gültige E-Mail-Adresse ein.',
+            'email.unique'                 => 'Diese E-Mail-Adresse ist bereits registriert.',
+            'confirm_membership.required'  => 'Bitte bestätige deine Vereinszugehörigkeit.',
+            'confirm_membership.accepted'  => 'Bitte bestätige deine Vereinszugehörigkeit.',
+            'confirm_privacy.required'     => 'Bitte stimme der Datenschutzerklärung zu.',
+            'confirm_privacy.accepted'     => 'Bitte stimme der Datenschutzerklärung zu.',
         ]);
 
         Member::create([

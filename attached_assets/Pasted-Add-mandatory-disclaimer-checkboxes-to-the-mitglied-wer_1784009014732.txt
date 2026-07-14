@@ -1,0 +1,62 @@
+Add mandatory disclaimer checkboxes to the /mitglied-werden form. Do NOT delete the database.
+
+In resources/views/mitglied-werden/index.blade.php add two required checkboxes BEFORE the submit button:
+
+STEP 1 - Add checkbox 1 (Vereinszugehörigkeit):
+<div class="form-group">
+    <div class="form-check">
+        <input class="form-check-input @error('confirm_membership') is-invalid @enderror" 
+               type="checkbox" 
+               name="confirm_membership" 
+               id="confirm_membership" 
+               value="1"
+               {{ old('confirm_membership') ? 'checked' : '' }}
+               required>
+        <label class="form-check-label" for="confirm_membership">
+            Ich bestätige, dass ich Mitglied der ausgewählten Organisation bin und dass alle von mir gemachten Angaben der Wahrheit entsprechen. *
+        </label>
+        @error('confirm_membership')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
+STEP 2 - Add checkbox 2 (Datenschutz):
+<div class="form-group">
+    <div class="form-check">
+        <input class="form-check-input @error('confirm_privacy') is-invalid @enderror" 
+               type="checkbox" 
+               name="confirm_privacy" 
+               id="confirm_privacy" 
+               value="1"
+               {{ old('confirm_privacy') ? 'checked' : '' }}
+               required>
+        <label class="form-check-label" for="confirm_privacy">
+            Ich stimme zu, dass das Freiwilligenzentrum Kärnten meine personenbezogenen Daten (Name, E-Mail-Adresse, Adresse) zum Zweck der Mitgliedsverwaltung und Ausstellung einer Mitgliedskarte gemäß der <a href="/datenschutz" target="_blank">Datenschutzerklärung</a> verarbeitet und speichert. Die Einwilligung kann jederzeit durch eine E-Mail an <a href="mailto:office@fwz-ktn.at">office@fwz-ktn.at</a> widerrufen werden. *
+        </label>
+        @error('confirm_privacy')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
+STEP 3 - Add info text below checkboxes:
+<p style="font-size:0.8rem;color:#6b7280;margin-top:1rem">
+    * Pflichtfeld. Ihre Daten werden ausschließlich für die Verwaltung Ihrer Mitgliedschaft beim Freiwilligenzentrum Kärnten verwendet und nicht an Dritte weitergegeben. Weitere Informationen entnehmen Sie unserer <a href="/datenschutz">Datenschutzerklärung</a>.
+</p>
+
+STEP 4 - Add validation in MemberRegistrationController::store():
+Add to validation rules:
+'confirm_membership' => 'required|accepted',
+'confirm_privacy' => 'required|accepted',
+
+Add custom error messages:
+'confirm_membership.required' => 'Bitte bestätigen Sie Ihre Vereinszugehörigkeit.',
+'confirm_membership.accepted' => 'Bitte bestätigen Sie Ihre Vereinszugehörigkeit.',
+'confirm_privacy.required' => 'Bitte stimmen Sie der Datenschutzerklärung zu.',
+'confirm_privacy.accepted' => 'Bitte stimmen Sie der Datenschutzerklärung zu.',
+
+IMPORTANT: Both checkboxes must NOT be pre-checked (DSGVO Art. 7 compliance).
+The newsletter checkbox must also NOT be pre-checked.
+
+Do NOT delete the database. Report when done.

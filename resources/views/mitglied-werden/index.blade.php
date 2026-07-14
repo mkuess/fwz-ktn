@@ -107,6 +107,46 @@
             @error('newsletter_optin')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
+          <div class="form-group">
+            <div class="form-check">
+              <input class="form-check-input @error('confirm_membership') is-invalid @enderror"
+                     type="checkbox"
+                     name="confirm_membership"
+                     id="confirm_membership"
+                     value="1"
+                     {{ old('confirm_membership') ? 'checked' : '' }}
+                     required>
+              <label class="form-check-label" for="confirm_membership">
+                Ich bestätige, dass ich Mitglied der ausgewählten Organisation bin und dass alle von mir gemachten Angaben der Wahrheit entsprechen. <span class="req">*</span>
+              </label>
+              @error('confirm_membership')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-check">
+              <input class="form-check-input @error('confirm_privacy') is-invalid @enderror"
+                     type="checkbox"
+                     name="confirm_privacy"
+                     id="confirm_privacy"
+                     value="1"
+                     {{ old('confirm_privacy') ? 'checked' : '' }}
+                     required>
+              <label class="form-check-label" for="confirm_privacy">
+                Ich stimme zu, dass das Freiwilligenzentrum Kärnten meine personenbezogenen Daten (Name, E-Mail-Adresse, Adresse) zum Zweck der Mitgliedsverwaltung und Ausstellung einer Mitgliedskarte gemäß der <a href="/datenschutz" target="_blank">Datenschutzerklärung</a> verarbeitet und speichert. Die Einwilligung kann jederzeit durch eine E-Mail an <a href="mailto:office@fwz-ktn.at">office@fwz-ktn.at</a> widerrufen werden. <span class="req">*</span>
+              </label>
+              @error('confirm_privacy')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
+
+          <p style="font-size:0.8rem;color:#6b7280;margin-top:1rem">
+            * Pflichtfeld. Ihre Daten werden ausschließlich für die Verwaltung Ihrer Mitgliedschaft beim Freiwilligenzentrum Kärnten verwendet und nicht an Dritte weitergegeben. Weitere Informationen entnehmen Sie unserer <a href="/datenschutz">Datenschutzerklärung</a>.
+          </p>
+
           <div class="form-actions">
             <button class="btn primary" type="submit">Jetzt anmelden <span class="arrow">→</span></button>
           </div>
