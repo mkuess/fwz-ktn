@@ -14,6 +14,15 @@
 @endsection
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+<style>
+  .ts-control { border-radius: 0.375rem !important; border-color: #d1d5db !important; min-height: 42px; }
+  .ts-control:focus-within { border-color: #c9a227 !important; box-shadow: 0 0 0 2px rgba(201,162,39,0.2) !important; outline: none; }
+  .ts-dropdown .active { background-color: #c9a227 !important; color: #fff !important; }
+  .ts-dropdown-content .option:hover { background-color: #f5e9c0; }
+  .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
+</style>
+
 <section class="reg-section">
   <div class="container">
     <div class="reg-layout">
@@ -36,7 +45,7 @@
           <div class="form-group">
             <label class="form-label" for="organisation_id">Organisation <span class="req">*</span></label>
             <select class="form-control @error('organisation_id') is-error @enderror" id="organisation_id" name="organisation_id" required>
-              <option value="">— Bitte wählen —</option>
+              <option value="">Organisation suchen...</option>
               @foreach($organisations as $id => $name)
                 <option value="{{ $id }}" {{ old('organisation_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
@@ -124,3 +133,22 @@
   </div>
 </section>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+  new TomSelect('#organisation_id', {
+    placeholder: 'Organisation suchen...',
+    searchField: 'text',
+    maxOptions: 50,
+    create: false,
+    allowEmptyOption: true,
+    @if($errors->has('organisation_id')) plugins: [''], @endif
+    render: {
+      no_results: function() {
+        return '<div class="no-results" style="padding:0.5rem 1rem;color:#6b7280">Keine Organisation gefunden</div>';
+      }
+    }
+  });
+</script>
+@endpush
