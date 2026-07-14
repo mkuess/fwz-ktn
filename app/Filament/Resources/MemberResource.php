@@ -290,12 +290,26 @@ class MemberResource extends Resource
                     ->state(fn (?Member $record): ?string => $record?->deleted_at ? 'Gelöscht' : null)
                     ->color('danger')
                     ->visible(fn (?Member $record): bool => $record?->deleted_at !== null),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('registration_info')
                     ->label('Angemeldet')
-                    ->dateTime('D, d. M Y \u\m H:i')
-                    ->since()
-                    ->tooltip(fn (?Member $record): ?string => $record?->created_at?->format('d.m.Y H:i'))
-                    ->sortable(),
+                    ->html()
+                    ->state(function (Member $record): string {
+                        $lines = [];
+
+                        $lines[] = '<span style="font-size:0.75rem;color:#6b7280">Angemeldet am: ' . e($record->created_at?->format('d.m.Y')) . '</span>';
+
+                        if ($record->status === 'rejected') {
+                            $reason = $record->rejection_reason ? 'title="' . e($record->rejection_reason) . '"' : 'title="Keine Info"';
+                            $lines[] = '<span ' . $reason . ' style="color:#ef4444;cursor:help">✗ Abgelehnt</span>';
+                        } elseif ($record->card_status === 'zugesendet' && $record->card_sent_at) {
+                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet am ' . e($record->card_sent_at?->format('d.m.Y')) . '</span>';
+                        } elseif ($record->card_status === 'zugesendet') {
+                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet</span>';
+                        }
+
+                        return implode('<br>', $lines);
+                    })
+                    ->sortable('created_at'),
             ])
             ->recordUrl(fn (Member $record): string => static::getUrl('edit', ['record' => $record]))
             ->striped()
@@ -321,7 +335,6 @@ class MemberResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\RestoreAction::make()
                     ->label('Wiederherstellen'),
                 Tables\Actions\ForceDeleteAction::make()
