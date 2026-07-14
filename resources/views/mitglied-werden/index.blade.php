@@ -21,8 +21,9 @@
   .ts-dropdown .active { background-color: #c9a227 !important; color: #fff !important; }
   .ts-dropdown-content .option:hover { background-color: #f5e9c0; }
   .ts-wrapper.is-error .ts-control { border-color: #ef4444 !important; }
-  .ts-dropdown { z-index: 9999 !important; position: absolute !important; }
   .ts-wrapper { position: relative; }
+  .ts-dropdown { z-index: 9999 !important; position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important; }
+  form, .form-container, .form-group, .reg-main, .reg-section, .container { overflow: visible !important; }
 </style>
 
 <section class="reg-section">
@@ -47,7 +48,7 @@
           <div class="form-group">
             <label class="form-label" for="organisation_id">Organisation <span class="req">*</span></label>
             <select class="form-control @error('organisation_id') is-error @enderror" id="organisation_id" name="organisation_id" required>
-              <option value="">Organisation suchen...</option>
+              <option value="" disabled selected>Organisation auswählen...</option>
               @foreach($organisations as $id => $name)
                 <option value="{{ $id }}" {{ old('organisation_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
@@ -181,14 +182,14 @@
 <script>
   new TomSelect('#organisation_id', {
     placeholder: 'Organisation suchen...',
-    searchField: 'text',
+    searchField: ['text'],
     maxOptions: 50,
     create: false,
-    allowEmptyOption: true,
-    @if($errors->has('organisation_id')) plugins: [''], @endif
+    allowEmptyOption: false,
+    closeAfterSelect: true,
     render: {
       no_results: function() {
-        return '<div class="no-results" style="padding:0.5rem 1rem;color:#6b7280">Keine Organisation gefunden</div>';
+        return '<div class="no-results" style="padding:8px 12px">Keine Organisation gefunden</div>';
       }
     }
   });
