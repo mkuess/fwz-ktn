@@ -8,58 +8,96 @@
   <div class="container">
     <span class="eyebrow">Rechtliches</span>
     <h2 class="h2">Datenschutzerklärung</h2>
-    <p>Informationen zur Verarbeitung personenbezogener Daten gemäß Art. 13/14 DSGVO.</p>
+    <p>Informationen gemäß Art. 13/14 DSGVO</p>
   </div>
 </div>
 @endsection
 
 @section('content')
-<div class="legal-content">
-  <div class="container">
-    <div class="box">
-      <div class="note-box">
-        <strong>⚠️ Platzhalter</strong>
-        Vor Go-Live mit rechtsgeprüften Inhalten befüllen — insbesondere Rechtsträger, Hosting-Anbieter, Aufbewahrungsfristen und Auftragsverarbeitungsvertrag. Alle <span class="placeholder-field">[…]</span>-Felder ersetzen.
-      </div>
+<section style="max-width:800px;margin:3rem auto;padding:0 1.5rem">
 
-      <div class="toc">
-        <p>Inhalt</p>
-        <ol>
-          <li>Verantwortlicher</li>
-          <li>Welche Daten wir verarbeiten</li>
-          <li>Rechtsgrundlagen</li>
-          <li>Cookies</li>
-          <li>Ihre Rechte</li>
-          <li>Hosting</li>
-        </ol>
-      </div>
+  <p>Wir freuen uns über Ihre Kontaktaufnahme mit dem Land Kärnten. Die Beachtung der Vorgaben des Datenschutzes nimmt bei uns einen großen Stellenwert ein.</p>
 
-      <h2>1. Verantwortlicher</h2>
-      <p><span class="placeholder-field">[Name des Rechtsträgers]</span>, <span class="placeholder-field">[Adresse, PLZ Ort]</span> — E-Mail: <span class="placeholder-field">[office@…]</span></p>
+  <p>Internetseiten können grundsätzlich ohne Angabe personenbezogener Daten genutzt werden. Sofern eine betroffene Person besondere Services über unsere Internetseiten in Anspruch nehmen möchte, könnte jedoch eine Verarbeitung personenbezogener Daten erforderlich werden. Ist die Verarbeitung nötig und besteht hierfür keine gesetzliche Grundlage, holen wir generell die Einwilligung der betroffenen Person ein.</p>
 
-      <h2>2. Welche Daten wir verarbeiten</h2>
-      <p>Beim Besuch dieser Website verarbeiten wir folgende Daten:</p>
-      <ul>
-        <li>Technisch notwendige Daten (IP-Adresse, Browser-Typ, Zugriffszeit) durch unseren Hosting-Anbieter <span class="placeholder-field">[Anbieter]</span></li>
-        <li>Formulardaten, die Sie freiwillig übermitteln (z. B. Vereinsregistrierung)</li>
-        <li>Cookie-Einwilligungsentscheidung (gespeichert lokal im Browser, kein Server-Transfer)</li>
-      </ul>
+  <p>Die Verarbeitung personenbezogener Daten erfolgt im Einklang mit den Erfordernissen der Datenschutz-Grundverordnung (DSGVO) und dem geltenden Datenschutzgesetz (DSG).</p>
 
-      <h2>3. Rechtsgrundlagen</h2>
-      <p>Die Verarbeitung erfolgt auf Basis von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung), lit. c (rechtliche Verpflichtung) und lit. f (berechtigte Interessen) sowie bei optionalen Cookies auf Basis Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO).</p>
+  <h2>1) Grundsätze der Datenverarbeitung</h2>
+  <ul>
+    <li>Wir achten darauf, dass sowohl bei der Datenverarbeitung als auch bei der Übermittlung die schutzwürdigen Geheimhaltungsinteressen der Betroffenen nicht verletzt werden.</li>
+    <li>Wir erheben und verarbeiten personenbezogene Daten nur in dem für die Verwaltung unbedingt erforderlichen Umfang.</li>
+    <li>Wir achten darauf, dass personenbezogene Daten richtig, vollständig und zutreffend sind.</li>
+    <li>Wir stellen sicher, dass personenbezogene Daten nur von befugten Mitarbeiter:innen eingesehen werden können.</li>
+  </ul>
 
-      <h2>4. Cookies</h2>
-      <p>Wir setzen ausschließlich technisch notwendige Cookies ein. Optionale Analyse- und Marketing-Cookies werden nur nach Ihrer ausdrücklichen Einwilligung aktiviert. Ihre Einwilligung können Sie jederzeit über den Link „Cookie-Einstellungen" im Footer widerrufen (Art. 7 Abs. 3 DSGVO).</p>
+  <h2>2) Zwecke und Rechtsgrundlagen der Datenverarbeitung</h2>
+  <p><strong>a. Zur Erfüllung von vertraglichen Pflichten (Art. 6 Abs. 1 lit b DSGVO):</strong><br>
+  Das Land Kärnten oder von uns beauftragte Auftragsverarbeiter verarbeiten Ihre personenbezogenen Daten zur Erfüllung des Vertrages mit Ihnen.</p>
 
-      <h2>5. Ihre Rechte</h2>
-      <p>Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21 DSGVO). Zur Ausübung Ihrer Rechte: <span class="placeholder-field">[E-Mail]</span></p>
-      <p>Sie haben zudem das Recht, Beschwerde bei der österreichischen Datenschutzbehörde einzulegen: <a href="https://www.dsb.gv.at" rel="noopener noreferrer" target="_blank">www.dsb.gv.at</a></p>
+  <p><strong>b. Zur Erfüllung von rechtlichen Verpflichtungen (Art. 6 Abs. 1 lit c DSGVO):</strong><br>
+  Die Verarbeitung personenbezogener Daten kann zum Zweck der Erfüllung unterschiedlicher gesetzlicher Verpflichtungen erforderlich sein.</p>
 
-      <h2>6. Hosting</h2>
-      <p>Diese Website wird gehostet bei <span class="placeholder-field">[Hosting-Anbieter, Adresse]</span>. Mit dem Anbieter besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO.</p>
+  <p><strong>c. Im Rahmen Ihrer Einwilligung (Art. 6 Abs. 1 lit a DSGVO):</strong><br>
+  Wenn Sie uns eine Einwilligung zur Verarbeitung Ihrer personenbezogenen Daten erteilt haben, erfolgt eine Verarbeitung nur gemäß den in der Einwilligungserklärung festgelegten Zwecken. Eine erteilte Einwilligung kann jederzeit mit Wirkung für die Zukunft widerrufen werden.</p>
 
-      <p style="margin-top:2rem"><a href="{{ route('home') }}">&larr; Zurück zur Startseite</a></p>
-    </div>
-  </div>
-</div>
+  <p><strong>d. Zur Wahrung berechtigter Interessen (Art. 6 Abs. 1 lit f DSGVO):</strong><br>
+  Soweit erforderlich, kann im Rahmen von Interessenabwägungen eine Datenverarbeitung zur Wahrung berechtigter Interessen erfolgen (z.B. Telefonaufzeichnungen, Rechtsverfolgung, Kontaktaufnahme, Videoüberwachungen).</p>
+
+  <h2>3) Begriffsbestimmungen</h2>
+  <p><strong>Personenbezogene Daten:</strong> Alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen.</p>
+  <p><strong>Betroffene Person:</strong> Jede identifizierte oder identifizierbare natürliche Person, deren personenbezogene Daten verarbeitet werden.</p>
+  <p><strong>Verarbeitung:</strong> Jeder Vorgang im Zusammenhang mit personenbezogenen Daten wie das Erheben, Erfassen, Speichern, Verändern, Abfragen, Verwenden, Übermitteln oder Löschen.</p>
+  <p><strong>Verantwortlicher:</strong> Das Amt der Kärntner Landesregierung und jede Bezirkshauptmannschaft des Landes sind als Verantwortliche im Sinne der DSGVO zu sehen.</p>
+  <p><strong>Datenschutzbeauftragter:</strong> Behörden und öffentliche Stellen sind rechtlich verpflichtet, einen Datenschutzbeauftragten zu bestellen. Für das Amt der Kärntner Landesregierung und die Bezirkshauptmannschaften wurde ein gemeinsamer Datenschutzbeauftragter bestellt.</p>
+
+  <h2>4) Verantwortlicher</h2>
+  <p>Die Website fwz-ktn.at wird vom Amt der Kärntner Landesregierung betrieben.</p>
+  <p>
+    <strong>Amt der Kärntner Landesregierung</strong><br>
+    Abteilung 1 – Landesamtsdirektion, Landespressedienst<br>
+    Telefon: (+43) 050 536-10202<br>
+    E-Mail: <a href="mailto:abt1.lpd@ktn.gv.at">abt1.lpd@ktn.gv.at</a>
+  </p>
+
+  <h2>5) Datenschutzbeauftragter</h2>
+  <p>
+    Amt der Kärntner Landesregierung<br>
+    Abteilung 1 – Landesamtsdirektion<br>
+    Datenschutzbeauftragter<br>
+    Arnulfplatz 1, 9021 Klagenfurt<br>
+    Telefon: (+43) 050 536<br>
+    E-Mail: <a href="mailto:datenschutzbeauftragter@ktn.gv.at">datenschutzbeauftragter@ktn.gv.at</a>
+  </p>
+
+  <h2>6) Verwendung von Cookies</h2>
+  <p>Die Internetseite fwz-ktn.at verwendet Cookies. Cookies sind Textdateien, welche über einen Internetbrowser auf einem Computersystem abgelegt und gespeichert werden. fwz-ktn.at benötigt zur korrekten Funktionsweise das Setzen von technisch notwendigen Cookies.</p>
+  <p>Die betroffene Person kann die Setzung von Cookies durch unsere Internetseite jederzeit mittels einer entsprechenden Einstellung des genutzten Internetbrowsers verhindern. fwz-ktn.at verwendet Cookies in Übereinstimmung mit der unionsrechtlichen und österreichischen Rechtslage (Art 5 Abs 3 E-Privacy-RL sowie § 96 Abs 3 TKG 2021).</p>
+
+  <h2>7) Erfassung von allgemeinen Daten</h2>
+  <p>Die Webseite fwz-ktn.at erfasst mit jedem Aufruf eine Reihe von allgemeinen Daten, die in den Logfiles des Servers gespeichert werden (Browsertyp, Betriebssystem, IP-Adresse, Datum und Uhrzeit des Zugriffs etc.). Diese Daten werden ausschließlich zur Sicherstellung der Funktionsfähigkeit und zur Gefahrenabwehr genutzt.</p>
+
+  <h2>8) Registrierung</h2>
+  <p>Die betroffene Person hat die Möglichkeit, sich auf fwz-ktn.at zu registrieren. Die eingegebenen personenbezogenen Daten werden ausschließlich für die elektronische Antragstellung und zur Verwaltung der registrierten Benutzer erhoben und gespeichert. Eine Weitergabe dieser Daten an Dritte erfolgt grundsätzlich nicht, sofern keine gesetzliche Pflicht zur Weitergabe besteht.</p>
+
+  <h2>9) Ihre Rechte als betroffene Person</h2>
+  <ul>
+    <li><strong>Auskunft:</strong> Sie haben das Recht, Auskunft über die über Sie gespeicherten Daten zu erhalten.</li>
+    <li><strong>Berichtigung:</strong> Sie haben das Recht auf Berichtigung unrichtiger Daten.</li>
+    <li><strong>Löschung:</strong> Sie haben das Recht auf Löschung Ihrer Daten, wenn diese nicht mehr erforderlich sind.</li>
+    <li><strong>Widerruf:</strong> Sie haben das Recht, eine erteilte Einwilligung jederzeit zu widerrufen.</li>
+    <li><strong>Einschränkung:</strong> Sie haben das Recht auf Einschränkung der Verarbeitung unter bestimmten Voraussetzungen.</li>
+    <li><strong>Widerspruch:</strong> Sie haben das Recht, aus Gründen Ihrer besonderen Situation Widerspruch gegen eine Verarbeitung zu erheben.</li>
+  </ul>
+
+  <h2>10) Soziale Netzwerke</h2>
+  <p><strong>YouTube:</strong> Auf dieser Internetseite können YouTube-Komponenten integriert sein. Betreibergesellschaft ist YouTube LLC, 901 Cherry Ave., San Bruno, CA 94066, USA (Tochtergesellschaft der Google Inc.). Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Datenschutzerklärung</a></p>
+  <p><strong>Facebook:</strong> Auf unseren Seiten können Plugins des sozialen Netzwerks Facebook integriert sein. Weitere Informationen: <a href="https://www.facebook.com/policy.php" target="_blank" rel="noopener">Facebook Datenschutzerklärung</a></p>
+  <p><strong>Instagram:</strong> Auf unseren Seiten können Funktionen von Instagram eingebunden sein. Weitere Informationen: <a href="https://instagram.com/about/legal/privacy/" target="_blank" rel="noopener">Instagram Datenschutzerklärung</a></p>
+
+  <h2>11) Newsletter</h2>
+  <p>Sofern ein Newsletter-Dienst betrieben wird, zeichnet dieser das Öffnungs- und Klickverhalten auf. Die gespeicherten Daten werden ausschließlich dazu verwendet, den Empfängern maßgeschneiderte Inhalte zusenden zu können, und nicht an Dritte weitergegeben. Die Speicherung erfolgt bis zur Abbestellung des Newsletters.</p>
+
+  <p style="margin-top:3rem;font-size:0.875rem;color:#6b7280">Stand: 2026 | <a href="/impressum">Impressum</a></p>
+
+</section>
 @endsection
