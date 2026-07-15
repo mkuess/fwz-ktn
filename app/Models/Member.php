@@ -11,6 +11,18 @@ class Member extends Authenticatable
 {
     use SoftDeletes;
 
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::saved(function (Member $member) {
+            if (empty($member->membership_number) && $member->id) {
+                $member->updateQuietly([
+                    'membership_number' => 'FWZ-' . now()->year . '-' . str_pad($member->id, 6, '0', STR_PAD_LEFT),
+                ]);
+            }
+        });
+    }
+
     protected $fillable = [
         'organisation_id',
         'first_name',
@@ -64,6 +76,13 @@ class Member extends Authenticatable
         $year   = now()->year;
         $padded = str_pad($this->id, 6, '0', STR_PAD_LEFT);
         return "FWZ-{$year}-{$padded}";
+    }
+
+    public function getFormattedMembershipNumberAttribute(): ?string
+    {
+        if (!$this->membership_number) return null;
+        $id = str_pad($this->id, 10, '0', STR_PAD_LEFT);
+        return substr($id, 0, 4) . '-' . substr($id, 4, 4) . '-' . substr($id, 8, 2);
     }
 
     public function organisation(): BelongsTo

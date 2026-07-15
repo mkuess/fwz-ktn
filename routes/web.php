@@ -33,6 +33,7 @@ Route::post('/aktivierung/{token}',[MemberAuthController::class, 'activate'])->n
 
 Route::middleware(['auth:member'])->group(function () {
     Route::get('/mein-bereich', [MemberPortalController::class, 'index'])->name('member.portal');
+    Route::get('/mein-bereich/benefit/{id}', [MemberPortalController::class, 'benefit'])->name('member.benefit');
 });
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
 

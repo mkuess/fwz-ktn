@@ -69,17 +69,17 @@
     <p style="color:#6b7280;margin:0 0 2rem">Exklusive Vorteile für freiwillig Engagierte in Kärnten.</p>
     <div class="benefit-grid">
       @foreach($benefits as $benefit)
-        <div class="benefit-card">
-          @if($benefit->logo_path)
-            <img src="{{ Storage::url($benefit->logo_path) }}" alt="{{ $benefit->name }}" style="max-height:48px;object-fit:contain;margin-bottom:0.5rem">
-          @else
-            <div class="benefit-logo">{{ $benefit->name }}</div>
-          @endif
-          <p>{{ $benefit->description }}</p>
-          @if($benefit->website)
-            <a href="{{ $benefit->website }}" target="_blank" rel="noopener" style="font-size:0.875rem;color:inherit">Zum Partner →</a>
-          @endif
-        </div>
+        <a href="{{ route('member.benefit', $benefit->id) }}" style="text-decoration:none;color:inherit;display:block">
+          <div class="benefit-card" style="cursor:pointer;height:100%">
+            @if($benefit->logo_path)
+              <img src="{{ Storage::url($benefit->logo_path) }}" alt="{{ $benefit->name }}" style="max-height:48px;object-fit:contain;margin-bottom:0.5rem">
+            @else
+              <div class="benefit-logo">{{ $benefit->name }}</div>
+            @endif
+            <p>{{ $benefit->description }}</p>
+            <span style="font-size:0.875rem;color:var(--yellow);font-weight:600">Details ansehen →</span>
+          </div>
+        </a>
       @endforeach
     </div>
   </div>

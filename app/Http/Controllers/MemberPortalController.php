@@ -13,4 +13,11 @@ class MemberPortalController extends Controller
             ->get();
         return view('mein-bereich.index', compact('member', 'benefits'));
     }
+
+    public function benefit($id)
+    {
+        $benefit = \App\Models\Benefit::where('id', $id)->where('is_active', true)->firstOrFail();
+        $member  = auth('member')->user()->load('organisation');
+        return view('mein-bereich.benefit', compact('benefit', 'member'));
+    }
 }
