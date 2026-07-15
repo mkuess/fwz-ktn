@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="nav-actions">
-      <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
+      <a class="btn primary" href="{{ route('member.register') }}">Benefits als Mitglied sichern <span class="arrow">→</span></a>
     </div>
     <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav-panel" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
   </nav>
@@ -41,7 +41,7 @@
     <a href="{{ route('articles.index') }}">Aktuelles</a>
   </nav>
   <div class="mobile-nav-panel__actions">
-    <a class="btn primary" href="{{ route('home') }}#aktionen">Ich möchte helfen <span class="arrow">→</span></a>
+    <a class="btn primary" href="{{ route('member.register') }}">Benefits als Mitglied sichern <span class="arrow">→</span></a>
     <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden</a>
   </div>
 </div>

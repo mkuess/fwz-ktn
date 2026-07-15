@@ -6,9 +6,9 @@
 @section('hero')
 <div class="page-hero">
   <div class="container">
-    <span class="eyebrow">Ehrenamt</span>
-    <h1 class="h2">Mitglied werden.</h1>
-    <p>Melde dich bei einer Organisation deiner Wahl an und werde Teil der Freiwilligengemeinschaft in Kärnten.</p>
+    <span class="eyebrow">FREIWILLIG ENGAGIERT</span>
+    <h1 class="h2">Benefits als Mitglied sichern.</h1>
+    <p>Melde dich als freiwilliges Mitglied einer Kärntner Organisation an und erhalte exklusive Benefits bei unseren Partnerbetrieben – als Dankeschön für dein Engagement.</p>
   </div>
 </div>
 @endsection
@@ -151,9 +151,9 @@
           <h3 class="h4" style="margin-bottom:1rem">Was passiert danach?</h3>
           <ol style="padding-left:1.25rem;line-height:1.8">
             <li>Deine Anfrage wird geprüft</li>
-            <li>Die Organisation bestätigt deine Mitgliedschaft</li>
-            <li>Du erhältst eine Bestätigung per E-Mail</li>
-            <li>Du kannst dich mit deiner E-Mail-Adresse anmelden</li>
+            <li>Du erhältst einen Aktivierungslink per E-Mail</li>
+            <li>Du erstellst dein Passwort und loggst dich ein</li>
+            <li>Du erhältst deine digitale Mitgliedskarte und Zugang zu allen Benefits</li>
           </ol>
         </div>
         <div class="box" style="padding:1.5rem;margin-top:1rem">

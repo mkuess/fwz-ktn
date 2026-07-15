@@ -20,6 +20,20 @@ Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.in
 Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
+
+Route::get('/mein-bereich', function () {
+    $member = (object)[
+        'first_name'       => 'Max',
+        'last_name'        => 'Mustermann',
+        'organisation'     => (object)['name' => 'Beispiel Verein Kärnten'],
+        'membership_number' => null,
+    ];
+    $benefits = \App\Models\Benefit::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+    return view('mein-bereich.index', compact('member', 'benefits'));
+})->name('member.portal');
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
 
 Route::get('/vereine/{id}', [OrganisationController::class, 'show'])->name('organisations.show');

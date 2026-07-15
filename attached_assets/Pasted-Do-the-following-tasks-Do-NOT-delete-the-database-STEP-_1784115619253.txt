@@ -1,0 +1,92 @@
+Do the following tasks. Do NOT delete the database.
+
+STEP 1 - Change all "Ich möchte helfen" buttons/links to "Benefits als Mitglied sichern":
+Search in all blade files for "Ich möchte helfen" and replace with "Benefits als Mitglied sichern".
+Also update the nav button and any CTA buttons on the homepage.
+
+STEP 2 - Copy the card background image to public:
+The image file at /mnt/user-data/uploads/90752704-55eb-455a-9f98-7183815b81e3.png
+Copy it to: public/img/mitgliedskarte-bg.png
+
+STEP 3 - Create the digital membership card as a Blade partial:
+Create resources/views/partials/mitgliedskarte.blade.php
+
+The card should look like a credit card (aspect ratio 1.586:1, e.g. 420px × 265px):
+
+<div style="
+    width:100%;
+    max-width:420px;
+    aspect-ratio:1.586;
+    border-radius:1rem;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 8px 32px rgba(0,0,0,0.25);
+    font-family:inherit;
+">
+    <!-- Background image -->
+    <img src="{{ asset('img/mitgliedskarte-bg.png') }}" 
+         alt="" 
+         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    
+    <!-- Dark overlay on left side for text readability -->
+    <div style="position:absolute;inset:0;background:linear-gradient(to right, rgba(26,46,26,0.75) 0%, rgba(26,46,26,0.3) 60%, transparent 100%)"></div>
+    
+    <!-- Card content -->
+    <div style="position:relative;z-index:1;padding:1.5rem;height:100%;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box">
+        
+        <!-- Top: FWZ Logo -->
+        <div>
+            <img src="{{ asset('img/footer-logo.svg') }}" alt="FWZ Kärnten" style="height:1.75rem;filter:brightness(0) invert(1)">
+        </div>
+        
+        <!-- Middle: Member name and organisation -->
+        <div>
+            <div style="color:rgba(255,255,255,0.8);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem">Freiwilliges Mitglied</div>
+            <div style="color:#ffffff;font-size:1.25rem;font-weight:700;line-height:1.2">
+                {{ $member->first_name }} {{ $member->last_name }}
+            </div>
+            @if($member->organisation)
+            <div style="color:rgba(255,255,255,0.85);font-size:0.8rem;margin-top:0.25rem">
+                {{ $member->organisation->name }}
+            </div>
+            @endif
+        </div>
+        
+        <!-- Bottom: Membership number -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="color:rgba(255,255,255,0.9);font-size:0.85rem;font-family:monospace;letter-spacing:0.15em">
+                {{ $member->membership_number ?? 'wird zugeteilt' }}
+            </div>
+            <div style="color:rgba(255,255,255,0.7);font-size:0.7rem;text-align:right">
+                <div>FREIWILLIGENZENTRUM</div>
+                <div>KÄRNTEN</div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+STEP 4 - Create a member portal page /mein-bereich (placeholder for now):
+Create resources/views/mein-bereich/index.blade.php with:
+- Same site layout
+- Hero header: "Mein Bereich" 
+- Show the membership card using @include('partials.mitgliedskarte', ['member' => $member])
+- Below card: section "Meine Benefits" showing all active benefits (same as /benefits page)
+- Note: "Login-Funktionalität folgt in Kürze" placeholder
+
+Add route: Route::get('/mein-bereich', fn() => view('mein-bereich.index'))->name('member.portal');
+(Pass a dummy member for now so the card renders)
+
+STEP 5 - Update the Anmeldung/registration page text:
+In resources/views/mitglied-werden/index.blade.php update the hero text:
+- Eyebrow: "FREIWILLIG ENGAGIERT"
+- Heading: "Benefits als Mitglied sichern."
+- Subtitle: "Melde dich als freiwilliges Mitglied einer Kärntner Organisation an und erhalte exklusive Benefits bei unseren Partnerbetrieben – als Dankeschön für dein Engagement."
+
+Also update the "Was passiert danach?" sidebar steps:
+1. Deine Anfrage wird geprüft
+2. Du erhältst einen Aktivierungslink per E-Mail
+3. Du erstellst dein Passwort und loggst dich ein
+4. Du erhältst deine digitale Mitgliedskarte und Zugang zu allen Benefits
+
+Do NOT delete the database. Report when done.
