@@ -260,10 +260,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   .nav-actions{display:none}
   .nav-toggle{
     display:block;
-    position:fixed;
-    top:18px;
-    right:20px;
-    z-index:3000;
+    position:relative;
     background:rgba(255,255,255,.12);
     border:none;
     border-radius:8px;
