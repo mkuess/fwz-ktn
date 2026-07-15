@@ -115,7 +115,7 @@
           @endif
 
           <a href="{{ route('member.register') }}?organisation={{ $organisation->id }}"
-             style="display:block;text-align:center;background:#c9a227;color:#1a2e1a;padding:0.875rem 1.5rem;border-radius:2rem;text-decoration:none;font-weight:700;font-size:1rem;margin-top:1.5rem">
+             class="btn-cta">
             Benefits als Mitglied sichern →
           </a>
         </div>
