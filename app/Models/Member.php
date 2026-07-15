@@ -80,10 +80,7 @@ class Member extends Authenticatable
 
     public function getFormattedMembershipNumberAttribute(): ?string
     {
-        if (!$this->membership_number) return null;
-        $numeric = preg_replace('/[^0-9]/', '', $this->membership_number);
-        $numeric = str_pad($numeric, 10, '0', STR_PAD_LEFT);
-        return substr($numeric, 0, 4) . '-' . substr($numeric, 4, 4) . '-' . substr($numeric, 8, 2);
+        return $this->membership_number ?? null;
     }
 
     public function organisation(): BelongsTo
