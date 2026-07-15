@@ -27,7 +27,15 @@
       </div>
     </div>
     <div class="nav-actions">
-      <a class="btn primary" href="{{ route('member.register') }}">Benefits als Mitglied sichern <span class="arrow">→</span></a>
+      @if(auth('member')->check())
+        <a class="btn primary" href="{{ route('member.portal') }}">Mein Bereich <span class="arrow">→</span></a>
+        <form method="POST" action="{{ route('member.logout') }}" style="display:inline">
+          @csrf
+          <button type="submit" class="btn light" style="cursor:pointer;font-family:inherit;border:none">Abmelden</button>
+        </form>
+      @else
+        <a class="btn primary" href="{{ route('member.login') }}">Anmelden <span class="arrow">→</span></a>
+      @endif
     </div>
     <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav-panel" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
   </nav>
@@ -41,7 +49,15 @@
     <a href="{{ route('articles.index') }}">Aktuelles</a>
   </nav>
   <div class="mobile-nav-panel__actions">
-    <a class="btn primary" href="{{ route('member.register') }}">Benefits als Mitglied sichern <span class="arrow">→</span></a>
+    @if(auth('member')->check())
+      <a class="btn primary" href="{{ route('member.portal') }}">Mein Bereich <span class="arrow">→</span></a>
+      <form method="POST" action="{{ route('member.logout') }}">
+        @csrf
+        <button type="submit" class="btn light" style="width:100%;cursor:pointer;font-family:inherit;border:none;text-align:center">Abmelden</button>
+      </form>
+    @else
+      <a class="btn primary" href="{{ route('member.login') }}">Anmelden <span class="arrow">→</span></a>
+    @endif
     <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden</a>
   </div>
 </div>

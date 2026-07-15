@@ -3,6 +3,8 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MemberAuthController;
+use App\Http\Controllers\MemberPortalController;
 use App\Http\Controllers\MemberRegistrationController;
 use App\Http\Controllers\OrganisationController;
 use App\Http\Controllers\OrganisationRegistrationController;
@@ -21,24 +23,17 @@ Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('artic
 
 Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
 
-Route::get('/aktivierung/{token}', function ($token) {
-    $member = \App\Models\Member::where('activation_token', $token)->firstOrFail();
-    return view('aktivierung.index', compact('member'));
-})->name('member.activate');
+Route::get('/anmelden',          [MemberAuthController::class, 'showLogin'])->name('member.login');
+Route::post('/anmelden',         [MemberAuthController::class, 'login'])->name('member.login.post');
+Route::post('/abmelden',         [MemberAuthController::class, 'logout'])->name('member.logout');
+Route::get('/passwort-vergessen', [MemberAuthController::class, 'showForgotPassword'])->name('member.forgot');
+Route::post('/passwort-vergessen',[MemberAuthController::class, 'sendResetLink'])->name('member.forgot.post');
+Route::get('/aktivierung/{token}', [MemberAuthController::class, 'showActivation'])->name('member.activate');
+Route::post('/aktivierung/{token}',[MemberAuthController::class, 'activate'])->name('member.activate.post');
 
-Route::get('/mein-bereich', function () {
-    $member = (object)[
-        'first_name'       => 'Max',
-        'last_name'        => 'Mustermann',
-        'organisation'     => (object)['name' => 'Beispiel Verein Kärnten'],
-        'membership_number' => null,
-    ];
-    $benefits = \App\Models\Benefit::where('is_active', true)
-        ->orderBy('sort_order')
-        ->orderBy('name')
-        ->get();
-    return view('mein-bereich.index', compact('member', 'benefits'));
-})->name('member.portal');
+Route::middleware(['auth:member'])->group(function () {
+    Route::get('/mein-bereich', [MemberPortalController::class, 'index'])->name('member.portal');
+});
 Route::get('/vereine/suche', [HomeController::class, 'vereineSuche'])->name('vereine.suche');
 
 Route::get('/vereine/{id}', [OrganisationController::class, 'show'])->name('organisations.show');

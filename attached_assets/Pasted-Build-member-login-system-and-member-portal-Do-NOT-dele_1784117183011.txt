@@ -1,0 +1,183 @@
+Build member login system and member portal. Do NOT delete the database.
+
+STEP 1 - Change nav button:
+In all blade files find "Benefits als Mitglied sichern" in the navigation header (NOT on other pages, only the nav button) and change to "Anmelden".
+Change the href to route('member.login').
+
+STEP 2 - Create member authentication system:
+Members log in with email + password (separate from Filament admin).
+Use Laravel's built-in Auth but with a custom guard for members.
+
+Add to config/auth.php:
+'guards' => [
+    'web' => [...existing...],
+    'member' => [
+        'driver' => 'session',
+        'provider' => 'members',
+    ],
+],
+'providers' => [
+    'users' => [...existing...],
+    'members' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Member::class,
+    ],
+],
+
+Make sure Member model implements Authenticatable:
+use Illuminate\Foundation\Auth\User as Authenticatable;
+class Member extends Authenticatable { ... }
+Add: use HasFactory, SoftDeletes;
+Make sure $hidden = ['password', 'remember_token'];
+
+STEP 3 - Create MemberAuthController:
+app/Http/Controllers/MemberAuthController.php
+
+public function showLogin() {
+    if (auth('member')->check()) {
+        return redirect()->route('member.portal');
+    }
+    return view('auth.member-login');
+}
+
+public function login(Request $request) {
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ], [
+        'email.required' => 'Bitte gib deine E-Mail-Adresse ein.',
+        'password.required' => 'Bitte gib dein Passwort ein.',
+    ]);
+
+    if (auth('member')->attempt($credentials, $request->boolean('remember'))) {
+        $member = auth('member')->user();
+        if ($member->status !== 'approved') {
+            auth('member')->logout();
+            return back()->withErrors(['email' => 'Dein Konto wurde noch nicht freigeschaltet.']);
+        }
+        $request->session()->regenerate();
+        return redirect()->route('member.portal');
+    }
+
+    return back()->withErrors(['email' => 'E-Mail oder Passwort ist falsch.']);
+}
+
+public function logout(Request $request) {
+    auth('member')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('member.login');
+}
+
+public function showForgotPassword() {
+    return view('auth.member-forgot-password');
+}
+
+public function sendResetLink(Request $request) {
+    $request->validate(['email' => 'required|email']);
+    $member = \App\Models\Member::where('email', $request->email)->first();
+    if ($member) {
+        $token = \Illuminate\Support\Str::random(64);
+        $member->update([
+            'activation_token' => $token,
+            'activation_sent_at' => now(),
+        ]);
+        // For now: show the link in session (email sending to be configured later)
+        session(['reset_link' => url('/aktivierung/' . $token)]);
+    }
+    return back()->with('status', 'Falls ein Konto mit dieser E-Mail existiert, wurde ein Link gesendet.');
+}
+
+STEP 4 - Create activation/password-set controller:
+In the existing activation route, handle password creation:
+
+Route for GET /aktivierung/{token} → show password form
+Route for POST /aktivierung/{token} → save password and log in
+
+public function showActivation($token) {
+    $member = \App\Models\Member::where('activation_token', $token)->firstOrFail();
+    return view('aktivierung.index', compact('member', 'token'));
+}
+
+public function activate(Request $request, $token) {
+    $member = \App\Models\Member::where('activation_token', $token)->firstOrFail();
+    $request->validate([
+        'password' => 'required|min:8|confirmed',
+    ], [
+        'password.required' => 'Bitte wähle ein Passwort.',
+        'password.min' => 'Das Passwort muss mindestens 8 Zeichen lang sein.',
+        'password.confirmed' => 'Die Passwörter stimmen nicht überein.',
+    ]);
+    $member->update([
+        'password' => bcrypt($request->password),
+        'activation_token' => null,
+        'status' => 'approved',
+    ]);
+    auth('member')->login($member);
+    return redirect()->route('member.portal')->with('success', 'Willkommen! Dein Konto wurde aktiviert.');
+}
+
+STEP 5 - Create routes in routes/web.php:
+Route::get('/anmelden', [MemberAuthController::class, 'showLogin'])->name('member.login');
+Route::post('/anmelden', [MemberAuthController::class, 'login'])->name('member.login.post');
+Route::post('/abmelden', [MemberAuthController::class, 'logout'])->name('member.logout');
+Route::get('/passwort-vergessen', [MemberAuthController::class, 'showForgotPassword'])->name('member.forgot');
+Route::post('/passwort-vergessen', [MemberAuthController::class, 'sendResetLink'])->name('member.forgot.post');
+Route::get('/aktivierung/{token}', [MemberAuthController::class, 'showActivation'])->name('member.activate');
+Route::post('/aktivierung/{token}', [MemberAuthController::class, 'activate'])->name('member.activate.post');
+
+// Protected member portal
+Route::middleware(['auth:member'])->group(function () {
+    Route::get('/mein-bereich', [MemberPortalController::class, 'index'])->name('member.portal');
+});
+
+STEP 6 - Create MemberPortalController:
+app/Http/Controllers/MemberPortalController.php
+
+public function index() {
+    $member = auth('member')->user()->load('organisation');
+    $benefits = \App\Models\Benefit::where('is_active', true)->orderBy('sort_order')->get();
+    return view('mein-bereich.index', compact('member', 'benefits'));
+}
+
+STEP 7 - Create login view resources/views/auth/member-login.blade.php:
+Same layout as site. Hero header:
+- Eyebrow: "MITGLIEDERBEREICH"
+- Heading: "Willkommen zurück"
+
+Form:
+- Email field
+- Password field  
+- "Angemeldet bleiben" checkbox
+- "Anmelden" submit button (gold, full width)
+- "Passwort vergessen?" link → route('member.forgot')
+- "Noch kein Mitglied?" link → route('member.register')
+Show validation errors inline.
+
+STEP 8 - Create forgot password view resources/views/auth/member-forgot-password.blade.php:
+Simple form with email field and submit button.
+Show success message from session('status').
+
+STEP 9 - Update aktivierung view resources/views/aktivierung/index.blade.php:
+Show password creation form:
+- "Willkommen, {$member->first_name}! Erstelle jetzt dein Passwort."
+- Password field (min 8 chars)
+- Password confirmation field
+- Submit: "Passwort erstellen & einloggen"
+Form POSTs to route('member.activate.post', $token)
+
+STEP 10 - Update /mein-bereich view with two sections:
+1. Mitgliedskarte (use existing partials/mitgliedskarte.blade.php with real auth('member')->user())
+2. Benefits section showing all active benefits as cards
+
+Also update nav: when member is logged in, show "Mein Bereich" instead of "Anmelden":
+@if(auth('member')->check())
+    <a href="{{ route('member.portal') }}">Mein Bereich</a>
+    <form method="POST" action="{{ route('member.logout') }}">@csrf<button>Abmelden</button></form>
+@else
+    <a href="{{ route('member.login') }}">Anmelden</a>
+@endif
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate if needed.
+Report when done.

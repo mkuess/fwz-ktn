@@ -17,14 +17,12 @@
 <section class="section">
   <div class="container">
 
-    {{-- Login notice --}}
-    <div style="background:#fef9ec;border:1px solid var(--yellow);border-radius:0.75rem;padding:1rem 1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:0.75rem">
-      <span style="font-size:1.25rem">🔒</span>
-      <p style="margin:0;font-size:0.9rem;color:#374151">
-        <strong>Login-Funktionalität folgt in Kürze.</strong>
-        Diese Seite zeigt eine Vorschau. Nach dem Launch loggst du dich mit deiner E-Mail-Adresse ein.
-      </p>
+    @if(session('success'))
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:0.75rem;padding:1rem 1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:0.75rem">
+      <span style="font-size:1.25rem">🎉</span>
+      <p style="margin:0;font-size:0.9rem;color:#166534">{{ session('success') }}</p>
     </div>
+    @endif
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start">
 
