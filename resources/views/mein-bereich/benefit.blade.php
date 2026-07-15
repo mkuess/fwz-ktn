@@ -15,19 +15,9 @@ body { background: #f3f4f6; }
 
 <div style="max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column">
 
-    <!-- Card section - dark background -->
-    <div style="background:#1a2e1a;padding:2rem 1.5rem 1rem;display:flex;flex-direction:column;align-items:center">
+    <!-- Card section -->
+    <div style="padding:2rem 1.5rem 1.5rem;display:flex;flex-direction:column;align-items:center">
         @include('partials.mitgliedskarte', ['member' => $member])
-    </div>
-
-    <!-- Live animation - centered, larger, no text -->
-    <div style="background:#1a2e1a;padding:0.75rem 0 1.5rem;display:flex;justify-content:center;align-items:center">
-        <div style="position:relative;width:48px;height:48px;display:flex;align-items:center;justify-content:center">
-            <div style="position:absolute;width:48px;height:48px;border-radius:50%;border:2px solid rgba(201,162,39,0.6);animation:ripple 2s ease-out infinite"></div>
-            <div style="position:absolute;width:48px;height:48px;border-radius:50%;border:2px solid rgba(201,162,39,0.4);animation:ripple 2s ease-out 0.6s infinite"></div>
-            <div style="position:absolute;width:48px;height:48px;border-radius:50%;border:2px solid rgba(201,162,39,0.2);animation:ripple 2s ease-out 1.2s infinite"></div>
-            <div style="width:12px;height:12px;border-radius:50%;background:#c9a227;animation:pulse-dot 1.5s ease-in-out infinite;position:relative;z-index:1"></div>
-        </div>
     </div>
 
     <!-- Benefit card -->

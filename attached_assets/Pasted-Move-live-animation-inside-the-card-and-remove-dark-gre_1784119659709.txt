@@ -1,0 +1,46 @@
+Move live animation inside the card and remove dark green background section. Do NOT delete the database.
+
+In resources/views/mein-bereich/benefit.blade.php:
+
+STEP 1 - Remove the separate animation section between card and benefit card:
+Delete the entire div that has the animation between the card section and the benefit card.
+
+STEP 2 - Remove dark green background from card section:
+Change the card wrapper div background from background:#1a2e1a to background:#f3f4f6 (same as page background).
+Remove the padding-bottom from that section too.
+
+So the card section becomes:
+<div style="padding:2rem 1.5rem 1.5rem;display:flex;flex-direction:column;align-items:center">
+    @include('partials.mitgliedskarte', ['member' => $member])
+</div>
+
+STEP 3 - Add the live animation INSIDE the membership card partial:
+In resources/views/partials/mitgliedskarte.blade.php add the animation in the TOP RIGHT corner of the card:
+
+Inside the card content div (position:relative;z-index:1), add a positioned element in the top right:
+
+<!-- Live indicator - top right corner -->
+<div style="position:absolute;top:1rem;right:1rem;z-index:2">
+    <div style="position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.7);animation:ripple 2s ease-out infinite"></div>
+        <div style="position:absolute;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.4);animation:ripple 2s ease-out 0.7s infinite"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#ffffff;animation:pulse-dot 1.5s ease-in-out infinite;position:relative;z-index:1"></div>
+    </div>
+</div>
+
+STEP 4 - Add the keyframe animations to the minimal layout or to the card partial itself via a <style> tag:
+In mitgliedskarte.blade.php add at the top (only once, use a check):
+@once
+<style>
+@keyframes ripple {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+@keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+}
+</style>
+@endonce
+
+Do NOT delete the database. Report when done.
