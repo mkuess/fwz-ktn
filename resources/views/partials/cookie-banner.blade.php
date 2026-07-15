@@ -18,7 +18,7 @@
                 <p style="margin:0;font-size:0.875rem;color:#374151;line-height:1.5">
                     Wir verwenden Cookies, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen.
                     Technisch notwendige Cookies werden immer gesetzt.
-                    <a href="/datenschutz" style="color:#c9a227">Mehr erfahren</a>
+                    <a href="/datenschutz" style="color:var(--yellow)">Mehr erfahren</a>
                 </p>
             </div>
 
@@ -38,7 +38,7 @@
                     Ablehnen
                 </button>
                 <button @click="accept()"
-                    style="padding:0.625rem 1.25rem;border:2px solid #c9a227;background:#c9a227;color:#1a2e1a;border-radius:2rem;cursor:pointer;font-size:0.875rem;font-weight:700;flex:1;min-width:120px">
+                    style="padding:0.625rem 1.25rem;border:2px solid var(--yellow);background:var(--yellow);color:#1a2e1a;border-radius:2rem;cursor:pointer;font-size:0.875rem;font-weight:700;flex:1;min-width:120px">
                     Verstanden
                 </button>
             </div>
@@ -46,7 +46,7 @@
             <!-- Footer note -->
             <p style="font-size:0.72rem;color:#9ca3af;margin-top:1rem;margin-bottom:0;line-height:1.5">
                 Technisch notwendige Cookies können nicht deaktiviert werden, da sie für die grundlegende Funktionsfähigkeit der Website erforderlich sind.
-                <a href="/datenschutz" style="color:#c9a227">Datenschutzerklärung</a>
+                <a href="/datenschutz" style="color:var(--yellow)">Datenschutzerklärung</a>
             </p>
 
         </div>

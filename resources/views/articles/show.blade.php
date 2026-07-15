@@ -25,7 +25,7 @@
       <div class="box" style="max-width:800px;margin:0 auto;padding:2.5rem">
         <article>
           @if($article->excerpt)
-            <p style="font-size:1.125rem;color:#6b7280;margin-bottom:2rem;border-left:4px solid #c9a227;padding-left:1rem">{{ $article->excerpt }}</p>
+            <p style="font-size:1.125rem;color:#6b7280;margin-bottom:2rem;border-left:4px solid var(--yellow);padding-left:1rem">{{ $article->excerpt }}</p>
           @endif
 
           <div class="news-data" style="margin-bottom:1.5rem;display:flex;gap:1rem;flex-wrap:wrap">
@@ -57,7 +57,7 @@
               <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.5rem">
                 @foreach($article->attachments as $attachment)
                   <li>
-                    <a href="{{ Storage::url($attachment->file_path) }}" target="_blank" download="{{ $attachment->original_name }}" style="color:#c9a227">
+                    <a href="{{ Storage::url($attachment->file_path) }}" target="_blank" download="{{ $attachment->original_name }}" style="color:var(--yellow)">
                       📎 {{ $attachment->original_name }}
                     </a>
                   </li>

@@ -5,7 +5,7 @@
              alt=""
              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
     @else
-        <div style="position:absolute;inset:0;background:linear-gradient(135deg,#1a2e1a 0%,#2d4a2d 50%,#c9a227 100%)"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,#1a2e1a 0%,#2d4a2d 50%,var(--yellow) 100%)"></div>
     @endif
 
     <!-- Dark overlay for text readability -->

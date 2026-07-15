@@ -14,7 +14,7 @@
       @if($organisation->categories->count())
         <div style="margin-bottom:0.5rem">
           @foreach($organisation->categories as $cat)
-            <span style="background:#c9a227;color:#fff;padding:0.15rem 0.6rem;border-radius:1rem;font-size:0.7rem;font-weight:600;margin-right:0.4rem">
+            <span style="background:var(--yellow);color:#fff;padding:0.15rem 0.6rem;border-radius:1rem;font-size:0.7rem;font-weight:600;margin-right:0.4rem">
               {{ $cat->name }}
             </span>
           @endforeach
@@ -102,7 +102,7 @@
           @if($organisation->website)
             <div style="margin-bottom:0.875rem;display:flex;align-items:center;gap:0.625rem">
               <span style="flex-shrink:0">🌐</span>
-              <a href="{{ $organisation->website }}" target="_blank" rel="noopener" style="color:#c9a227;word-break:break-all">
+              <a href="{{ $organisation->website }}" target="_blank" rel="noopener" style="color:var(--yellow);word-break:break-all">
                 {{ $organisation->website }}
               </a>
             </div>

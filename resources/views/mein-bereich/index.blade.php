@@ -18,7 +18,7 @@
   <div class="container">
 
     {{-- Login notice --}}
-    <div style="background:#fef9ec;border:1px solid #c9a227;border-radius:0.75rem;padding:1rem 1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:0.75rem">
+    <div style="background:#fef9ec;border:1px solid var(--yellow);border-radius:0.75rem;padding:1rem 1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:0.75rem">
       <span style="font-size:1.25rem">🔒</span>
       <p style="margin:0;font-size:0.9rem;color:#374151">
         <strong>Login-Funktionalität folgt in Kürze.</strong>
