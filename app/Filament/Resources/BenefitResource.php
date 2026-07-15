@@ -36,6 +36,12 @@ class BenefitResource extends Resource
                     ->label('Beschreibung')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\Textarea::make('benefit_code')
+                    ->label('Benefit Code')
+                    ->helperText('Code oder Aktionscode den Mitglieder beim Partner vorzeigen können')
+                    ->rows(3)
+                    ->nullable()
+                    ->columnSpanFull(),
                 Forms\Components\RichEditor::make('content')
                     ->label('Inhalt')
                     ->helperText('Detaillierter Inhalt / Beschreibung des Benefits')

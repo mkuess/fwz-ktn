@@ -9,6 +9,7 @@ class Benefit extends Model
     protected $fillable = [
         'name',
         'description',
+        'benefit_code',
         'content',
         'website',
         'logo_path',
