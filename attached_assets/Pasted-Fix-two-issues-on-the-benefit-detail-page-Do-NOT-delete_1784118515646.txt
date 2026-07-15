@@ -1,0 +1,55 @@
+Fix two issues on the benefit detail page. Do NOT delete the database.
+
+STEP 1 - Hide header and footer on benefit detail page:
+In resources/views/mein-bereich/benefit.blade.php use a minimal layout without header and footer.
+
+Either:
+a) Create a new minimal layout resources/views/layouts/minimal.blade.php:
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body style="margin:0;padding:0;background:#f3f4f6">
+    @yield('content')
+</body>
+</html>
+
+Then in benefit.blade.php use: @extends('layouts.minimal')
+
+b) OR if the current layout has a variable to hide header/footer:
+Pass @php($hideHeaderFooter = true) @endphp and add @if(empty($hideHeaderFooter)) around header and footer in the main layout.
+
+STEP 2 - Fix membership number display on card:
+The formatted_membership_number accessor is not working correctly.
+
+In Member model, fix the accessor:
+public function getFormattedMembershipNumberAttribute(): ?string
+{
+    if (!$this->membership_number) return null;
+    // membership_number is stored as "FWZ-2026-000042"
+    // Extract just the numeric part and format as XXXX-XXXX-XX
+    $numeric = preg_replace('/[^0-9]/', '', $this->membership_number);
+    $numeric = str_pad($numeric, 10, '0', STR_PAD_LEFT);
+    return substr($numeric, 0, 4) . '-' . substr($numeric, 4, 4) . '-' . substr($numeric, 8, 2);
+}
+
+Then in resources/views/partials/mitgliedskarte.blade.php make sure it uses:
+{{ $member->formatted_membership_number ?? 'wird zugeteilt' }}
+
+STEP 3 - Also verify membership number is being generated:
+In Member model boot() method, check if the saved() hook fires correctly.
+Add a fallback in MemberPortalController:
+$member = auth('member')->user()->load('organisation');
+if (empty($member->membership_number)) {
+    $member->update([
+        'membership_number' => 'FWZ-' . now()->year . '-' . str_pad($member->id, 6, '0', STR_PAD_LEFT)
+    ]);
+    $member->refresh();
+}
+
+Do NOT delete the database. Report when done.

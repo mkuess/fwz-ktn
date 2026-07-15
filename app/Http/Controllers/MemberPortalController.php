@@ -6,7 +6,13 @@ class MemberPortalController extends Controller
 {
     public function index()
     {
-        $member   = auth('member')->user()->load('organisation');
+        $member = auth('member')->user()->load('organisation');
+        if (empty($member->membership_number)) {
+            $member->update([
+                'membership_number' => 'FWZ-' . now()->year . '-' . str_pad($member->id, 6, '0', STR_PAD_LEFT),
+            ]);
+            $member->refresh();
+        }
         $benefits = \App\Models\Benefit::where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
