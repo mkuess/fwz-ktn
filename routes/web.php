@@ -21,6 +21,11 @@ Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('artic
 
 Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
 
+Route::get('/aktivierung/{token}', function ($token) {
+    $member = \App\Models\Member::where('activation_token', $token)->firstOrFail();
+    return view('aktivierung.index', compact('member'));
+})->name('member.activate');
+
 Route::get('/mein-bereich', function () {
     $member = (object)[
         'first_name'       => 'Max',

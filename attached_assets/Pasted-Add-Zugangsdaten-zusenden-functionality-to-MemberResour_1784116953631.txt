@@ -1,0 +1,87 @@
+Add "Zugangsdaten zusenden" functionality to MemberResource edit page. Do NOT delete the database.
+
+STEP 1 - Add new columns to members table if not exist:
+Create migration:
+$table->timestamp('activation_sent_at')->nullable();
+$table->string('activation_token')->nullable()->unique();
+Run: php artisan migrate
+
+STEP 2 - Add 'activation_sent_at', 'activation_token' to Member model $fillable.
+
+STEP 3 - Add membership_number auto-generation:
+When a member's status is set to 'approved' and membership_number is empty, auto-generate:
+Format: FWZ-YYYY-XXXXXX (e.g. FWZ-2026-000042)
+In Member model add a method:
+public function generateMembershipNumber(): string
+{
+    $year = now()->year;
+    $padded = str_pad($this->id, 6, '0', STR_PAD_LEFT);
+    return "FWZ-{$year}-{$padded}";
+}
+
+STEP 4 - Add a custom Action to MemberResource edit page header:
+In app/Filament/Resources/MemberResource/Pages/EditMember.php add to getHeaderActions():
+
+Action::make('sendActivation')
+    ->label('Zugangsdaten zusenden')
+    ->icon('heroicon-o-envelope')
+    ->color('success')
+    ->visible(fn () => $this->record->status === 'approved')
+    ->requiresConfirmation()
+    ->modalHeading('Zugangsdaten zusenden')
+    ->modalDescription('Es wird ein Aktivierungslink an ' . ($this->record->email ?? '') . ' gesendet. Das Mitglied kann damit ein Passwort erstellen und sich einloggen.')
+    ->action(function () {
+        $member = $this->record;
+        
+        // Generate membership number if not set
+        if (empty($member->membership_number)) {
+            $member->membership_number = $member->generateMembershipNumber();
+        }
+        
+        // Generate activation token
+        $token = \Illuminate\Support\Str::random(64);
+        
+        // Save
+        $member->update([
+            'activation_token' => $token,
+            'activation_sent_at' => now(),
+            'membership_number' => $member->membership_number,
+        ]);
+        
+        // For now: show the activation link in a notification (email will be added later)
+        $activationUrl = url('/aktivierung/' . $token);
+        
+        \Filament\Notifications\Notification::make()
+            ->title('Aktivierungslink generiert')
+            ->body('Link: ' . $activationUrl . ' | Mitgliedsnummer: ' . $member->membership_number)
+            ->success()
+            ->persistent()
+            ->send();
+    }),
+
+STEP 5 - Show activation status in the info cards at top of edit page:
+Update the third info card to also show:
+- Aktivierungslink gesendet am: $record->activation_sent_at?->format('d.m.Y H:i') ?? 'Noch nicht gesendet'
+- Mitgliedsnummer: $record->membership_number ?? 'Noch nicht generiert'
+
+STEP 6 - Remove "Karte zugesendet" field from MemberResource:
+The new "Zugangsdaten zusenden" button replaces this functionality.
+Remove the card_status and card_sent_at fields from the form (keep in DB, just hide from form).
+The info card at the top already shows this info.
+
+STEP 7 - Create activation route placeholder:
+In routes/web.php add:
+Route::get('/aktivierung/{token}', function($token) {
+    $member = \App\Models\Member::where('activation_token', $token)->firstOrFail();
+    return view('aktivierung.index', compact('member'));
+})->name('member.activate');
+
+Create placeholder view resources/views/aktivierung/index.blade.php:
+- Same layout
+- Show: "Willkommen, {name}! Dein Konto wird aktiviert."
+- Password creation form (to be implemented)
+- For now just show a success message
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.

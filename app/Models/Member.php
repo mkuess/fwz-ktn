@@ -32,6 +32,8 @@ class Member extends Model
         'rejection_reason',
         'card_status',
         'card_sent_at',
+        'activation_sent_at',
+        'activation_token',
     ];
 
     protected $hidden = [
@@ -48,12 +50,20 @@ class Member extends Model
     protected function casts(): array
     {
         return [
-            'password'          => 'hashed',
-            'email_verified_at' => 'datetime',
-            'approved_at'       => 'datetime',
-            'newsletter_optin'  => 'boolean',
-            'card_sent_at'      => 'date',
+            'password'           => 'hashed',
+            'email_verified_at'  => 'datetime',
+            'approved_at'        => 'datetime',
+            'newsletter_optin'   => 'boolean',
+            'card_sent_at'       => 'date',
+            'activation_sent_at' => 'datetime',
         ];
+    }
+
+    public function generateMembershipNumber(): string
+    {
+        $year   = now()->year;
+        $padded = str_pad($this->id, 6, '0', STR_PAD_LEFT);
+        return "FWZ-{$year}-{$padded}";
     }
 
     public function organisation(): BelongsTo

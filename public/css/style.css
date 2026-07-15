@@ -1,7 +1,8 @@
 :root{
   --blue:#111111;
   --blue-dark:#111111;
-  --yellow:#e4a400;
+  --yellow:#ffbb10;
+  --yellow-dark:#e4a400;
   --yellow-soft:#fff7dc;
   --ink:#111111;
   --text:#3333333;
@@ -184,7 +185,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* Innenseiten (Impressum / Datenschutz / Barrierefreiheit) */
-.page-hero{position:relative;background:var(--blue-dark);color:#fff;padding:150px 0 60px}
+.page-hero{position:relative;background:var(--yellow-dark);color:#fff;padding:150px 0 60px}
 .page-hero .h2{color:#fff;font-size:clamp(1.8rem,3vw,2.6rem)}
 .page-hero p{color:rgba(255,255,255,.85);margin-top:10px;max-width:680px}
 .legal-content{padding:44px 0 70px}

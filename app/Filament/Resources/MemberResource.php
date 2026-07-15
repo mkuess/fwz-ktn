@@ -69,11 +69,15 @@ class MemberResource extends Resource
                                     'rejected' => 'Abgelehnt',
                                     default    => '—',
                                 };
+                                $activationSent = $record?->activation_sent_at?->format('d.m.Y H:i') ?? 'Noch nicht gesendet';
+                                $memberNumber   = $record?->membership_number ?? 'Noch nicht generiert';
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🕐 Angemeldet</div>
                                         <div style="font-weight:600">' . e($since) . '</div>
-                                        <div style="font-size:0.75rem">' . e($status) . '</div>
+                                        <div style="font-size:0.75rem;margin-bottom:0.5rem">' . e($status) . '</div>
+                                        <div style="font-size:0.7rem;color:#6b7280">📧 Aktivierungslink: ' . e($activationSent) . '</div>
+                                        <div style="font-size:0.7rem;color:#6b7280">🪪 Nr: ' . e($memberNumber) . '</div>
                                     </div>
                                 ');
                             }),
@@ -97,19 +101,6 @@ class MemberResource extends Resource
                             ->label('Ablehnungsgrund')
                             ->placeholder('Bitte Grund angeben...')
                             ->visible(fn (Get $get): bool => $get('status') === 'rejected')
-                            ->nullable(),
-                        Forms\Components\Select::make('card_status')
-                            ->label('Karte zugesendet')
-                            ->options([
-                                'ausstehend' => '📭 Noch ausstehend',
-                                'zugesendet' => '📬 Zugesendet',
-                            ])
-                            ->default('ausstehend')
-                            ->live()
-                            ->required(),
-                        Forms\Components\DatePicker::make('card_sent_at')
-                            ->label('Karte zugesendet am')
-                            ->visible(fn (Get $get): bool => $get('card_status') === 'zugesendet')
                             ->nullable(),
                     ])
                     ->columns(2),
