@@ -2,37 +2,15 @@
 (function () {
   'use strict';
 
-  /* ── Mobile nav toggle ── */
-  var toggle = document.querySelector('.nav-toggle');
-  var panel = document.getElementById('mobile-nav-panel');
-
-  function openPanel() {
-    panel.hidden = false;
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.querySelector('span').textContent = '✕';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePanel() {
-    panel.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.querySelector('span').textContent = '☰';
-    document.body.style.overflow = '';
-  }
-
-  if (toggle && panel) {
-    toggle.addEventListener('click', function () {
-      panel.hidden ? openPanel() : closePanel();
-    });
-
-    panel.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') closePanel();
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !panel.hidden) closePanel();
-    });
-  }
+  /* ── Mobile nav: Escape key closes (Alpine owns open/close state) ── */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      var toggle = document.querySelector('.nav-toggle');
+      if (toggle && toggle.getAttribute('aria-expanded') === 'true') {
+        toggle.click();
+      }
+    }
+  });
 
   /* ── Category filter chips ── */
   var chips = document.querySelectorAll('.chip');
