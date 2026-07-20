@@ -15,6 +15,8 @@
 
 <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
 
+<div x-data="{ menuOpen: false }">
+
 <header class="header">
   <nav class="nav">
     <div class="nav-left">
@@ -37,15 +39,30 @@
         <a class="btn primary" href="{{ route('member.login') }}">Anmelden <span class="arrow">→</span></a>
       @endif
     </div>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav-panel" aria-label="Menü öffnen"><span aria-hidden="true">☰</span></button>
+    <button
+      class="nav-toggle"
+      @click="menuOpen = !menuOpen"
+      :aria-expanded="menuOpen.toString()"
+      aria-controls="mobile-nav-panel"
+      aria-label="Menü">
+      <svg x-show="!menuOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <svg x-show="menuOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
   </nav>
 </header>
 
-<div class="mobile-nav-panel" id="mobile-nav-panel" hidden>
+<div class="mobile-nav-panel" id="mobile-nav-panel" x-show="menuOpen" x-cloak>
 
-  {{-- Close button --}}
+  {{-- Close button (inside panel, top-right) --}}
   <button
-    onclick="document.getElementById('mobile-nav-panel').hidden=true;document.querySelector('.nav-toggle').setAttribute('aria-expanded','false')"
+    @click="menuOpen = false"
     aria-label="Menü schließen"
     style="position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;cursor:pointer;color:#fff;padding:0.5rem;line-height:1">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -55,18 +72,18 @@
   </button>
 
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
-    <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
-    <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
-    <a href="{{ route('home') }}#vereine">Vereine</a>
-    <a href="{{ route('articles.index') }}">Aktuelles</a>
+    <a href="{{ route('home') }}#fwz" @click="menuOpen = false">Was ist FWZ</a>
+    <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
+    <a href="{{ route('home') }}#vereine" @click="menuOpen = false">Vereine</a>
+    <a href="{{ route('articles.index') }}" @click="menuOpen = false">Aktuelles</a>
     @if(auth('member')->check())
-      <a href="{{ route('member.portal') }}">Mein Bereich</a>
+      <a href="{{ route('member.portal') }}" @click="menuOpen = false">Mein Bereich</a>
       <form method="POST" action="{{ route('member.logout') }}" style="display:block">
         @csrf
         <button type="submit" class="mobile-nav-panel__nav-btn">Abmelden</button>
       </form>
     @else
-      <a href="{{ route('member.login') }}">Anmelden</a>
+      <a href="{{ route('member.login') }}" @click="menuOpen = false">Anmelden</a>
     @endif
   </nav>
 
@@ -75,6 +92,8 @@
   </div>
 
 </div>
+
+</div>{{-- end x-data --}}
 
 @yield('hero')
 
