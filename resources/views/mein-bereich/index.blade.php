@@ -2,8 +2,15 @@
 
 @section('title', 'Mein Bereich – Freiwilligenzentrum Kärnten')
 
+@push('styles')
+<style>
+.portal-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;max-width:600px;margin:0 auto}
+@media(min-width:768px){.portal-grid{grid-template-columns:1fr 1fr;max-width:900px;gap:2.5rem}}
+</style>
+@endpush
+
 @section('hero')
-<div class="page-hero">
+<div class="page-hero" style="background:#1a2e1a">
   <div class="container">
     <span class="eyebrow">MITGLIEDERBEREICH</span>
     <h1 class="h2">Mein Bereich</h1>
@@ -24,7 +31,7 @@
     </div>
     @endif
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start">
+    <div class="portal-grid">
 
       {{-- Left: Membership card --}}
       <div>
