@@ -255,6 +255,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .mobile-nav-panel__nav a:hover{color:var(--yellow)}
 .mobile-nav-panel__actions{display:flex;flex-direction:column;gap:12px;width:100%}
 .mobile-nav-panel__actions .btn{width:100%;text-align:center;justify-content:center}
+.mobile-nav-panel__nav-btn{display:block;width:100%;background:none;border:none;border-bottom:1px solid rgba(255,255,255,.15);cursor:pointer;font-family:inherit;font-size:clamp(1.25rem,4vw,1.75rem);font-weight:700;color:#fff;padding:14px 0;text-align:left}
 
 @media(max-width:1300px){
   .nav .menu{display:none}

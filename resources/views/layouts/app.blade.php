@@ -42,24 +42,38 @@
 </header>
 
 <div class="mobile-nav-panel" id="mobile-nav-panel" hidden>
+
+  {{-- Close button --}}
+  <button
+    onclick="document.getElementById('mobile-nav-panel').hidden=true;document.querySelector('.nav-toggle').setAttribute('aria-expanded','false')"
+    aria-label="Menü schließen"
+    style="position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;cursor:pointer;color:#fff;padding:0.5rem;line-height:1">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
     <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
     <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
     <a href="{{ route('home') }}#vereine">Vereine</a>
     <a href="{{ route('articles.index') }}">Aktuelles</a>
-  </nav>
-  <div class="mobile-nav-panel__actions">
     @if(auth('member')->check())
-      <a class="btn primary" href="{{ route('member.portal') }}">Mein Bereich <span class="arrow">→</span></a>
-      <form method="POST" action="{{ route('member.logout') }}">
+      <a href="{{ route('member.portal') }}">Mein Bereich</a>
+      <form method="POST" action="{{ route('member.logout') }}" style="display:block">
         @csrf
-        <button type="submit" class="btn light" style="width:100%;cursor:pointer;font-family:inherit;border:none;text-align:center">Abmelden</button>
+        <button type="submit" class="mobile-nav-panel__nav-btn">Abmelden</button>
       </form>
     @else
-      <a class="btn primary" href="{{ route('member.login') }}">Anmelden <span class="arrow">→</span></a>
+      <a href="{{ route('member.login') }}">Anmelden</a>
     @endif
+  </nav>
+
+  <div class="mobile-nav-panel__actions">
     <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden</a>
   </div>
+
 </div>
 
 @yield('hero')
