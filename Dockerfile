@@ -2,7 +2,7 @@
 FROM node:20-alpine AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund && ls node_modules/.bin/vite
 COPY . .
 RUN npm run build
 
