@@ -1,6 +1,9 @@
 # Stage 1: Build frontend assets (Tailwind/Vite)
 FROM node:22-slim AS frontend
 WORKDIR /app
+RUN npm config set fetch-retries 5 \
+  && npm config set fetch-retry-mintimeout 20000 \
+  && npm config set fetch-retry-maxtimeout 120000
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund && ls node_modules/.bin/vite
 COPY . .
