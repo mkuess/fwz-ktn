@@ -1,15 +1,3 @@
-# Stage 1: Build frontend assets (Tailwind/Vite)
-FROM node:22-slim AS frontend
-WORKDIR /app
-RUN npm config set fetch-retries 5 \
-  && npm config set fetch-retry-mintimeout 20000 \
-  && npm config set fetch-retry-maxtimeout 120000
-COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund && ls node_modules/.bin/vite
-COPY . .
-RUN npm run build
-
-# Stage 2: PHP application
 FROM php:8.3-fpm
 
 # Install system dependencies
@@ -49,11 +37,8 @@ RUN composer install \
     --no-interaction \
     --no-scripts
 
-# Copy application code
+# Copy application code (includes pre-built public/build assets)
 COPY . .
-
-# Copy built frontend assets from the frontend stage
-COPY --from=frontend /app/public/build ./public/build
 
 # Optimise autoloader with full codebase present
 RUN composer dump-autoload --optimize
