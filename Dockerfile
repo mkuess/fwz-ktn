@@ -1,6 +1,7 @@
 # Stage 1: Build frontend assets (Tailwind/Vite)
 FROM node:20-slim AS frontend
 WORKDIR /app
+RUN npm install -g npm@latest
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund && ls node_modules/.bin/vite
 COPY . .
