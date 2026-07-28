@@ -9,17 +9,17 @@ services:
       - ./.env:/var/www/html/.env
     depends_on:
       - db
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - "127.0.0.1:${APP_PORT}:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./certbot:/etc/letsencrypt
     depends_on:
       - app
+    restart: unless-stopped
 
   db:
     image: mysql:8
@@ -29,6 +29,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    restart: unless-stopped
 
 volumes:
   db_data:
