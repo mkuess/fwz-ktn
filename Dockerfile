@@ -1,3 +1,12 @@
+# Stage 1: Build frontend assets (Tailwind/Vite)
+FROM node:20-alpine AS frontend
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: PHP application
 FROM php:8.3-fpm
 
 # Install system dependencies
@@ -31,7 +40,6 @@ WORKDIR /var/www/html
 
 # Copy dependency files first for layer caching
 COPY composer.json composer.lock ./
-
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
@@ -41,6 +49,9 @@ RUN composer install \
 # Copy application code
 COPY . .
 
+# Copy built frontend assets from the frontend stage
+COPY --from=frontend /app/public/build ./public/build
+
 # Optimise autoloader with full codebase present
 RUN composer dump-autoload --optimize
 
@@ -49,5 +60,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 9000
-
 CMD ["php-fpm"]
