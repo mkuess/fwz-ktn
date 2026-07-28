@@ -19,7 +19,7 @@ services:
       - app
 
   db:
-    image: mysql:8
+    image: mariadb:10.11
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-fwz_staging_db}
       MYSQL_USER: ${DB_USERNAME:-fwz_user}
