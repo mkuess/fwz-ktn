@@ -1,5 +1,5 @@
 # Stage 1: Build frontend assets (Tailwind/Vite)
-FROM node:20-alpine AS frontend
+FROM node:20-slim AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund && ls node_modules/.bin/vite
