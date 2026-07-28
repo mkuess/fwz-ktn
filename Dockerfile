@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libicu-dev \
     zip \
     curl \
   && rm -rf /var/lib/apt/lists/*
@@ -19,6 +20,7 @@ RUN docker-php-ext-install \
     exif \
     pcntl \
     bcmath \
+    intl \
     gd \
     zip
 
