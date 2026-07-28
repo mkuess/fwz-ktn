@@ -1,3 +1,5 @@
+Create a file `docker-compose.yml` in the project root with exactly this content:
+
 services:
   app:
     build: .
@@ -29,3 +31,7 @@ services:
 
 volumes:
   db_data:
+
+Also create a minimal `nginx.conf` in the project root if one doesn't already exist, that proxies PHP requests to the `app` container on port 9000 (PHP-FPM) for a standard Laravel `public/` document root setup.
+
+Commit and push with the message "Add production docker-compose.yml".

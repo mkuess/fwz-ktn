@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    image: fwz-laravel
+    image: fwz-laravel-staging
     volumes:
       - ./storage:/var/www/html/storage
       - ./.env:/var/www/html/.env
@@ -20,7 +20,7 @@ services:
   db:
     image: mysql:8
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-fwz_db}
+      MYSQL_DATABASE: ${DB_DATABASE:-fwz_staging_db}
       MYSQL_USER: ${DB_USERNAME:-fwz_user}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
