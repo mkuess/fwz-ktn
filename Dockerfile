@@ -47,5 +47,10 @@ RUN composer dump-autoload --optimize
 RUN chown -R www-data:www-data storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
 
+# Ensure .env is always readable/writable by the www-data worker,
+# even if it was baked into the image with wrong ownership from a previous
+# manual docker cp. This runs on every build, so it self-heals.
+RUN if [ -f .env ]; then chown www-data:www-data .env && chmod 644 .env; fi
+
 EXPOSE 9000
 CMD ["php-fpm"]
