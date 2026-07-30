@@ -1,15 +1,12 @@
 name: Deploy
-
 on:
   push:
     branches:
       - main
       - develop
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Set deployment variables
         id: vars
@@ -17,11 +14,12 @@ jobs:
           if [ "${{ github.ref_name }}" = "main" ]; then
             echo "deploy_path=/var/www/fwz-prod" >> $GITHUB_OUTPUT
             echo "compose_file=docker-compose.yml" >> $GITHUB_OUTPUT
+            echo "app_container=fwz-prod-app-1" >> $GITHUB_OUTPUT
           else
             echo "deploy_path=/var/www/fwz-staging" >> $GITHUB_OUTPUT
             echo "compose_file=docker-compose.staging.yml" >> $GITHUB_OUTPUT
+            echo "app_container=fwz-staging-app-1" >> $GITHUB_OUTPUT
           fi
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -33,6 +31,20 @@ jobs:
             cd ${{ steps.vars.outputs.deploy_path }}
             git pull origin ${{ github.ref_name }}
             docker compose -f ${{ steps.vars.outputs.compose_file }} build
+
+            IMAGE_NAME=$(docker compose -f ${{ steps.vars.outputs.compose_file }} config --images app)
+            docker create --name temp_extract_$$ "$IMAGE_NAME"
+            docker cp temp_extract_$$:/var/www/html/public/. /tmp/fresh_public_$$/
+            docker rm temp_extract_$$
+
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
+
+            docker cp /tmp/fresh_public_$$/. ${{ steps.vars.outputs.app_container }}:/var/www/html/public/
+            rm -rf /tmp/fresh_public_$$/
+
+            docker compose -f ${{ steps.vars.outputs.compose_file }} exec -u root -T app chown -R www-data:www-data public
+            docker compose -f ${{ steps.vars.outputs.compose_file }} exec -u root -T app find public -type d -exec chmod 775 {} \;
+            docker compose -f ${{ steps.vars.outputs.compose_file }} exec -u root -T app find public -type f -exec chmod 664 {} \;
+
             docker compose -f ${{ steps.vars.outputs.compose_file }} exec -T app php artisan migrate --force
             docker compose -f ${{ steps.vars.outputs.compose_file }} exec -T app php artisan optimize
