@@ -15,10 +15,12 @@ jobs:
             echo "deploy_path=/var/www/fwz-prod" >> $GITHUB_OUTPUT
             echo "compose_file=docker-compose.yml" >> $GITHUB_OUTPUT
             echo "app_container=fwz-prod-app-1" >> $GITHUB_OUTPUT
+            echo "image_name=fwz-laravel" >> $GITHUB_OUTPUT
           else
             echo "deploy_path=/var/www/fwz-staging" >> $GITHUB_OUTPUT
             echo "compose_file=docker-compose.staging.yml" >> $GITHUB_OUTPUT
             echo "app_container=fwz-staging-app-1" >> $GITHUB_OUTPUT
+            echo "image_name=fwz-laravel-staging" >> $GITHUB_OUTPUT
           fi
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -32,8 +34,7 @@ jobs:
             git pull origin ${{ github.ref_name }}
             docker compose -f ${{ steps.vars.outputs.compose_file }} build
 
-            IMAGE_NAME=$(docker compose -f ${{ steps.vars.outputs.compose_file }} config --images app)
-            docker create --name temp_extract_$$ "$IMAGE_NAME"
+            docker create --name temp_extract_$$ ${{ steps.vars.outputs.image_name }}
             docker cp temp_extract_$$:/var/www/html/public/. /tmp/fresh_public_$$/
             docker rm temp_extract_$$
 
