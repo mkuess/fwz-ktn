@@ -67,7 +67,7 @@
     <div class="container">
       <div class="box welcome-box">
         <div class="welcome-media">
-          <img src="{{ asset('img/welcome-photo.png') }}" alt="Walter Gitschthaler und Ing. Daniel Fellner gemeinsam">
+          <img src="{{ asset('img/welcome-photo.png') }}" alt="Patrick Egger und Ing. Daniel Fellner gemeinsam">
         </div>
         <div class="welcome-text">
           <span class="eyebrow">Herzlich willkommen</span>
@@ -77,7 +77,7 @@
           <p>Die Gründung dieses Zentrums ist ein bedeutender Meilenstein unserer Ehrenamts-Offensive. Ohne die unermüdliche Arbeit unserer Ehrenamtlichen wäre unser gesellschaftliches Zusammenleben in dieser Form nicht aufrechtzuerhalten.</p>
           <p>Das Ehrenamt ist mehr als nur eine Ergänzung zu staatlichen Strukturen — es ist die Seele unseres Miteinanders. Ob bei Feuerwehr, Rettung, Bergrettung, in der Pflege, in Bildungsinitiativen oder zahllosen anderen Initiativen: Freiwillige leisten Tag für Tag Unbezahlbares.</p>
           <p>Wir laden Sie herzlich ein, Teil dieser Bewegung zu sein — durch Ihr Engagement, Ihre Ideen oder Ihre Anerkennung. Gemeinsam gestalten wir eine noch solidarischere und lebenswertere Zukunft für Kärnten.</p>
-          <div class="welcome-signoff">Walter Gitschthaler, MSD · Schirmherr des FWZ Kärnten<br>Ing. Daniel Fellner · Landeshauptmann von Kärnten</div>
+          <div class="welcome-signoff">Patrick Egger · Schirmherr des FWZ Kärnten<br>Ing. Daniel Fellner · Landeshauptmann von Kärnten</div>
         </div>
       </div>
     </div>
