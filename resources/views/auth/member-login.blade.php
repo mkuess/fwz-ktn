@@ -18,6 +18,10 @@
 
     <div class="box" style="padding:2rem 2.5rem">
 
+      <div style="text-align:center;margin-bottom:1.75rem">
+        <img src="{{ asset('img/fwz-logo-login.svg') }}" alt="FWZ Kärnten" style="height:48px;width:auto">
+      </div>
+
       @if(session('status'))
         <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:0.5rem;padding:0.875rem 1rem;margin-bottom:1.5rem;font-size:0.875rem;color:#166534">
           {{ session('status') }}
