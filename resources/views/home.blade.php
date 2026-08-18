@@ -8,7 +8,7 @@
   <div class="container hero-inner">
     <div class="hero-copy">
       <h1 class="h1">Ich bin…<br><span>ehrenamtlich.</span></h1>
-      <p>Hinter jedem Einsatz, jeder Übung, jeder helfenden Hand steht ein Mensch aus Kärnten. Werde Teil von etwas, das zählt — und schreib deine eigene Geschichte.</p>
+      <p>Hinter jedem Einsatz, jeder Übung, jeder helfenden Hand steht ein Mensch aus Kärnten. Hunderttausende Kärntnerinnen & Kärntner sind unentgeltlich tätig — bei der Feuerwehr genauso wie bei der Bergrettung, im Chor, im Sportverein, in der Trachtenkapelle und im Elternverein. Werde Teil von etwas, das zählt — und schreib deine eigene Geschichte.</p>
       <div class="hero-cta">
         <a class="btn primary" href="{{ route('member.register') }}">Benefits als Mitglied sichern <span class="arrow">→</span></a>
         <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden <span class="arrow">→</span></a>
