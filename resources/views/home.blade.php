@@ -35,7 +35,7 @@
         <div class="intro-top">
           <span class="eyebrow">Das Freiwilligenzentrum</span>
           <h2 class="h2">Das Freiwilligenzentrum Kärnten.</h2>
-          <p class="lead">Das FWZ ist die zentrale, offizielle Anlaufstelle des Landes Kärnten für ehrenamtliches Engagement. Wir vernetzen Vereine, Organisationen und Menschen, die anpacken wollen — übersichtlich, regional und kostenfrei.</p>
+          <p class="lead">Das FWZ ist die zentrale, offizielle Anlaufstelle Kärntens für ehrenamtliches Engagement. Wir vernetzen Vereine, Organisationen und Menschen, die anpacken wollen — übersichtlich, regional und kostenfrei.</p>
         </div>
         <div class="features">
           <div class="feature">
@@ -51,7 +51,7 @@
           <div class="feature">
             <img class="icon-img" src="{{ asset('img/icon-benefits.png') }}" alt="Icon Benefits">
             <h3 class="h3">Benefits</h3>
-            <p>Mit dem persönlichen Vereinscode öffnen sich Vergünstigungen bei ausgewählten Kärntner Partnerbetrieben.</p>
+            <p>Im Mitgliederbereich stehen exklusive Vergünstigungen und Angebote unserer ausgewählten Kärntner Partnerbetriebe zur Verfügung.</p>
           </div>
           <div class="feature">
             <img class="icon-img" src="{{ asset('img/icon-sicherheitsnetz.png') }}" alt="Icon Sicherheitsnetz">
