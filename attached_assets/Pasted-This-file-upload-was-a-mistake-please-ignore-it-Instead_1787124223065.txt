@@ -1,0 +1,121 @@
+This file upload was a mistake, please ignore it. 
+
+Instead, please implement the following:
+
+Add geolocation (lat/lng) to organisations for map display. Do NOT delete the database.
+
+STEP 1 - Create migration to add location columns to organisations table:
+$table->decimal('latitude', 10, 7)->nullable()->after('city');
+$table->decimal('longitude', 10, 7)->nullable()->after('latitude');
+$table->timestamp('geocoded_at')->nullable()->after('longitude');
+Run: php artisan migrate
+
+STEP 2 - Add 'latitude', 'longitude', 'geocoded_at' to Organisation model $fillable.
+
+STEP 3 - Create app/Services/GeocodingService.php:
+
+namespace App\Services;
+use App\Models\Organisation;
+
+class GeocodingService
+{
+    public function geocode(string $address): ?array
+    {
+        $encoded = urlencode($address);
+        $url = "https://nominatim.openstreetmap.org/search?q={$encoded}&format=json&limit=1&countrycodes=at";
+        $context = stream_context_create([
+            'http' => [
+                'header' => "User-Agent: FWZ-Kaernten/1.0 (info@fwz-ktn.at)\r\n",
+                'timeout' => 5,
+            ]
+        ]);
+        $response = @file_get_contents($url, false, $context);
+        if (!$response) return null;
+        $data = json_decode($response, true);
+        if (empty($data)) return null;
+        return [
+            'latitude' => (float) $data[0]['lat'],
+            'longitude' => (float) $data[0]['lon'],
+        ];
+    }
+
+    public function geocodeOrganisation(Organisation $organisation): bool
+    {
+        $parts = array_filter([
+            $organisation->street,
+            $organisation->zip,
+            $organisation->city,
+            'Kärnten',
+            'Österreich',
+        ]);
+        if (empty($organisation->city) && empty($organisation->zip)) return false;
+        $address = implode(', ', $parts);
+        $result = $this->geocode($address);
+        if (!$result) return false;
+        $organisation->updateQuietly([
+            'latitude' => $result['latitude'],
+            'longitude' => $result['longitude'],
+            'geocoded_at' => now(),
+        ]);
+        return true;
+    }
+}
+
+STEP 4 - Add bulk action "Standort ermitteln" to OrganisationResource:
+In bulkActions() add:
+
+BulkAction::make('geocode')
+    ->label('Standort ermitteln')
+    ->icon('heroicon-o-map-pin')
+    ->color('info')
+    ->requiresConfirmation()
+    ->modalHeading('Standorte ermitteln')
+    ->modalDescription('Für alle ausgewählten Organisationen wird der Standort über die Adresse ermittelt (OpenStreetMap). Dies kann einige Sekunden dauern.')
+    ->action(function (Collection $records): void {
+        $service = new \App\Services\GeocodingService();
+        $success = 0;
+        $failed = 0;
+        foreach ($records as $record) {
+            usleep(1100000);
+            if ($service->geocodeOrganisation($record)) {
+                $success++;
+            } else {
+                $failed++;
+            }
+        }
+        \Filament\Notifications\Notification::make()
+            ->title("Standorte ermittelt: {$success} erfolgreich, {$failed} fehlgeschlagen")
+            ->success()
+            ->send();
+    })
+    ->deselectRecordsAfterCompletion(),
+
+STEP 5 - Add icon column to OrganisationResource list view:
+
+Tables\Columns\IconColumn::make('latitude')
+    ->label('Standort')
+    ->boolean()
+    ->state(fn ($record) => !is_null($record->latitude))
+    ->trueIcon('heroicon-o-map-pin')
+    ->falseIcon('heroicon-o-x-mark')
+    ->trueColor('success')
+    ->falseColor('gray')
+    ->tooltip(fn ($record) => $record->latitude
+        ? 'Koordinaten: ' . $record->latitude . ', ' . $record->longitude
+        : 'Kein Standort ermittelt'),
+
+STEP 6 - Auto-geocode on save in Organisation model boot():
+
+static::saved(function (Organisation $organisation) {
+    if (is_null($organisation->latitude) &&
+        (!empty($organisation->city) || !empty($organisation->zip))) {
+        dispatch(function () use ($organisation) {
+            $service = new \App\Services\GeocodingService();
+            $service->geocodeOrganisation($organisation);
+        })->afterResponse();
+    }
+});
+
+Do NOT delete the database. Do NOT run migrate:fresh.
+Run only: php artisan migrate
+Report when done.
