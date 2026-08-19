@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\GeocodingService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +24,9 @@ class Organisation extends Model
         'street',
         'zip',
         'city',
+        'latitude',
+        'longitude',
+        'geocoded_at',
         'phone',
         'website',
         'representative',
@@ -44,7 +48,48 @@ class Organisation extends Model
             'is_approved' => 'boolean',
             'is_active' => 'boolean',
             'approved_at' => 'datetime',
+            'latitude' => 'float',
+            'longitude' => 'float',
+            'geocoded_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (Organisation $organisation): void {
+            $addressChanged = $organisation->wasRecentlyCreated
+                || $organisation->wasChanged(['street', 'zip', 'city']);
+            $hasCoordinates = $organisation->latitude !== null
+                && $organisation->longitude !== null;
+
+            if (! $addressChanged && $hasCoordinates) {
+                return;
+            }
+
+            if ($addressChanged && $hasCoordinates) {
+                $organisation->updateQuietly([
+                    'latitude' => null,
+                    'longitude' => null,
+                    'geocoded_at' => null,
+                ]);
+            }
+
+            if (blank($organisation->city) && blank($organisation->zip)) {
+                return;
+            }
+
+            $organisationId = $organisation->getKey();
+
+            dispatch(static function () use ($organisationId): void {
+                $organisation = Organisation::query()->find($organisationId);
+
+                if ($organisation === null) {
+                    return;
+                }
+
+                app(GeocodingService::class)->geocodeOrganisation($organisation);
+            })->afterResponse();
+        });
     }
 
     public function categories(): BelongsToMany

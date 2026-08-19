@@ -4,12 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrganisationResource\Pages;
 use App\Models\Organisation;
+use App\Services\GeocodingService;
 use Filament\Forms;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\HtmlString;
 
 class OrganisationResource extends Resource
@@ -37,10 +40,11 @@ class OrganisationResource extends Resource
                             ->label('')
                             ->content(function ($record): HtmlString {
                                 $count = $record?->members()->count() ?? 0;
+
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">👥 Mitglieder</div>
-                                        <div style="font-weight:600;font-size:1.25rem">' . $count . '</div>
+                                        <div style="font-weight:600;font-size:1.25rem">'.$count.'</div>
                                     </div>
                                 ');
                             }),
@@ -48,26 +52,28 @@ class OrganisationResource extends Resource
                             ->label('')
                             ->content(function ($record): HtmlString {
                                 $approved = $record?->is_approved ? '✓ Freigeschaltet' : '✗ Ausstehend';
-                                $color    = $record?->is_approved ? '#22c55e' : '#f59e0b';
-                                $since    = $record?->created_at?->diffForHumans() ?? '—';
+                                $color = $record?->is_approved ? '#22c55e' : '#f59e0b';
+                                $since = $record?->created_at?->diffForHumans() ?? '—';
+
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📋 Status</div>
-                                        <div style="font-weight:600;color:' . $color . '">' . $approved . '</div>
-                                        <div style="font-size:0.75rem;color:#6b7280">Angemeldet ' . e($since) . '</div>
+                                        <div style="font-weight:600;color:'.$color.'">'.$approved.'</div>
+                                        <div style="font-size:0.75rem;color:#6b7280">Angemeldet '.e($since).'</div>
                                     </div>
                                 ');
                             }),
                         Placeholder::make('card_location')
                             ->label('')
                             ->content(function ($record): HtmlString {
-                                $location = trim(($record?->zip ?? '') . ' ' . ($record?->city ?? '')) ?: '—';
-                                $phone    = $record?->phone ?? '—';
+                                $location = trim(($record?->zip ?? '').' '.($record?->city ?? '')) ?: '—';
+                                $phone = $record?->phone ?? '—';
+
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📍 Standort</div>
-                                        <div style="font-weight:600">' . e($location) . '</div>
-                                        <div style="font-size:0.75rem">' . e($phone) . '</div>
+                                        <div style="font-weight:600">'.e($location).'</div>
+                                        <div style="font-size:0.75rem">'.e($phone).'</div>
                                     </div>
                                 ');
                             }),
@@ -81,7 +87,7 @@ class OrganisationResource extends Resource
                         Forms\Components\Radio::make('type')
                             ->label('Typ')
                             ->options([
-                                'verein'       => 'Verein (ZVR)',
+                                'verein' => 'Verein (ZVR)',
                                 'organisation' => 'Organisation / Initiative',
                             ])
                             ->inline()
@@ -204,6 +210,17 @@ class OrganisationResource extends Resource
                     ->label('Stadt')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('latitude')
+                    ->label('Standort')
+                    ->boolean()
+                    ->state(fn (Organisation $record): bool => $record->latitude !== null && $record->longitude !== null)
+                    ->trueIcon('heroicon-o-map-pin')
+                    ->falseIcon('heroicon-o-x-mark')
+                    ->trueColor('success')
+                    ->falseColor('gray')
+                    ->tooltip(fn (Organisation $record): string => $record->latitude !== null && $record->longitude !== null
+                        ? 'Koordinaten: '.$record->latitude.', '.$record->longitude
+                        : 'Kein Standort ermittelt'),
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean()
                     ->label('Freigeschalten'),
@@ -245,12 +262,44 @@ class OrganisationResource extends Resource
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->action(fn (\Illuminate\Database\Eloquent\Collection $records) => $records->each(
+                        ->action(fn (Collection $records) => $records->each(
                             fn (Organisation $organisation) => $organisation->update([
                                 'is_approved' => true,
                                 'approved_at' => now(),
                             ])
                         ))
+                        ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\BulkAction::make('geocode')
+                        ->label('Standort ermitteln')
+                        ->icon('heroicon-o-map-pin')
+                        ->color('info')
+                        ->requiresConfirmation()
+                        ->modalHeading('Standorte ermitteln')
+                        ->modalDescription('Für alle ausgewählten Organisationen wird der Standort über die Adresse ermittelt (OpenStreetMap). Dies kann einige Sekunden dauern.')
+                        ->action(function (Collection $records): void {
+                            $service = app(GeocodingService::class);
+                            $success = 0;
+                            $failed = 0;
+
+                            foreach ($records as $record) {
+                                if ($service->geocodeOrganisation($record)) {
+                                    $success++;
+                                } else {
+                                    $failed++;
+                                }
+                            }
+
+                            $notification = Notification::make()
+                                ->title("Standorte ermittelt: {$success} erfolgreich, {$failed} fehlgeschlagen");
+
+                            if ($failed === 0) {
+                                $notification->success();
+                            } else {
+                                $notification->warning();
+                            }
+
+                            $notification->send();
+                        })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make()
