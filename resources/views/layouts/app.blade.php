@@ -109,8 +109,7 @@
     </div>
     <div>
       <h4>Kontakt</h4>
-      <p>Freiwilligenzentrum Kärnten<br>Bahnhofplatz 5/1<br>9020 Klagenfurt</p>
-      <p style="margin-top:12px">+43 463 50 56 60<br>office@freiwilligenzentrum-kaernten.at</p>
+      <p>AMT DER KÄRNTNER LANDESREGIERUNG<br>Abteilung 3 – Gemeinden und Katastrophenschutz<br>Unterabteilung Feuerwehrwesen, Katastrophenschutz und Zivildienst<br>Rosenegger Straße 20<br>A-9021 Klagenfurt am Wörthersee<br>E-Mail: info@fwz-ktn.at</p>
     </div>
     <div>
       <h4>Schnellzugriff</h4>
