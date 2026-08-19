@@ -67,17 +67,18 @@
     <div class="container">
       <div class="box welcome-box">
         <div class="welcome-media">
-          <img src="{{ asset('img/welcome-photo.png') }}" alt="Patrick Egger und Ing. Daniel Fellner gemeinsam">
+          <img src="{{ asset('img/welcome-photo.jpg') }}" alt="Ing. Daniel Fellner">
         </div>
         <div class="welcome-text">
           <span class="eyebrow">Herzlich willkommen</span>
           <h2 class="h2">Gemeinsam für das Ehrenamt in Kärnten.</h2>
           <p>Liebe Kärntnerinnen und Kärntner,</p>
-          <p>mit großem Stolz und tiefer Überzeugung dürfen wir Ihnen das erste Freiwilligenzentrum Kärntens vorstellen — eine zentrale Anlaufstelle für all jene, die sich ehrenamtlich engagieren oder freiwilliges Engagement ermöglichen möchten.</p>
-          <p>Die Gründung dieses Zentrums ist ein bedeutender Meilenstein unserer Ehrenamts-Offensive. Ohne die unermüdliche Arbeit unserer Ehrenamtlichen wäre unser gesellschaftliches Zusammenleben in dieser Form nicht aufrechtzuerhalten.</p>
-          <p>Das Ehrenamt ist mehr als nur eine Ergänzung zu staatlichen Strukturen — es ist die Seele unseres Miteinanders. Ob bei Feuerwehr, Rettung, Bergrettung, in der Pflege, in Bildungsinitiativen oder zahllosen anderen Initiativen: Freiwillige leisten Tag für Tag Unbezahlbares.</p>
-          <p>Wir laden Sie herzlich ein, Teil dieser Bewegung zu sein — durch Ihr Engagement, Ihre Ideen oder Ihre Anerkennung. Gemeinsam gestalten wir eine noch solidarischere und lebenswertere Zukunft für Kärnten.</p>
-          <div class="welcome-signoff">Patrick Egger · Schirmherr des FWZ Kärnten<br>Ing. Daniel Fellner · Landeshauptmann von Kärnten</div>
+          <p>mit großem Stolz und tiefer Überzeugung dürfen wir Ihnen das erste Freiwilligenzentrum Kärntens vorstellen – eine zentrale Anlaufstelle für all jene, die sich ehrenamtlich engagieren oder freiwilliges Engagement ermöglichen möchten.</p>
+          <p>Die Gründung dieses Zentrums ist ein bedeutender Meilenstein im Rahmen unserer Ehrenamts-Offensive, die wir ins Leben gerufen haben, um dem Ehrenamt in Kärnten die Sichtbarkeit und Anerkennung zu geben, die es verdient. Denn ohne die unermüdliche Arbeit unserer Ehrenamtlichen wäre unser gesellschaftliches Zusammenleben in dieser Form nicht aufrechtzuerhalten.</p>
+          <p>Das Ehrenamt ist mehr als nur eine Ergänzung zu bestehenden, staatlichen Strukturen – es ist die Seele unseres Miteinanders. Ob bei den Einsatzorganisationen wie der Freiwilligen Feuerwehr, Rettung, Bergrettung oder Wasserrettung, in sozialen Bereichen wie der Pflege, in Bildungsinitiativen wie den Caritas Lerncafés oder in zahllosen anderen Initiativen: Freiwillige leisten Tag für Tag Unbezahlbares – mit Herz, Überzeugung und im Dienste der Gemeinschaft.</p>
+          <p>Mit dem Freiwilligenzentrum schaffen wir nun einen Ort, der Ehrenamt koordiniert, stärkt und sichtbar macht. Ein Ort der Begegnung, der Information, der Unterstützung – und vor allem ein Ort der Wertschätzung.</p>
+          <p>Wir laden Sie herzlich ein, Teil dieser Bewegung zu sein – durch Ihr Engagement, Ihre Ideen oder Ihre Anerkennung für all jene, die sich bereits freiwillig einsetzen. Gemeinsam gestalten wir eine noch solidarischere und lebenswertere Zukunft für Kärnten.</p>
+          <div class="welcome-signoff">Ing. Daniel Fellner<br>Landeshauptmann von Kärnten &amp; Katastrophenschutzreferent</div>
         </div>
       </div>
     </div>
