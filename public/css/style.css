@@ -120,7 +120,7 @@ p{margin:0;color:var(--text)}
 .person{font-weight:800}
 .role{font-size:.94rem;color:#6b8099}
 .footer{margin-top:48px;background:var(--blue-dark);color:#fff;padding:54px 0 26px}
-.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
+.footer-grid{display:grid;grid-template-columns:1.2fr 2fr 1fr;gap:28px}
 .footer-logo{width:170px;margin-bottom:16px}
 .footer p,.footer li,.footer a{color:rgba(255,255,255,.86)}
 .footer h4{margin:0 0 14px;font-size:1rem}

@@ -112,15 +112,6 @@
       <p>AMT DER KÄRNTNER LANDESREGIERUNG<br>Abteilung 3 – Gemeinden und Katastrophenschutz<br>Unterabteilung Feuerwehrwesen, Katastrophenschutz und Zivildienst<br>Rosenegger Straße 20<br>A-9021 Klagenfurt am Wörthersee<br>E-Mail: info@fwz-ktn.at</p>
     </div>
     <div>
-      <h4>Schnellzugriff</h4>
-      <ul>
-        <li><a href="{{ route('home') }}#fwz">Über das FWZ</a></li>
-        <li><a href="{{ route('registrierung.schritt1') }}">Verein registrieren</a></li>
-        <li><a href="{{ route('home') }}#vereine">Vereine finden</a></li>
-        <li><a href="{{ route('articles.index') }}">Aktionen &amp; Termine</a></li>
-      </ul>
-    </div>
-    <div>
       <h4>Rechtliches &amp; Social</h4>
       <ul>
         <li><a href="{{ route('impressum') }}">Impressum</a></li>
