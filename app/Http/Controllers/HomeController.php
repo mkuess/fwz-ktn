@@ -32,17 +32,10 @@ class HomeController extends Controller
             ->get();
 
         $featuredBenefits = \App\Models\Benefit::where('is_active', true)
-            ->where('is_teaser', true)
+            ->orderByDesc('is_teaser')
             ->orderBy('sort_order')
-            ->limit(3)
+            ->limit(6)
             ->get();
-
-        if ($featuredBenefits->isEmpty()) {
-            $featuredBenefits = \App\Models\Benefit::where('is_active', true)
-                ->orderBy('sort_order')
-                ->limit(3)
-                ->get();
-        }
 
         $testimonials = \App\Models\Testimonial::where('is_active', true)
             ->orderBy('sort_order')
@@ -50,8 +43,8 @@ class HomeController extends Controller
 
         $stats = [
             'vereine'          => Organisation::where('is_approved', true)->count() . '+',
-            'freiwillige'      => '1.2k',
-            'stunden'          => '15k',
+            'freiwillige'      => '1.200',
+            'stunden'          => '15.000',
             'engagementFelder' => Category::count(),
         ];
 
