@@ -22,7 +22,7 @@
     <div class="nav-left">
       <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-new.svg') }}" alt="FWZ Kärnten" width="234" height="40"></a>
       <div class="menu" id="mobile-menu">
-        <a href="{{ route('home') }}#fwz">Was ist FWZ</a>
+        <a href="{{ route('home') }}#fwz">Über uns</a>
         <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         <a href="{{ route('home') }}#vereine">Vereine</a>
         <a href="{{ route('articles.index') }}">Aktuelles</a>
@@ -72,7 +72,7 @@
   </button>
 
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
-    <a href="{{ route('home') }}#fwz" @click="menuOpen = false">Was ist FWZ</a>
+    <a href="{{ route('home') }}#fwz" @click="menuOpen = false">Über uns</a>
     <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
     <a href="{{ route('home') }}#vereine" @click="menuOpen = false">Vereine</a>
     <a href="{{ route('articles.index') }}" @click="menuOpen = false">Aktuelles</a>
