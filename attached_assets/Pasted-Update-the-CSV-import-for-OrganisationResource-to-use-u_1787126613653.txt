@@ -1,0 +1,63 @@
+Update the CSV import for OrganisationResource to use updateOrCreate instead of just create, so existing records are updated with new data instead of creating duplicates. Do NOT delete the database.
+
+In app/Filament/Support/SmartCsvImportAction.php (or wherever the Organisation import logic is):
+
+Find the part where Organisation records are created and replace with updateOrCreate:
+
+Instead of:
+Organisation::create([...])
+
+Use:
+Organisation::withTrashed()->updateOrCreate(
+    ['email' => $email], // match on email as unique identifier
+    array_filter([       // only update fields that have values in CSV
+        'name' => $name ?: null,
+        'type' => $type ?: null,
+        'zvr_number' => $zvr_number ?: null,
+        'description' => $description ?: null,
+        'street' => $street ?: null,
+        'zip' => $zip ?: null,
+        'city' => $city ?: null,
+        'phone' => $phone ?: null,
+        'website' => $website ?: null,
+        'representative' => $representative ?: null,
+        'contact_person' => $contact_person ?: null,
+    ], fn($v) => $v !== null && $v !== '')
+);
+
+IMPORTANT rules for updateOrCreate:
+1. Match key: email (unique identifier)
+2. Only UPDATE fields that have a non-empty value in the CSV - do NOT overwrite existing data with empty values
+3. Do NOT overwrite: is_approved, is_active, password (keep existing values)
+4. If record is soft-deleted and found by email: restore it and update data
+5. Count separately: "X neu angelegt, Y aktualisiert, Z übersprungen"
+
+To track new vs updated:
+$existing = Organisation::withTrashed()->where('email', $email)->first();
+$isNew = !$existing;
+
+// restore if soft deleted
+if ($existing && $existing->trashed()) {
+    $existing->restore();
+}
+
+$org = Organisation::updateOrCreate(
+    ['email' => $email],
+    $updateData
+);
+
+if ($isNew) {
+    $created++;
+} else {
+    $updated++;
+}
+
+Update the result notification to show:
+"X Organisationen neu angelegt, Y aktualisiert, Z übersprungen"
+
+Apply the same updateOrCreate logic to MemberResource CSV import:
+- Match key for members: email
+- Do NOT overwrite: status, role, password, membership_number, card_status (keep existing)
+- Only update: first_name, last_name, organisation_id, street, zip, city, newsletter_optin if they have values
+
+Do NOT delete the database. Report when done.

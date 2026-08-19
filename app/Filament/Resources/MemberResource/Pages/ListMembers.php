@@ -24,10 +24,12 @@ class ListMembers extends ListRecords
                     ['key' => 'last_name', 'label' => 'Nachname', 'icon' => '👤', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'email', 'label' => 'E-Mail', 'icon' => '📧', 'required' => true, 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'organisation_id', 'label' => 'Organisation', 'icon' => '🏢', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'street', 'label' => 'Straße', 'icon' => '🏠', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'zip', 'label' => 'PLZ', 'icon' => '📮', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
+                    ['key' => 'city', 'label' => 'Ort', 'icon' => '🌆', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'newsletter_optin', 'label' => 'Newsletter', 'icon' => '📰', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
-                    ['key' => 'role', 'label' => 'Rolle', 'icon' => '🎭', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
-                importRow: function (array $mapped): bool|string {
+                importRow: function (array $mapped): array|bool|string {
                     $firstName = $mapped['first_name'] ?? '';
                     $lastName = $mapped['last_name'] ?? '';
                     $email = $mapped['email'] ?? null;
@@ -57,34 +59,42 @@ class ListMembers extends ListRecords
                         }
                     }
 
-                    $newsletterRaw = strtolower((string) ($mapped['newsletter_optin'] ?? ''));
-                    $newsletterOptin = in_array($newsletterRaw, ['1', 'true', 'yes', 'ja'], true);
+                    $existing = Member::withTrashed()->where('email', $email)->first();
+                    $isNew = $existing === null;
 
-                    $roleRaw = strtolower(trim((string) ($mapped['role'] ?? '')));
-                    $role = match (true) {
-                        in_array($roleRaw, ['organisations-administrator', 'org_admin', 'organisator'], true) => 'org_admin',
-                        in_array($roleRaw, ['administrator', 'admin'], true) => 'admin',
-                        default => 'member',
-                    };
+                    $updateData = array_filter([
+                        'first_name' => $firstName ?: null,
+                        'last_name' => $lastName ?: null,
+                        'organisation_id' => $organisationId,
+                        'street' => $mapped['street'] ?: null,
+                        'zip' => $mapped['zip'] ?: null,
+                        'city' => $mapped['city'] ?: null,
+                    ], fn ($value) => $value !== null && $value !== '');
+
+                    $newsletterRaw = trim((string) ($mapped['newsletter_optin'] ?? ''));
+
+                    if ($newsletterRaw !== '') {
+                        $updateData['newsletter_optin'] = in_array(strtolower($newsletterRaw), ['1', 'true', 'yes', 'ja'], true);
+                    }
+
+                    if ($isNew) {
+                        $updateData['source'] = 'csv';
+                    }
 
                     try {
-                        Member::updateOrCreate(
+                        if ($existing?->trashed()) {
+                            $existing->restore();
+                        }
+
+                        Member::withTrashed()->updateOrCreate(
                             ['email' => $email],
-                            [
-                                'organisation_id' => $organisationId,
-                                'first_name' => $firstName !== '' ? $firstName : null,
-                                'last_name' => $lastName !== '' ? $lastName : null,
-                                'newsletter_optin' => $newsletterOptin,
-                                'role' => $role,
-                                'status' => 'pending',
-                                'source' => 'csv',
-                            ]
+                            $updateData
                         );
                     } catch (\Throwable $e) {
                         return "Fehler beim Speichern: {$e->getMessage()} (Name: {$firstName} {$lastName})";
                     }
 
-                    return true;
+                    return ['status' => $isNew ? 'created' : 'updated'];
                 },
                 entityPluralLabel: 'Mitglieder',
             ),

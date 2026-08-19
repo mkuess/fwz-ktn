@@ -35,7 +35,7 @@ class ListOrganisations extends ListRecords
                     ['key' => 'representative', 'label' => 'Vertretung', 'icon' => '👤', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                     ['key' => 'contact_person', 'label' => 'Ansprechpartner:in', 'icon' => '👥', 'special' => ['value' => SmartCsvImportAction::IGNORE, 'label' => '(ignorieren)']],
                 ],
-                importRow: function (array $mapped): bool|string {
+                importRow: function (array $mapped): array|bool|string {
                     $name = $mapped['name'] ?? null;
 
                     if (! $name) {
@@ -59,48 +59,45 @@ class ListOrganisations extends ListRecords
                         default => 'organisation',
                     };
 
-                    $password = $mapped['password'] ?? null;
+                    $existing = Organisation::withTrashed()->where('email', $email)->first();
+                    $isNew = $existing === null;
 
-                    // CSV imports can involve hundreds of rows, and Laravel's
-                    // default bcrypt cost (12 rounds) takes long enough per
-                    // hash that hashing a large batch of auto-generated
-                    // passwords can exceed the PHP execution time limit. For
-                    // rows without an explicit password we generate a random
-                    // one and hash it with a much lower cost, since these
-                    // orgs must go through a password reset before ever
-                    // using it anyway. Pre-hashing here (rather than letting
-                    // the model's 'hashed' cast do it) means Laravel's
-                    // Hash::isHashed() check sees an already-valid bcrypt
-                    // hash and skips re-hashing at the default cost.
-                    $password = ($password !== null && $password !== '')
-                        ? $password
-                        : Hash::make(Str::random(12), ['rounds' => 4]);
+                    $updateData = array_filter([
+                        'name' => $name ?: null,
+                        'type' => $typeRaw !== '' ? $type : ($isNew ? 'organisation' : null),
+                        'zvr_number' => $mapped['zvr_number'] ?: null,
+                        'description' => $mapped['description'] ?: null,
+                        'street' => $mapped['street'] ?: null,
+                        'zip' => $mapped['zip'] ?: null,
+                        'city' => $mapped['city'] ?: null,
+                        'phone' => $mapped['phone'] ?: null,
+                        'website' => $mapped['website'] ?: null,
+                        'representative' => $mapped['representative'] ?: null,
+                        'contact_person' => $mapped['contact_person'] ?: null,
+                    ], fn ($value) => $value !== null && $value !== '');
+
+                    if ($isNew) {
+                        // New organisations need a password because the
+                        // database column is required. Existing passwords are
+                        // intentionally never included in updateData.
+                        $password = $mapped['password'] ?? null;
+                        $updateData['password'] = $password ?: Hash::make(Str::random(12), ['rounds' => 4]);
+                    }
 
                     try {
-                        Organisation::updateOrCreate(
+                        if ($existing?->trashed()) {
+                            $existing->restore();
+                        }
+
+                        Organisation::withTrashed()->updateOrCreate(
                             ['email' => $email],
-                            [
-                                'type' => $type,
-                                'name' => $name,
-                                'password' => $password,
-                                'zvr_number' => $mapped['zvr_number'] ?: null,
-                                'description' => $mapped['description'] ?: null,
-                                'street' => $mapped['street'] ?: null,
-                                'zip' => $mapped['zip'] ?: null,
-                                'city' => $mapped['city'] ?: null,
-                                'phone' => $mapped['phone'] ?: null,
-                                'website' => $mapped['website'] ?: null,
-                                'representative' => $mapped['representative'] ?: null,
-                                'contact_person' => $mapped['contact_person'] ?: null,
-                                'is_approved' => false,
-                                'is_active' => true,
-                            ]
+                            $updateData
                         );
                     } catch (\Throwable $e) {
                         return "Fehler beim Speichern: {$e->getMessage()} (Name: {$name})";
                     }
 
-                    return true;
+                    return ['status' => $isNew ? 'created' : 'updated'];
                 },
                 entityPluralLabel: 'Organisationen',
             ),

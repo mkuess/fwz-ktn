@@ -31,7 +31,7 @@ class SmartCsvImportAction
 
     /**
      * @param  array<int, array{key: string, label: string, icon?: string, required?: bool, special?: array{value: string, label: string}}>  $fields
-     * @param  Closure(array<string, string|null>): (bool|string)  $importRow  Returns true when the row was imported, false when it was skipped (generic reason), or a string with the skip reason.
+     * @param  Closure(array<string, string|null>): (array{status: 'created'|'updated'}|bool|string)  $importRow  Returns a detailed create/update status, true when the row was imported, false when it was skipped (generic reason), or a string with the skip reason.
      */
     public static function make(
         string $name,
@@ -147,6 +147,9 @@ class SmartCsvImportAction
                     $rows = iterator_to_array(CsvImportHelper::readRows($path, $analysis['delimiter']));
 
                     $imported = 0;
+                    $created = 0;
+                    $updated = 0;
+                    $hasDetailedCounts = false;
                     $skipped = 0;
                     $skipReasons = [];
                     $skipDetails = [];
@@ -156,7 +159,7 @@ class SmartCsvImportAction
                     // row) while keeping memory usage bounded for very large
                     // files.
                     foreach (array_chunk($rows, 50, preserve_keys: true) as $chunk) {
-                        DB::transaction(function () use ($chunk, $fields, $data, $importRow, $entityPluralLabel, &$imported, &$skipped, &$skipReasons, &$skipDetails) {
+                        DB::transaction(function () use ($chunk, $fields, $data, $importRow, $entityPluralLabel, &$imported, &$created, &$updated, &$hasDetailedCounts, &$skipped, &$skipReasons, &$skipDetails) {
                             foreach ($chunk as $rowIndex => $row) {
                                 $mapped = [];
 
@@ -179,7 +182,15 @@ class SmartCsvImportAction
                                     $result = 'Fehler: '.$e->getMessage();
                                 }
 
-                                if ($result === true) {
+                                if (is_array($result) && in_array($result['status'] ?? null, ['created', 'updated'], true)) {
+                                    $hasDetailedCounts = true;
+
+                                    if ($result['status'] === 'created') {
+                                        $created++;
+                                    } else {
+                                        $updated++;
+                                    }
+                                } elseif ($result === true) {
                                     $imported++;
                                 } else {
                                     $skipped++;
@@ -219,7 +230,9 @@ class SmartCsvImportAction
                         );
                     }
 
-                    $title = "{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen";
+                    $title = $hasDetailedCounts
+                        ? "{$created} {$entityPluralLabel} neu angelegt, {$updated} aktualisiert, {$skipped} übersprungen"
+                        : "{$imported} {$entityPluralLabel} importiert, {$skipped} übersprungen";
 
                     $notification = Notification::make()->title($title);
 
