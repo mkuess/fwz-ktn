@@ -71,7 +71,7 @@ p{margin:0;color:var(--text)}
 .icon-img{width:48px;height:48px;object-fit:contain;margin-bottom:16px}
 .feature .h3{font-size:1.12rem;margin-bottom:8px}
 .feature p{font-size:.96rem}
-.welcome-box{padding:48px;display:grid;grid-template-columns:minmax(340px,460px) 1fr;gap:44px;align-items:center}
+.welcome-box{padding:48px;display:grid;grid-template-columns:minmax(340px,460px) 1fr;gap:44px;align-items:start}
 .welcome-media img{width:100%;border-radius:26px;border:1px solid var(--line);box-shadow:0 16px 40px rgba(8,38,79,.09)}
 .welcome-text p{margin-bottom:16px}
 .welcome-signoff{margin-top:18px;color:#5d7390;font-weight:700}
