@@ -195,6 +195,11 @@ class OrganisationResource extends Resource
             ->defaultPaginationPageOption(30)
             ->paginationPageOptions([10, 30, 50, 100])
             ->columns([
+                Tables\Columns\ImageColumn::make('logo_path')
+                    ->label('Logo')
+                    ->disk('public')
+                    ->size(40)
+                    ->square(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
