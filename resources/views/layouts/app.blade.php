@@ -24,7 +24,7 @@
       <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Über uns</a>
         <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
-        <a href="{{ route('home') }}#vereine">Vereine</a>
+        <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
         <a href="{{ route('articles.index') }}">Aktuelles</a>
       </div>
     </div>
@@ -74,7 +74,7 @@
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
     <a href="{{ route('home') }}#fwz" @click="menuOpen = false">Über uns</a>
     <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
-    <a href="{{ route('home') }}#vereine" @click="menuOpen = false">Vereine</a>
+    <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
     <a href="{{ route('articles.index') }}" @click="menuOpen = false">Aktuelles</a>
     @if(auth('member')->check())
       <a href="{{ route('member.portal') }}" @click="menuOpen = false">Mein Bereich</a>

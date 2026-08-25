@@ -16,6 +16,13 @@
 
   <section class="section">
     <div class="container">
+      <div class="org-directory-header">
+        <div>
+          <span class="eyebrow">Vereinsverzeichnis</span>
+          <h2 class="h2">Vereine &amp; Organisationen</h2>
+        </div>
+        <a class="btn dark" href="{{ route('organisations.map') }}">Karte öffnen <span class="arrow">→</span></a>
+      </div>
       <div class="org-grid">
         @forelse($organisations as $org)
           <a href="{{ route('organisations.show', $org->id) }}" style="text-decoration:none;color:inherit;display:block">

@@ -22,6 +22,7 @@ Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.in
 Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
+Route::get('/vereine/karte', [OrganisationController::class, 'map'])->name('organisations.map');
 
 Route::get('/anmelden',          [MemberAuthController::class, 'showLogin'])->name('member.login');
 Route::post('/anmelden',         [MemberAuthController::class, 'login'])->name('member.login.post');
