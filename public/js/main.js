@@ -30,8 +30,6 @@
   if (heroSlider) {
     var heroSlides = Array.from(heroSlider.querySelectorAll('[data-hero-slide]'));
     var heroDots = Array.from(heroSlider.querySelectorAll('[data-hero-dot]'));
-    var heroPrev = heroSlider.querySelector('[data-hero-prev]');
-    var heroNext = heroSlider.querySelector('[data-hero-next]');
     var heroIndex = 0;
     var heroTimer;
     var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -68,16 +66,6 @@
       stopHeroTimer();
       startHeroTimer();
     }
-
-    heroPrev.addEventListener('click', function () {
-      showHeroSlide(heroIndex - 1);
-      restartHeroTimer();
-    });
-
-    heroNext.addEventListener('click', function () {
-      showHeroSlide(heroIndex + 1);
-      restartHeroTimer();
-    });
 
     heroDots.forEach(function (dot) {
       dot.addEventListener('click', function () {

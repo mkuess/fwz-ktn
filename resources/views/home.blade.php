@@ -50,7 +50,6 @@
     </div>
   </div>
   <div class="hero-controls" aria-label="Hero-Bilder steuern">
-    <button class="hero-control" type="button" data-hero-prev aria-label="Vorheriges Bild">←</button>
     <div class="hero-dots" role="tablist" aria-label="Hero-Bild auswählen">
       @foreach($heroSlides as $index => $slide)
         <button
@@ -64,7 +63,6 @@
         ></button>
       @endforeach
     </div>
-    <button class="hero-control" type="button" data-hero-next aria-label="Nächstes Bild">→</button>
   </div>
 </section>
 

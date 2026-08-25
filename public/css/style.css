@@ -55,13 +55,10 @@ p{margin:0;color:var(--text)}
 .hero-copy{max-width:590px}
 .hero-copy p{color:rgba(255,255,255,.92);font-size:1.08rem;max-width:510px;margin:24px 0 34px}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
-.hero-controls{position:absolute;z-index:3;right:clamp(20px,4vw,56px);bottom:34px;display:flex;align-items:center;gap:16px}
-.hero-control,.hero-dot{border:1px solid rgba(255,255,255,.72);color:#fff;background:rgba(5,22,47,.28);backdrop-filter:blur(10px);cursor:pointer;transition:background .2s ease,transform .2s ease,border-color .2s ease}
-.hero-control{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;line-height:1}
-.hero-control:hover,.hero-control:focus-visible,.hero-dot:hover,.hero-dot:focus-visible{background:rgba(255,187,16,.95);border-color:var(--yellow);color:var(--blue-dark)}
-.hero-control:hover{transform:translateY(-1px)}
+.hero-controls{position:absolute;z-index:3;right:clamp(20px,4vw,56px);bottom:34px}
 .hero-dots{display:flex;align-items:center;gap:8px}
-.hero-dot{width:10px;height:10px;padding:0;border-radius:50%}
+.hero-dot{width:10px;height:10px;padding:0;border:1px solid rgba(255,255,255,.72);border-radius:50%;color:#fff;background:rgba(5,22,47,.28);backdrop-filter:blur(10px);cursor:pointer;transition:background .2s ease,transform .2s ease,border-color .2s ease}
+.hero-dot:hover,.hero-dot:focus-visible{background:rgba(255,187,16,.95);border-color:var(--yellow);color:var(--blue-dark)}
 .hero-dot.is-active{width:28px;border-radius:999px;background:var(--yellow);border-color:var(--yellow)}
 .hero-stats{position:relative;z-index:5;margin-top:-72px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;overflow:hidden;padding:12px;background:rgba(255,255,255,.98)}
@@ -163,7 +160,7 @@ p{margin:0;color:var(--text)}
   .nav{padding:0 16px}
   .nav-actions{display:none}
   .hero-copy p{font-size:1rem}
-  .hero-controls{left:0;right:0;justify-content:center;bottom:20px}
+  .hero-controls{right:20px;bottom:20px}
   .stats,.features,.org-grid,.news-grid,.benefit-grid,.testi-grid{grid-template-columns:1fr}
   .stat{border-right:0;border-bottom:1px solid var(--line)}
   .stat:last-child{border-bottom:0}
