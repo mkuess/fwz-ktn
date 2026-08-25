@@ -4,7 +4,41 @@
 @section('meta_description', 'Das Freiwilligenzentrum Kärnten (FWZ) ist die zentrale Anlaufstelle des Landes Kärnten für ehrenamtliches Engagement – für Freiwillige und Vereine.')
 
 @section('hero')
-<section class="hero" id="top">
+@php
+  $heroSlides = [
+    [
+      'image' => 'img/hero-slide-sport.jpg',
+      'alt' => 'Freiwillige Sportlerinnen und Sportler vor dem Wörthersee und den Kärntner Bergen',
+    ],
+    [
+      'image' => 'img/hero-slide-rescue.png',
+      'alt' => 'Einsatzkräfte bei einer gemeinsamen Übung am See',
+    ],
+    [
+      'image' => 'img/hero-slide-music.jpg',
+      'alt' => 'Musikerinnen und Musiker einer Kärntner Blasmusikkapelle am See',
+    ],
+  ];
+@endphp
+<section class="hero" id="top" data-hero-slider aria-label="Ehrenamt in Kärnten">
+  <div class="hero-slides">
+    @foreach($heroSlides as $index => $slide)
+      <div
+        class="hero-slide{{ $index === 0 ? ' is-active' : '' }}"
+        id="hero-slide-{{ $index }}"
+        data-hero-slide
+        aria-hidden="{{ $index === 0 ? 'false' : 'true' }}"
+      >
+        <img
+          src="{{ asset($slide['image']) }}"
+          alt="{{ $slide['alt'] }}"
+          width="1916"
+          height="821"
+          @if($index === 0) fetchpriority="high" @else loading="lazy" @endif
+        >
+      </div>
+    @endforeach
+  </div>
   <div class="container hero-inner">
     <div class="hero-copy">
       <h1 class="h1">Ich bin…<br><span>ehrenamtlich.</span></h1>
@@ -14,6 +48,23 @@
         <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden <span class="arrow">→</span></a>
       </div>
     </div>
+  </div>
+  <div class="hero-controls" aria-label="Hero-Bilder steuern">
+    <button class="hero-control" type="button" data-hero-prev aria-label="Vorheriges Bild">←</button>
+    <div class="hero-dots" role="tablist" aria-label="Hero-Bild auswählen">
+      @foreach($heroSlides as $index => $slide)
+        <button
+          class="hero-dot{{ $index === 0 ? ' is-active' : '' }}"
+          type="button"
+          role="tab"
+          data-hero-dot="{{ $index }}"
+          aria-controls="hero-slide-{{ $index }}"
+          aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
+          aria-label="Bild {{ $index + 1 }} von {{ count($heroSlides) }}"
+        ></button>
+      @endforeach
+    </div>
+    <button class="hero-control" type="button" data-hero-next aria-label="Nächstes Bild">→</button>
   </div>
 </section>
 
