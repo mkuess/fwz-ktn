@@ -62,9 +62,11 @@
 
       <div style="margin-top:1.5rem;text-align:center;display:flex;flex-direction:column;gap:0.5rem">
         <a href="{{ route('member.forgot') }}" style="font-size:0.875rem;color:var(--yellow)">Passwort vergessen?</a>
-        <span style="font-size:0.875rem;color:#9ca3af">Noch kein Mitglied?
-          <a href="{{ route('member.register') }}" style="color:var(--yellow);font-weight:600">Jetzt registrieren →</a>
-        </span>
+        @if(\App\Models\Setting::enabled('member_registration_enabled'))
+          <span style="font-size:0.875rem;color:#9ca3af">Noch kein Mitglied?
+            <a href="{{ route('member.register') }}" style="color:var(--yellow);font-weight:600">Jetzt registrieren →</a>
+          </span>
+        @endif
       </div>
 
     </div>

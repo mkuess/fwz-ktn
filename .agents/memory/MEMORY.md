@@ -4,3 +4,4 @@
 - [SQLite enum column migrations](sqlite-enum-migrations.md) — don't ->change() an existing column to enum() on SQLite; drop+re-add instead to avoid doctrine/dbal enum-type pitfalls.
 - [HTTPS admin sessions](https-admin-sessions.md) — keep Laravel session cookies secure behind the HTTPS proxy so Filament session regeneration does not trigger Livewire 419 errors.
 - [Leaflet map assets and popup escaping](leaflet-map-assets-popups.md) — validate CDN SRI against the fetched asset and escape popup values with a regular DOM element, not a template node.
+- [Public registration settings](public-registration-settings.md) — cache registration flags centrally and invalidate them immediately whenever an admin changes a setting.

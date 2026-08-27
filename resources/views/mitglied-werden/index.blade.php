@@ -156,11 +156,13 @@
             <li>Du erhältst deine digitale Mitgliedskarte und Zugang zu allen Benefits</li>
           </ol>
         </div>
-        <div class="box" style="padding:1.5rem;margin-top:1rem">
-          <h3 class="h4" style="margin-bottom:0.5rem">Du möchtest einen Verein anmelden?</h3>
-          <p style="font-size:0.9rem;margin-bottom:1rem">Als Organisation kannst du dich ebenfalls beim FWZ Kärnten registrieren.</p>
-          <a class="btn dark" style="width:100%;text-align:center" href="{{ route('registrierung.schritt1') }}">Verein anmelden <span class="arrow">→</span></a>
-        </div>
+        @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
+          <div class="box" style="padding:1.5rem;margin-top:1rem">
+            <h3 class="h4" style="margin-bottom:0.5rem">Du möchtest einen Verein anmelden?</h3>
+            <p style="font-size:0.9rem;margin-bottom:1rem">Als Organisation kannst du dich ebenfalls beim FWZ Kärnten registrieren.</p>
+            <a class="btn dark" style="width:100%;text-align:center" href="{{ route('registrierung.schritt1') }}">Verein anmelden <span class="arrow">→</span></a>
+          </div>
+        @endif
       </aside>
     </div>
   </div>

@@ -114,10 +114,12 @@
             </div>
           @endif
 
-          <a href="{{ route('member.register') }}?organisation={{ $organisation->id }}"
-             class="btn-cta">
-            Benefits als Mitglied sichern →
-          </a>
+          @if(\App\Models\Setting::enabled('member_registration_enabled'))
+            <a href="{{ route('member.register') }}?organisation={{ $organisation->id }}"
+               class="btn-cta">
+              Benefits als Mitglied sichern →
+            </a>
+          @endif
         </div>
       </div>
 

@@ -23,7 +23,9 @@
       <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-new.svg') }}" alt="FWZ Kärnten" width="234" height="40"></a>
       <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Über uns</a>
-        <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
+        @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
+          <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
+        @endif
         <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
         <a href="{{ route('articles.index') }}">Aktuelles</a>
       </div>
@@ -73,7 +75,9 @@
 
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
     <a href="{{ route('home') }}#fwz" @click="menuOpen = false">Über uns</a>
-    <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
+    @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
+      <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
+    @endif
     <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
     <a href="{{ route('articles.index') }}" @click="menuOpen = false">Aktuelles</a>
     @if(auth('member')->check())
@@ -88,7 +92,9 @@
   </nav>
 
   <div class="mobile-nav-panel__actions">
-    <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden</a>
+    @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
+      <a class="btn light" href="{{ route('registrierung.schritt1') }}">Verein anmelden</a>
+    @endif
   </div>
 
 </div>
