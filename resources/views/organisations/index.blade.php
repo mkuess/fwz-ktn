@@ -55,8 +55,8 @@
       </div>
 
       @if($organisations->hasPages())
-        <div style="margin-top:2rem;display:flex;justify-content:center">
-          {{ $organisations->links() }}
+        <div class="pagination-wrapper">
+          {{ $organisations->onEachSide(2)->links() }}
         </div>
       @endif
     </div>

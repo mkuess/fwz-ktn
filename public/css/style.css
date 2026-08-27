@@ -104,6 +104,42 @@ p{margin:0;color:var(--text)}
 .org-card .place{color:#6a7f99;font-size:.95rem}
 .org-directory-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
 .org-directory-header .eyebrow{margin-bottom:6px}
+.pagination-wrapper{display:flex;justify-content:center;margin-top:2rem}
+.pagination-nav{width:100%}
+.pagination-summary{margin:0 0 1rem;text-align:center;color:#5d7390;font-size:.875rem}
+.pagination{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;list-style:none;padding:0;margin:0}
+.pagination > li > a,.pagination > li > span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:2.25rem;
+  height:2.25rem;
+  padding:0 .65rem;
+  border-radius:50%;
+  font-size:.875rem;
+  color:#1a2e1a;
+  text-decoration:none;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  transition:all .2s;
+}
+.pagination li.active > span,.pagination li > span[aria-current="page"]{
+  background:#c9a227;
+  color:#1a2e1a;
+  border-color:#c9a227;
+  font-weight:700;
+}
+.pagination li a:hover{background:#f3f4f6}
+.pagination li > span.disabled{opacity:.4;cursor:not-allowed}
+.pagination li > a.pagination-control,.pagination li > span.pagination-control{
+  width:auto;
+  border-radius:999px;
+  padding:0 .9rem;
+  gap:.35rem;
+}
+.pagination-control > span{min-width:0;width:auto;height:auto;padding:0;border:0;border-radius:0;background:transparent;transition:none}
+.pagination li.pagination-ellipsis span{border-color:transparent;background:transparent;min-width:1.5rem;padding:0}
+.pagination li a:focus-visible,.pagination li span:focus-visible{outline:3px solid #ff8a00;outline-offset:3px}
 .banner-box{padding:56px 56px 44px}
 .banner-head{display:grid;grid-template-columns:1fr auto;gap:26px;align-items:end;margin-bottom:28px}
 .banner-box .btn{min-width:220px}

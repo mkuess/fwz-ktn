@@ -9,6 +9,8 @@ class OrganisationController extends Controller
 {
     public function index()
     {
+        app()->setLocale('de');
+
         $organisations = Organisation::where('is_approved', true)
             ->where('is_active', true)
             ->with('categories')

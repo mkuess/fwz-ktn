@@ -1,0 +1,81 @@
+Fix the pagination on the /vereine page - it's broken visually and showing in English. Do NOT delete the database.
+
+In resources/views/organisations/index.blade.php find the pagination links and fix:
+
+STEP 1 - Replace English pagination with German:
+The paginator uses Laravel's default English strings. Fix by either:
+
+a) In AppServiceProvider boot() method add:
+Paginator::defaultView('pagination::tailwind');
+use Illuminate\Pagination\Paginator;
+
+b) OR publish and customize the pagination view:
+php artisan vendor:publish --tag=laravel-pagination
+
+Then in the published view replace:
+"Previous" → "Zurück"
+"Next" → "Weiter"
+"Showing" → "Zeige"
+"to" → "bis"
+"of" → "von"
+"results" → "Ergebnisse"
+
+STEP 2 - Fix pagination visual layout:
+The pagination is showing raw « Previous Next » links AND separate numbered links which makes it look broken.
+
+In resources/views/organisations/index.blade.php replace:
+{{ $organisations->links() }}
+
+With a styled version:
+<div style="display:flex;justify-content:center;margin-top:2rem">
+    {{ $organisations->onEachSide(2)->links() }}
+</div>
+
+STEP 3 - Make sure only ONE pagination element is rendered:
+Check the blade file for duplicate pagination calls and remove any extras.
+
+STEP 4 - Style the pagination to match site design:
+In the CSS file add:
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+.pagination li a,
+.pagination li span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    font-size: 0.875rem;
+    color: #1a2e1a;
+    text-decoration: none;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    transition: all 0.2s;
+}
+.pagination li.active span,
+.pagination li span[aria-current="page"] {
+    background: #c9a227;
+    color: #1a2e1a;
+    border-color: #c9a227;
+    font-weight: 700;
+}
+.pagination li a:hover {
+    background: #f3f4f6;
+}
+.pagination li span.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+Also update OrganisationController::index() to use German locale for pagination:
+app()->setLocale('de');
+
+Do NOT delete the database. Report when done.
