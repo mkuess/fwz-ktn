@@ -45,7 +45,6 @@ class HomeController extends Controller
             'vereine'          => Organisation::where('is_approved', true)->count() . '+',
             'freiwillige'      => '200.000',
             'stunden'          => '15.000',
-            'engagementFelder' => Category::count(),
         ];
 
         return view('home', compact('vereine', 'kategorien', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
