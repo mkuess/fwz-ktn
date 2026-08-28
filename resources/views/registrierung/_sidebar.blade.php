@@ -26,8 +26,8 @@
     </ul>
     <div class="reg-sidebar__contact">
       <p style="font-weight:800;color:var(--ink);margin-bottom:6px">Fragen zur Registrierung?</p>
-      <p style="font-size:.93rem">+43 463 50 56 60<br>
-      <a href="mailto:office@freiwilligenzentrum-kaernten.at" style="color:var(--blue);font-weight:700">office@freiwilligenzentrum-kaernten.at</a></p>
+      <p style="font-size:.93rem">0664 88625010<br>
+      <a href="mailto:info@fwz-ktn.at" style="color:var(--blue);font-weight:700">info@fwz-ktn.at</a></p>
     </div>
   </div>
 </aside>

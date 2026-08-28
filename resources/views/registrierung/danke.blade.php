@@ -44,7 +44,7 @@
       </div>
       <div style="margin-top:32px;display:flex;gap:14px;flex-wrap:wrap">
         <a class="btn dark" href="{{ route('home') }}">Zurück zur Startseite <span class="arrow">→</span></a>
-        <a class="btn light-outline" href="mailto:office@freiwilligenzentrum-kaernten.at">Bei Fragen kontaktieren</a>
+        <a class="btn light-outline" href="mailto:info@fwz-ktn.at">Bei Fragen kontaktieren</a>
       </div>
     </div>
   </div>
