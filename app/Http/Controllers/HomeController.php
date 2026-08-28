@@ -43,7 +43,7 @@ class HomeController extends Controller
 
         $stats = [
             'vereine'          => Organisation::where('is_approved', true)->count() . '+',
-            'freiwillige'      => '1.200',
+            'freiwillige'      => '200.000',
             'stunden'          => '15.000',
             'engagementFelder' => Category::count(),
         ];
