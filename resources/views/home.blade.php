@@ -12,7 +12,7 @@
     ],
     [
       'image' => 'img/hero-slide-5.jpg',
-      'alt' => 'Ehrenamtliche Helferinnen und Helfer unterstützen einen Menschen im Rollstuhl am See',
+      'alt' => 'Musikerinnen und Musiker in traditioneller Kärntner Tracht mit Blasinstrumenten am See',
     ],
     [
       'image' => 'img/hero-slide-sport.jpg',
