@@ -7,6 +7,14 @@
 @php
   $heroSlides = [
     [
+      'image' => 'img/hero-slide-4.jpg',
+      'alt' => 'Ehrenamtliche Helferinnen und Helfer bei einer gemeinsamen Aktion am See',
+    ],
+    [
+      'image' => 'img/hero-slide-5.jpg',
+      'alt' => 'Ehrenamtliche Helferinnen und Helfer unterstützen einen Menschen im Rollstuhl am See',
+    ],
+    [
       'image' => 'img/hero-slide-sport.jpg',
       'alt' => 'Freiwillige Sportlerinnen und Sportler vor dem Wörthersee und den Kärntner Bergen',
     ],
