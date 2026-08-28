@@ -27,6 +27,7 @@
           <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         @endif
         <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
+        <a href="#kontakt">Kontakt</a>
         <a href="{{ route('articles.index') }}">Aktuelles</a>
       </div>
     </div>
@@ -79,6 +80,11 @@
       <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
     @endif
     <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
+    <a
+      href="#kontakt"
+      @click.prevent="menuOpen = false; window.history.pushState(null, '', '#kontakt'); $nextTick(() => document.getElementById('kontakt').scrollIntoView({ behavior: 'smooth', block: 'start' }))">
+      Kontakt
+    </a>
     <a href="{{ route('articles.index') }}" @click="menuOpen = false">Aktuelles</a>
     @if(auth('member')->check())
       <a href="{{ route('member.portal') }}" @click="menuOpen = false">Mein Bereich</a>
@@ -107,7 +113,7 @@
   @yield('content')
 </main>
 
-<footer class="footer">
+<footer class="footer" id="kontakt">
   <div class="container footer-grid">
     <div>
       <img class="footer-logo" src="{{ asset('img/fwz-logo-new.svg') }}" alt="FWZ Kärnten">
