@@ -140,7 +140,7 @@
           <p>Das Ehrenamt ist mehr als nur eine Ergänzung zu bestehenden, staatlichen Strukturen – es ist die Seele unseres Miteinanders. Ob bei den Einsatzorganisationen wie der Freiwilligen Feuerwehr, Rettung, Bergrettung oder Wasserrettung, in sozialen Bereichen wie der Pflege, in Bildungsinitiativen wie den Caritas Lerncafés oder in zahllosen anderen Initiativen: Freiwillige leisten Tag für Tag Unbezahlbares – mit Herz, Überzeugung und im Dienste der Gemeinschaft.</p>
           <p>Mit dem Freiwilligenzentrum schaffen wir nun einen Ort, der Ehrenamt koordiniert, stärkt und sichtbar macht. Ein Ort der Begegnung, der Information, der Unterstützung – und vor allem ein Ort der Wertschätzung.</p>
           <p>Wir laden Sie herzlich ein, Teil dieser Bewegung zu sein – durch Ihr Engagement, Ihre Ideen oder Ihre Anerkennung für all jene, die sich bereits freiwillig einsetzen. Gemeinsam gestalten wir eine noch solidarischere und lebenswertere Zukunft für Kärnten.</p>
-          <div class="welcome-signoff">Ing. Daniel Fellner<br>Landeshauptmann von Kärnten &amp; Katastrophenschutzreferent</div>
+          <div class="welcome-signoff">Ing. Daniel Fellner<br>Vereinsobmann Freiwilligenzentrum Kärnten - Landeshauptmann von Kärnten &amp; Katastrophenschutzreferent</div>
         </div>
       </div>
     </div>
