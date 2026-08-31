@@ -23,8 +23,8 @@
       'alt' => 'Einsatzkräfte bei einer gemeinsamen Übung am See',
     ],
     [
-      'image' => 'img/hero-slide-music.jpg',
-      'alt' => 'Musikerinnen und Musiker einer Kärntner Blasmusikkapelle am See',
+      'image' => 'img/hero-slide-wheels.jpg',
+      'alt' => 'Ehrenamtliche Helferinnen und Helfer von Wheels for Charity mit einem Rollstuhl am See',
     ],
   ];
 @endphp
