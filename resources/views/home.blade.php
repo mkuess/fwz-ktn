@@ -205,13 +205,6 @@
           <p class="vereine-result-count" aria-live="polite" aria-atomic="true"></p>
         </div>
 
-        <div class="chips">
-          <button class="chip active" data-kategorie="">Alle</button>
-          @foreach($kategorien as $kat)
-            <button class="chip" data-kategorie="{{ $kat->slug }}">{{ $kat->name }}</button>
-          @endforeach
-        </div>
-
         <div class="org-grid" id="vereine-grid">
           @forelse($vereine as $verein)
             <a href="{{ route('organisations.show', $verein['id']) }}" style="text-decoration:none;color:inherit;display:block">
@@ -230,6 +223,10 @@
           @empty
             <p class="muted">Aktuell sind noch keine Vereine im Verzeichnis freigeschaltet.</p>
           @endforelse
+        </div>
+
+        <div class="button-center">
+          <a class="btn dark" href="{{ route('organisations.index') }}">Alle ansehen <span class="arrow">→</span></a>
         </div>
       </div>
     </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Organisation;
 use Illuminate\Http\Request;
 
@@ -23,8 +22,6 @@ class HomeController extends Controller
                 'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
                 'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
             ]);
-
-        $kategorien = Category::orderBy('sort_order')->get(['name', 'slug']);
 
         $aktionen = \App\Models\Article::where('is_published', true)
             ->orderBy('published_at', 'desc')
@@ -47,7 +44,7 @@ class HomeController extends Controller
             'stunden'          => '15.000',
         ];
 
-        return view('home', compact('vereine', 'kategorien', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
+        return view('home', compact('vereine', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
     }
 
     public function vereineSuche(Request $request)
