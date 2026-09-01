@@ -24,6 +24,10 @@ class PublicRegistrationAvailabilityTest extends TestCase
             'key' => 'organisation_registration_enabled',
             'value' => '1',
         ]);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'login_button_enabled',
+            'value' => '1',
+        ]);
 
         $this->get(route('member.register'))->assertOk();
         $this->get(route('registrierung.schritt1'))->assertOk();
@@ -31,7 +35,8 @@ class PublicRegistrationAvailabilityTest extends TestCase
         $this->get(route('home'))
             ->assertSee('Benefits als Mitglied sichern')
             ->assertSee('Verein anmelden')
-            ->assertSee('Jetzt Verein registrieren');
+            ->assertSee('Jetzt Verein registrieren')
+            ->assertSee('Anmelden');
     }
 
     public function test_admin_can_persist_each_registration_setting_independently(): void
@@ -42,6 +47,7 @@ class PublicRegistrationAvailabilityTest extends TestCase
             ->assertSet('member_registration_enabled', true)
             ->assertSet('organisation_registration_enabled', true)
             ->set('member_registration_enabled', false)
+            ->assertSet('login_button_enabled', true)
             ->call('save')
             ->assertHasNoErrors();
 
@@ -57,6 +63,23 @@ class PublicRegistrationAvailabilityTest extends TestCase
 
         $this->assertFalse(Setting::enabled('member_registration_enabled'));
         $this->assertFalse(Setting::enabled('organisation_registration_enabled'));
+    }
+
+    public function test_admin_can_hide_the_login_button_without_disabling_login(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(Einstellungen::class)
+            ->assertSet('login_button_enabled', true)
+            ->set('login_button_enabled', false)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertFalse(Setting::enabled('login_button_enabled'));
+        $this->get(route('home'))
+            ->assertDontSee('href="'.route('member.login').'"', false)
+            ->assertDontSee('Anmelden');
+        $this->get(route('member.login'))->assertOk();
     }
 
     public function test_member_registration_can_be_disabled_independently(): void

@@ -39,7 +39,9 @@
           <button type="submit" class="btn light" style="cursor:pointer;font-family:inherit;border:none">Abmelden</button>
         </form>
       @else
-        <a class="btn primary" href="{{ route('member.login') }}">Anmelden <span class="arrow">→</span></a>
+        @if(\App\Models\Setting::enabled('login_button_enabled'))
+          <a class="btn primary" href="{{ route('member.login') }}">Anmelden <span class="arrow">→</span></a>
+        @endif
       @endif
     </div>
     <button
@@ -93,7 +95,9 @@
         <button type="submit" class="mobile-nav-panel__nav-btn">Abmelden</button>
       </form>
     @else
-      <a href="{{ route('member.login') }}" @click="menuOpen = false">Anmelden</a>
+      @if(\App\Models\Setting::enabled('login_button_enabled'))
+        <a href="{{ route('member.login') }}" @click="menuOpen = false">Anmelden</a>
+      @endif
     @endif
   </nav>
 
