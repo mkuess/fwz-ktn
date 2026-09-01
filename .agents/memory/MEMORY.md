@@ -6,3 +6,4 @@
 - [Leaflet map assets and popup escaping](leaflet-map-assets-popups.md) — validate CDN SRI against the fetched asset and escape popup values with a regular DOM element, not a template node.
 - [Public registration settings](public-registration-settings.md) — cache registration flags centrally and invalidate them immediately whenever an admin changes a setting.
 - [Mobile footer anchors](mobile-footer-anchors.md) — close Alpine overlays before scrolling, then preserve the fragment explicitly when preventing native navigation.
+- [Admin authentication separation](admin-auth-separation.md) — FWZ-admin members sync to Filament users; normal accounts must never gain access to `/verwaltung`.
