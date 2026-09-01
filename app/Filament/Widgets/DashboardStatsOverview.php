@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Benefit;
 use App\Models\Member;
 use App\Models\Organisation;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -31,6 +32,11 @@ class DashboardStatsOverview extends BaseWidget
                 ->description('Warten auf Freischaltung')
                 ->icon('heroicon-o-user-plus')
                 ->color('warning'),
+
+            Stat::make('Benefits gesamt', Benefit::count())
+                ->description('Alle verfügbaren Benefits')
+                ->icon('heroicon-o-gift')
+                ->color('success'),
         ];
     }
 }

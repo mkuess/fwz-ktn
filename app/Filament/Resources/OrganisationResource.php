@@ -81,6 +81,20 @@ class OrganisationResource extends Resource
                     ->columns(3)
                     ->visibleOn('edit'),
 
+                /* ── Status ───────────────────────────────────────────────── */
+                Forms\Components\Section::make('Status')
+                    ->schema([
+                        Forms\Components\Toggle::make('is_approved')
+                            ->label('Freigeschaltet')
+                            ->helperText('Organisation wurde vom FWZ-Team geprüft und genehmigt')
+                            ->default(false),
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Aktiv')
+                            ->helperText('Organisation ist technisch aktiv und kann sich einloggen')
+                            ->default(true),
+                    ])
+                    ->columns(2),
+
                 /* ── Grunddaten ──────────────────────────────────────────── */
                 Forms\Components\Section::make('Grunddaten')
                     ->schema([
@@ -176,16 +190,8 @@ class OrganisationResource extends Resource
                             ->preload()
                             ->searchable()
                             ->columnSpanFull(),
-                        Forms\Components\Toggle::make('is_approved')
-                            ->label('Freigeschaltet')
-                            ->helperText('Organisation wurde vom FWZ-Team geprüft und genehmigt')
-                            ->default(false),
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Aktiv')
-                            ->helperText('Organisation ist technisch aktiv und kann sich einloggen')
-                            ->default(true),
                     ])
-                    ->columns(2),
+                    ->columns(1),
             ]);
     }
 
