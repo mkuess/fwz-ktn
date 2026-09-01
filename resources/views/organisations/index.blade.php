@@ -23,7 +23,51 @@
         </div>
         <a class="btn dark" href="{{ route('organisations.map') }}">Karte öffnen <span class="arrow">→</span></a>
       </div>
-      <div class="org-grid">
+
+      <div class="vereine-search-wrap">
+        <div class="combobox-wrap">
+          <input
+            id="vereine-suche"
+            class="input"
+            type="search"
+            value="{{ request('q') }}"
+            placeholder="Verein, Organisation, Ort oder Stichwort"
+            aria-label="Suche nach Verein oder Organisation"
+            autocomplete="off"
+          />
+        </div>
+        <p class="vereine-result-count" aria-live="polite" aria-atomic="true">
+          {{ $organisations->total() === 1 ? '1 Verein gefunden' : $organisations->total().' Vereine gefunden' }}
+        </p>
+      </div>
+
+      @php($activeCategory = request('kategorie', ''))
+      <div class="chips" role="group" aria-label="Vereine nach Tätigkeitsfeld filtern">
+        <button
+          type="button"
+          class="chip{{ $activeCategory === '' || $activeCategory === 'alle' ? ' active' : '' }}"
+          data-kategorie=""
+          aria-pressed="{{ $activeCategory === '' || $activeCategory === 'alle' ? 'true' : 'false' }}"
+        >Alle</button>
+        @foreach($categories as $category)
+          <button
+            type="button"
+            class="chip{{ $activeCategory === $category->slug ? ' active' : '' }}"
+            data-kategorie="{{ $category->slug }}"
+            aria-pressed="{{ $activeCategory === $category->slug ? 'true' : 'false' }}"
+          >{{ $category->name }}</button>
+        @endforeach
+      </div>
+
+      <div
+        class="org-grid"
+        id="vereine-grid"
+        data-infinite-scroll="true"
+        data-search-limit="12"
+        data-initial-page="{{ $organisations->currentPage() }}"
+        data-has-more="{{ $organisations->hasMorePages() ? 'true' : 'false' }}"
+        data-active-category="{{ $activeCategory }}"
+      >
         @forelse($organisations as $org)
           <a href="{{ route('organisations.show', $org->id) }}" style="text-decoration:none;color:inherit;display:block">
             <div class="org-card" style="cursor:pointer">
@@ -39,11 +83,9 @@
                 <div class="place">{{ trim(($org->zip ?? '') . ' ' . ($org->city ?? '')) }}</div>
               @endif
               @if($org->categories->count())
-                <div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem;justify-content:center">
+                <div class="org-card-categories">
                   @foreach($org->categories->take(2) as $cat)
-                    <span style="background:#f3f4f6;color:#374151;padding:0.15rem 0.5rem;border-radius:1rem;font-size:0.65rem;font-weight:600">
-                      {{ $cat->name }}
-                    </span>
+                    <span>{{ $cat->name }}</span>
                   @endforeach
                 </div>
               @endif
@@ -54,11 +96,13 @@
         @endforelse
       </div>
 
-      @if($organisations->hasPages())
-        <div class="pagination-wrapper">
-          {{ $organisations->onEachSide(2)->links() }}
-        </div>
-      @endif
+      <div
+        id="vereine-load-more"
+        class="vereine-load-more"
+        role="status"
+        aria-live="polite"
+        @if(! $organisations->hasMorePages()) hidden @endif
+      >Weitere Vereine werden geladen …</div>
     </div>
   </section>
 

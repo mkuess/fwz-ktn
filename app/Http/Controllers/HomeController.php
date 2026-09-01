@@ -2,98 +2,77 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
+use App\Models\Benefit;
+use App\Models\Category;
 use App\Models\Organisation;
-use Illuminate\Http\Request;
+use App\Models\Testimonial;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $vereine = Organisation::query()
             ->where('is_approved', true)
             ->where('is_active', true)
+            ->with('categories')
             ->orderBy('name')
             ->take(8)
             ->get()
-            ->map(fn ($org) => [
-                'id'       => $org->id,
-                'kuerzel'  => $this->abbreviation($org->name),
-                'name'     => $org->name,
-                'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
-                'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
+            ->map(fn (Organisation $organisation): array => [
+                'id' => $organisation->id,
+                'name' => $organisation->name,
+                'ort' => trim(($organisation->zip ?? '').' '.($organisation->city ?? '')),
+                'logo_url' => $organisation->logo_path ? asset('storage/'.$organisation->logo_path) : null,
+                'categories' => $organisation->categories->pluck('name')->values()->all(),
             ]);
 
-        $aktionen = \App\Models\Article::where('is_published', true)
+        $categories = Category::query()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+
+        $aktionen = Article::where('is_published', true)
             ->orderBy('published_at', 'desc')
             ->limit(3)
             ->get();
 
-        $featuredBenefits = \App\Models\Benefit::where('is_active', true)
+        $featuredBenefits = Benefit::where('is_active', true)
             ->orderByDesc('is_teaser')
             ->orderBy('sort_order')
             ->limit(6)
             ->get();
 
-        $testimonials = \App\Models\Testimonial::where('is_active', true)
+        $testimonials = Testimonial::where('is_active', true)
             ->orderBy('sort_order')
             ->get();
 
         $stats = [
-            'vereine'          => Organisation::where('is_approved', true)->count() . '+',
-            'freiwillige'      => '200.000',
-            'stunden'          => '15.000',
+            'vereine' => Organisation::where('is_approved', true)->count().'+',
+            'freiwillige' => '200.000',
+            'stunden' => '15.000',
         ];
 
-        return view('home', compact('vereine', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
+        return view('home', compact('vereine', 'categories', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
     }
 
-    public function vereineSuche(Request $request)
+    public function impressum()
     {
-        $q         = trim($request->get('q', ''));
-        $kategorie = trim($request->get('kategorie', ''));
-
-        $query = Organisation::query()
-            ->where('is_approved', true)
-            ->where('is_active', true);
-
-        if ($q !== '') {
-            $query->where(function ($sub) use ($q) {
-                $sub->where('name', 'like', '%' . $q . '%')
-                    ->orWhere('city', 'like', '%' . $q . '%')
-                    ->orWhere('zip',  'like', '%' . $q . '%')
-                    ->orWhere('description', 'like', '%' . $q . '%');
-            });
-        }
-
-        if ($kategorie !== '' && $kategorie !== 'alle') {
-            $query->whereHas('categories', fn ($sub) => $sub->where('slug', $kategorie));
-        }
-
-        $total   = (clone $query)->count();
-        $results = $query->orderBy('name')->take(8)->get()
-            ->map(fn ($org) => [
-                'name'     => $org->name,
-                'ort'      => trim(($org->zip ?? '') . ' ' . ($org->city ?? '')),
-                'kuerzel'  => $this->abbreviation($org->name),
-                'logo_url' => $org->logo_path ? asset('storage/' . $org->logo_path) : null,
-            ]);
-
-        return response()->json(['total' => $total, 'results' => $results]);
+        return view('impressum');
     }
 
-    private function abbreviation(string $name): string
+    public function datenschutz()
     {
-        $abbr = collect(explode(' ', $name))
-            ->filter(fn ($w) => mb_strlen($w) > 2)
-            ->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))
-            ->take(4)
-            ->implode('');
-
-        return $abbr ?: mb_strtoupper(mb_substr($name, 0, 3));
+        return view('datenschutz');
     }
 
-    public function impressum()       { return view('impressum'); }
-    public function datenschutz()     { return view('datenschutz'); }
-    public function barrierefreiheit(){ return view('barrierefreiheit'); }
-    public function inArbeit()        { return view('in-arbeit'); }
+    public function barrierefreiheit()
+    {
+        return view('barrierefreiheit');
+    }
+
+    public function inArbeit()
+    {
+        return view('in-arbeit');
+    }
 }

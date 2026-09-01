@@ -8,3 +8,4 @@
 - [Mobile footer anchors](mobile-footer-anchors.md) — close Alpine overlays before scrolling, then preserve the fragment explicitly when preventing native navigation.
 - [Admin authentication separation](admin-auth-separation.md) — FWZ-admin members sync to Filament users; normal accounts must never gain access to `/verwaltung`.
 - [User-area login audit](user-area-login-audit.md) — log member-area successes and failures without credentials; keep the Filament view read-only.
+- [Organisation category assignment](organisation-category-assignment.md) — bulk category assignment is additive and must preserve existing organisation categories.

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrganisationResource\Pages;
+use App\Models\Category;
 use App\Models\Organisation;
 use App\Services\GeocodingService;
 use Filament\Forms;
@@ -280,6 +281,29 @@ class OrganisationResource extends Resource
                             ])
                         ))
                         ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\BulkAction::make('assignCategory')
+                        ->label('Kategorie zuweisen')
+                        ->icon('heroicon-o-tag')
+                        ->form([
+                            Forms\Components\Select::make('category_id')
+                                ->label('Kategorie')
+                                ->options(fn (): array => Category::query()
+                                    ->orderBy('sort_order')
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->searchable()
+                                ->preload()
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each(
+                                fn (Organisation $organisation) => $organisation->categories()
+                                    ->syncWithoutDetaching([(int) $data['category_id']])
+                            );
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->successNotificationTitle('Kategorie erfolgreich zugewiesen'),
                     Tables\Actions\BulkAction::make('geocode')
                         ->label('Standort ermitteln')
                         ->icon('heroicon-o-map-pin')

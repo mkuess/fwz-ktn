@@ -1,118 +1,173 @@
 (function () {
   'use strict';
 
-  var SEARCH_URL  = '/vereine/suche';
+  var SEARCH_URL = '/vereine/suche';
   var DEBOUNCE_MS = 300;
   var PLACEHOLDER = '/img/placeholder-verein-logo.svg';
 
-  var input       = document.getElementById('vereine-suche');
-  var listbox     = document.getElementById('vereine-listbox');
-  var grid        = document.getElementById('vereine-grid');
+  var input = document.getElementById('vereine-suche');
+  var listbox = document.getElementById('vereine-listbox');
+  var grid = document.getElementById('vereine-grid');
   var resultCount = document.querySelector('.vereine-result-count');
-  var chips       = document.querySelectorAll('.chips .chip[data-kategorie]');
-  var combobox    = document.querySelector('.combobox-wrap');
+  var chips = document.querySelectorAll('.chips .chip[data-kategorie]');
+  var combobox = document.querySelector('.combobox-wrap');
+  var loadMore = document.getElementById('vereine-load-more');
 
-  if (!input || !listbox || !grid) return;
+  if (!input || !grid) return;
 
-  var activeKategorie = '';
-  var debounceTimer   = null;
-  var activeIndex     = -1;
+  var isInfinite = grid.dataset.infiniteScroll === 'true';
+  var pageSize = parseInt(grid.dataset.searchLimit || (isInfinite ? '12' : '8'), 10);
+  var currentPage = parseInt(grid.dataset.initialPage || '1', 10);
+  var nextPage = currentPage + 1;
+  var hasMore = isInfinite && grid.dataset.hasMore === 'true';
+  var activeKategorie = grid.dataset.activeCategory || '';
+  var currentQuery = input.value.trim();
+  var debounceTimer = null;
+  var activeIndex = -1;
+  var requestSequence = 0;
+  var loading = false;
 
-  /* ── Category chips ─────────────────────────────────────────────────── */
   chips.forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      chips.forEach(function (c) { c.classList.remove('active'); });
-      chip.classList.add('active');
+    if (chip.classList.contains('active')) {
       activeKategorie = chip.dataset.kategorie || '';
-      fetchAndRender(input.value.trim(), activeKategorie, true);
+    }
+
+    chip.addEventListener('click', function () {
+      chips.forEach(function (candidate) {
+        candidate.classList.remove('active');
+        candidate.setAttribute('aria-pressed', 'false');
+      });
+      chip.classList.add('active');
+      chip.setAttribute('aria-pressed', 'true');
+      activeKategorie = chip.dataset.kategorie || '';
+      currentQuery = input.value.trim();
+      fetchAndRender(currentQuery, activeKategorie, 1, false);
     });
   });
 
-  /* ── Input ───────────────────────────────────────────────────────────── */
   input.addEventListener('input', function () {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(function () {
-      var q = input.value.trim();
-      fetchAndRender(q, activeKategorie, q.length === 0);
+      currentQuery = input.value.trim();
+      fetchAndRender(currentQuery, activeKategorie, 1, false);
     }, DEBOUNCE_MS);
   });
 
-  input.addEventListener('keydown', function (e) {
+  input.addEventListener('keydown', function (event) {
+    if (!listbox) return;
+
     var options = listbox.querySelectorAll('[role="option"]');
     if (!options.length) return;
 
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
       activeIndex = Math.min(activeIndex + 1, options.length - 1);
       highlightOption(options);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
       activeIndex = Math.max(activeIndex - 1, 0);
       highlightOption(options);
-    } else if (e.key === 'Enter' && activeIndex >= 0) {
-      e.preventDefault();
-      var chosen = options[activeIndex].dataset.name || '';
-      input.value = chosen;
+    } else if (event.key === 'Enter' && activeIndex >= 0) {
+      event.preventDefault();
+      input.value = options[activeIndex].dataset.name || '';
+      currentQuery = input.value.trim();
       closeListbox();
-      fetchAndRender(chosen, activeKategorie, true);
-    } else if (e.key === 'Escape') {
-      closeListbox();
-    }
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!input.contains(e.target) && !listbox.contains(e.target)) {
+      fetchAndRender(currentQuery, activeKategorie, 1, false);
+    } else if (event.key === 'Escape') {
       closeListbox();
     }
   });
 
-  /* ── Fetch ───────────────────────────────────────────────────────────── */
-  function fetchAndRender(q, kategorie, updateGrid) {
-    var url = SEARCH_URL + '?q=' + encodeURIComponent(q) + '&kategorie=' + encodeURIComponent(kategorie);
+  document.addEventListener('click', function (event) {
+    if (!listbox || (!input.contains(event.target) && !listbox.contains(event.target))) {
+      closeListbox();
+    }
+  });
+
+  function fetchAndRender(query, category, page, append) {
+    if (append && (loading || !hasMore)) return;
+
+    var requestId = ++requestSequence;
+    loading = true;
+    grid.setAttribute('aria-busy', 'true');
+    updateLoadMore();
+
+    var url = SEARCH_URL
+      + '?q=' + encodeURIComponent(query)
+      + '&kategorie=' + encodeURIComponent(category)
+      + '&limit=' + encodeURIComponent(pageSize)
+      + '&page=' + encodeURIComponent(page);
+
     fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        var results = data.results || data;
-        var total   = data.total != null ? data.total : results.length;
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('Die Vereinssuche konnte nicht geladen werden.');
+        }
 
-        if (q.length >= 2) {
-          renderListbox(results, q);
-        } else {
+        return response.json();
+      })
+      .then(function (data) {
+        if (requestId !== requestSequence) return;
+
+        var results = data.results || [];
+        renderGrid(results, append);
+        announce(data.total != null ? data.total : results.length);
+
+        if (listbox && query.length >= 2 && !append) {
+          renderListbox(results);
+        } else if (listbox && !append) {
           closeListbox();
         }
-        if (updateGrid || kategorie !== '') {
-          renderGrid(results);
-          announce(total);
-        }
+
+        currentPage = data.page || page;
+        nextPage = currentPage + 1;
+        hasMore = isInfinite && Boolean(data.has_more);
+        loading = false;
+        grid.setAttribute('aria-busy', 'false');
+        updateLoadMore();
       })
-      .catch(function () {});
+      .catch(function () {
+        if (requestId !== requestSequence) return;
+
+        loading = false;
+        grid.setAttribute('aria-busy', 'false');
+        updateLoadMore();
+        announceError('Die Vereine konnten nicht geladen werden. Bitte versuche es erneut.');
+      });
   }
 
-  /* ── Listbox ─────────────────────────────────────────────────────────── */
-  function renderListbox(results, q) {
+  function renderListbox(results) {
+    if (!listbox) return;
+
     activeIndex = -1;
     listbox.innerHTML = '';
 
     var hits = results.slice(0, 8);
-    if (!hits.length) { closeListbox(); return; }
+    if (!hits.length) {
+      closeListbox();
+      return;
+    }
 
-    hits.forEach(function (org, i) {
-      var opt = document.createElement('div');
-      opt.setAttribute('role', 'option');
-      opt.setAttribute('id', 'vo-' + i);
-      opt.setAttribute('aria-selected', 'false');
-      opt.dataset.name = org.name;
-      opt.className = 'vereine-option';
-      opt.innerHTML =
-        '<strong>' + esc(org.name) + '</strong>' +
-        (org.ort ? '<span class="vereine-option__ort">' + esc(org.ort) + '</span>' : '');
-      opt.addEventListener('mousedown', function (e) {
-        e.preventDefault();
-        input.value = org.name;
+    hits.forEach(function (organisation, index) {
+      var option = document.createElement('div');
+      option.setAttribute('role', 'option');
+      option.setAttribute('id', 'vo-' + index);
+      option.setAttribute('aria-selected', 'false');
+      option.dataset.name = organisation.name;
+      option.className = 'vereine-option';
+      option.innerHTML =
+        '<strong>' + escapeHtml(organisation.name) + '</strong>' +
+        (organisation.ort
+          ? '<span class="vereine-option__ort">' + escapeHtml(organisation.ort) + '</span>'
+          : '');
+      option.addEventListener('mousedown', function (event) {
+        event.preventDefault();
+        input.value = organisation.name;
+        currentQuery = organisation.name;
         closeListbox();
-        fetchAndRender(org.name, activeKategorie, true);
+        fetchAndRender(currentQuery, activeKategorie, 1, false);
       });
-      listbox.appendChild(opt);
+      listbox.appendChild(option);
     });
 
     listbox.hidden = false;
@@ -120,15 +175,17 @@
   }
 
   function highlightOption(options) {
-    options.forEach(function (o, i) {
-      var on = i === activeIndex;
-      o.classList.toggle('is-active', on);
-      o.setAttribute('aria-selected', on ? 'true' : 'false');
+    options.forEach(function (option, index) {
+      var active = index === activeIndex;
+      option.classList.toggle('is-active', active);
+      option.setAttribute('aria-selected', active ? 'true' : 'false');
     });
     input.setAttribute('aria-activedescendant', activeIndex >= 0 ? 'vo-' + activeIndex : '');
   }
 
   function closeListbox() {
+    if (!listbox) return;
+
     listbox.hidden = true;
     listbox.innerHTML = '';
     activeIndex = -1;
@@ -136,33 +193,90 @@
     input.removeAttribute('aria-activedescendant');
   }
 
-  /* ── Grid ────────────────────────────────────────────────────────────── */
-  function renderGrid(results) {
-    if (!results.length) {
+  function renderGrid(results, append) {
+    if (!results.length && !append) {
       grid.innerHTML = '<p class="muted">Keine Vereine gefunden.</p>';
       return;
     }
-    grid.innerHTML = results.map(function (org) {
-      var src = org.logo_url || PLACEHOLDER;
-      return '<div class="org-card">' +
-        '<img class="org-logo" src="' + esc(src) + '" alt="' + esc(org.name) + '" loading="lazy" onerror="this.src=\'' + PLACEHOLDER + '\'">' +
-        '<div class="name">' + esc(org.name) + '</div>' +
-        '<div class="place">' + esc(org.ort || '') + '</div>' +
-        '</div>';
-    }).join('');
-  }
 
-  /* ── Live region ─────────────────────────────────────────────────────── */
-  function announce(n) {
-    if (resultCount) {
-      resultCount.textContent = n === 1 ? '1 Verein gefunden' : n + ' Vereine gefunden';
+    var html = results.map(renderCard).join('');
+    if (append) {
+      grid.insertAdjacentHTML('beforeend', html);
+    } else {
+      grid.innerHTML = html;
     }
   }
 
-  /* ── Util ────────────────────────────────────────────────────────────── */
-  function esc(s) {
-    return String(s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  function renderCard(organisation) {
+    var categories = Array.isArray(organisation.categories)
+      ? organisation.categories.slice(0, 2)
+      : [];
+    var categoryHtml = categories.length
+      ? '<div class="org-card-categories">' + categories.map(function (category) {
+        return '<span>' + escapeHtml(category) + '</span>';
+      }).join('') + '</div>'
+      : '';
+    var logo = organisation.logo_url || PLACEHOLDER;
+    var href = '/vereine/' + encodeURIComponent(String(organisation.id));
+
+    return '<a href="' + href + '" style="text-decoration:none;color:inherit;display:block">' +
+      '<div class="org-card" style="cursor:pointer">' +
+      '<img class="org-logo" src="' + escapeHtml(logo) + '" alt="' + escapeHtml(organisation.name) +
+      '" loading="lazy" onerror="this.src=\'' + PLACEHOLDER + '\'">' +
+      '<div class="name">' + escapeHtml(organisation.name) + '</div>' +
+      (organisation.ort ? '<div class="place">' + escapeHtml(organisation.ort) + '</div>' : '') +
+      categoryHtml +
+      '</div>' +
+      '</a>';
+  }
+
+  function announce(number) {
+    if (!resultCount) return;
+
+    resultCount.textContent = number === 1 ? '1 Verein gefunden' : number + ' Vereine gefunden';
+  }
+
+  function announceError(message) {
+    if (resultCount) {
+      resultCount.textContent = message;
+    }
+  }
+
+  function updateLoadMore() {
+    if (!loadMore) return;
+
+    loadMore.hidden = !hasMore && !loading;
+    loadMore.setAttribute('aria-busy', loading ? 'true' : 'false');
+  }
+
+  function loadNextPage() {
+    fetchAndRender(currentQuery, activeKategorie, nextPage, true);
+  }
+
+  if (isInfinite && loadMore) {
+    updateLoadMore();
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          loadNextPage();
+        }
+      }, { rootMargin: '500px 0px' });
+      observer.observe(loadMore);
+    } else {
+      window.addEventListener('scroll', function () {
+        if (loadMore.getBoundingClientRect().top <= window.innerHeight + 500) {
+          loadNextPage();
+        }
+      }, { passive: true });
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 })();

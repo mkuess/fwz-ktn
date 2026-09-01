@@ -205,7 +205,14 @@
           <p class="vereine-result-count" aria-live="polite" aria-atomic="true"></p>
         </div>
 
-        <div class="org-grid" id="vereine-grid">
+        <div class="chips" role="group" aria-label="Vereine nach Tätigkeitsfeld filtern">
+          <button type="button" class="chip active" data-kategorie="" aria-pressed="true">Alle</button>
+          @foreach($categories as $category)
+            <button type="button" class="chip" data-kategorie="{{ $category->slug }}" aria-pressed="false">{{ $category->name }}</button>
+          @endforeach
+        </div>
+
+        <div class="org-grid" id="vereine-grid" data-search-limit="8">
           @forelse($vereine as $verein)
             <a href="{{ route('organisations.show', $verein['id']) }}" style="text-decoration:none;color:inherit;display:block">
               <div class="org-card" style="cursor:pointer">
@@ -218,6 +225,13 @@
                 >
                 <div class="name">{{ $verein['name'] }}</div>
                 <div class="place">{{ $verein['ort'] }}</div>
+                @if(count($verein['categories']))
+                  <div class="org-card-categories">
+                    @foreach(array_slice($verein['categories'], 0, 2) as $categoryName)
+                      <span>{{ $categoryName }}</span>
+                    @endforeach
+                  </div>
+                @endif
               </div>
             </a>
           @empty
