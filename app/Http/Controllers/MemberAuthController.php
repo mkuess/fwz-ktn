@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LoginLog;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class MemberAuthController extends Controller
 {
@@ -19,30 +21,61 @@ class MemberAuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ], [
-            'email.required' => 'Bitte gib deine E-Mail-Adresse ein.',
-            'password.required' => 'Bitte gib dein Passwort ein.',
-        ]);
+        try {
+            $credentials = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ], [
+                'email.required' => 'Bitte gib deine E-Mail-Adresse ein.',
+                'password.required' => 'Bitte gib dein Passwort ein.',
+            ]);
+        } catch (ValidationException $exception) {
+            LoginLog::record(
+                null,
+                trim((string) $request->input('email')) ?: null,
+                false,
+                'Ungültige Eingaben',
+            );
+
+            throw $exception;
+        }
 
         if (auth('member')->attempt($credentials, $request->boolean('remember'))) {
             $member = auth('member')->user();
             if ($member->role === 'admin') {
+                LoginLog::record(
+                    $member,
+                    $credentials['email'],
+                    false,
+                    'FWZ-Admins melden sich ausschließlich unter /verwaltung an.',
+                );
                 auth('member')->logout();
 
                 return back()->withErrors(['email' => 'FWZ-Admins melden sich ausschließlich unter /verwaltung an.']);
             }
             if ($member->status !== 'approved') {
+                LoginLog::record(
+                    $member,
+                    $credentials['email'],
+                    false,
+                    'Konto noch nicht freigeschaltet.',
+                );
                 auth('member')->logout();
 
                 return back()->withErrors(['email' => 'Dein Konto wurde noch nicht freigeschaltet.']);
             }
+            LoginLog::record($member, $credentials['email'], true);
             $request->session()->regenerate();
 
             return redirect()->route('member.portal');
         }
+
+        LoginLog::record(
+            Member::where('email', $credentials['email'])->first(),
+            $credentials['email'],
+            false,
+            'E-Mail oder Passwort ist falsch.',
+        );
 
         return back()->withErrors(['email' => 'E-Mail oder Passwort ist falsch.'])->withInput();
     }
