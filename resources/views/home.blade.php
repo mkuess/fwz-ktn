@@ -338,8 +338,6 @@
             <article class="testi-card" onclick="openTestimonialModal({{ $testimonial->id }})" style="cursor:pointer">
               @if($testimonial->photo_path)
                 <img src="{{ Storage::url($testimonial->photo_path) }}" alt="{{ $testimonial->name }}" class="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover">
-              @else
-                <div class="avatar">🙂</div>
               @endif
               <div>
                 <div class="quote">„{{ Str::limit($testimonial->quote, 100) }}"</div>
@@ -396,7 +394,7 @@ function openTestimonialModal(id) {
     document.getElementById('modal-org').textContent   = t.organisation || '';
     document.getElementById('modal-photo').innerHTML   = t.photo
         ? '<img src="' + t.photo + '" style="width:60px;height:60px;border-radius:50%;object-fit:cover">'
-        : '<div style="font-size:2rem">🙂</div>';
+        : '';
     const modal = document.getElementById('testimonial-modal');
     modal.style.display = 'flex';
 }
