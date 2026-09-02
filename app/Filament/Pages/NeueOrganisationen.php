@@ -6,23 +6,28 @@ use App\Filament\Resources\OrganisationResource;
 use App\Models\Organisation;
 use Filament\Pages\Page;
 use Filament\Tables;
-use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 
 class NeueOrganisationen extends Page implements HasTable
 {
     use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+
     protected static ?string $navigationLabel = 'Neue Organisationen';
+
     protected static ?string $title = 'Neue Organisationen';
+
     protected static ?int $navigationSort = 2;
+
     protected static string $view = 'filament.pages.neue-organisationen';
 
     public static function getNavigationBadge(): ?string
     {
-        $count = Organisation::where('is_approved', false)->count();
+        $count = Organisation::where('approval_status', 'pending')->count();
+
         return $count > 0 ? (string) $count : null;
     }
 
@@ -36,7 +41,7 @@ class NeueOrganisationen extends Page implements HasTable
         return $table
             ->query(
                 Organisation::query()
-                    ->where('is_approved', false)
+                    ->where('approval_status', 'pending')
                     ->withoutTrashed()
             )
             ->columns([
@@ -48,10 +53,10 @@ class NeueOrganisationen extends Page implements HasTable
                 Tables\Columns\TextColumn::make('type')
                     ->label('Typ')
                     ->badge()
-                    ->color(fn (string $state): string => match($state) {
-                        'verein'       => 'success',
+                    ->color(fn (string $state): string => match ($state) {
+                        'verein' => 'success',
                         'organisation' => 'warning',
-                        default        => 'gray',
+                        default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Ort')

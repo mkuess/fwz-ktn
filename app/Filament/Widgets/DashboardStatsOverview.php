@@ -18,7 +18,7 @@ class DashboardStatsOverview extends BaseWidget
                 ->icon('heroicon-o-building-office-2')
                 ->color('primary'),
 
-            Stat::make('Ausstehende Organisationen', Organisation::where('is_approved', false)->count())
+            Stat::make('Ausstehende Organisationen', Organisation::where('approval_status', 'pending')->count())
                 ->description('Warten auf Freischaltung')
                 ->icon('heroicon-o-clock')
                 ->color('warning'),

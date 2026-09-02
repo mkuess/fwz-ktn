@@ -19,7 +19,7 @@ class LatestOrganisationsWidget extends BaseWidget
         return $table
             ->query(
                 Organisation::query()
-                    ->where('is_approved', false)
+                    ->where('approval_status', 'pending')
                     ->withoutTrashed()
                     ->latest()
                     ->limit(5)
@@ -31,10 +31,10 @@ class LatestOrganisationsWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('type')
                     ->label('Typ')
                     ->badge()
-                    ->color(fn (string $state): string => match($state) {
-                        'verein'       => 'success',
+                    ->color(fn (string $state): string => match ($state) {
+                        'verein' => 'success',
                         'organisation' => 'warning',
-                        default        => 'gray',
+                        default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Angemeldet')

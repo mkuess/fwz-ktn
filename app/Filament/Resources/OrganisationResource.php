@@ -52,14 +52,23 @@ class OrganisationResource extends Resource
                         Placeholder::make('card_status')
                             ->label('')
                             ->content(function ($record): HtmlString {
-                                $approved = $record?->is_approved ? '✓ Freigeschaltet' : '✗ Ausstehend';
-                                $color = $record?->is_approved ? '#22c55e' : '#f59e0b';
+                                $status = $record?->approval_status ?? ($record?->is_approved ? 'approved' : 'pending');
+                                $statusLabel = match ($status) {
+                                    'approved' => '✓ Freigeschaltet',
+                                    'rejected' => '✗ Abgelehnt',
+                                    default => '◷ Ausstehend',
+                                };
+                                $color = match ($status) {
+                                    'approved' => '#22c55e',
+                                    'rejected' => '#ef4444',
+                                    default => '#f59e0b',
+                                };
                                 $since = $record?->created_at?->diffForHumans() ?? '—';
 
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📋 Status</div>
-                                        <div style="font-weight:600;color:'.$color.'">'.$approved.'</div>
+                                        <div style="font-weight:600;color:'.$color.'">'.$statusLabel.'</div>
                                         <div style="font-size:0.75rem;color:#6b7280">Angemeldet '.e($since).'</div>
                                     </div>
                                 ');
@@ -85,16 +94,35 @@ class OrganisationResource extends Resource
                 /* ── Status ───────────────────────────────────────────────── */
                 Forms\Components\Section::make('Status')
                     ->schema([
-                        Forms\Components\Toggle::make('is_approved')
-                            ->label('Freigeschaltet')
-                            ->helperText('Organisation wurde vom FWZ-Team geprüft und genehmigt')
-                            ->default(false),
+                        Forms\Components\Select::make('approval_status')
+                            ->label('Freigabestatus')
+                            ->options([
+                                'pending' => 'Ausstehend',
+                                'approved' => 'Freigeschaltet',
+                                'rejected' => 'Abgelehnt',
+                            ])
+                            ->live()
+                            ->required()
+                            ->default('pending')
+                            ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
+                                if ($state !== 'rejected') {
+                                    $set('rejection_reason', null);
+                                }
+                            }),
+                        Forms\Components\Textarea::make('rejection_reason')
+                            ->label('Begründung der Ablehnung')
+                            ->placeholder('Warum wurde die Organisation abgelehnt?')
+                            ->visible(fn (Forms\Get $get): bool => $get('approval_status') === 'rejected')
+                            ->required(fn (Forms\Get $get): bool => $get('approval_status') === 'rejected')
+                            ->maxLength(5000)
+                            ->columnSpanFull(),
                         Forms\Components\Toggle::make('is_active')
                             ->label('Aktiv')
                             ->helperText('Organisation ist technisch aktiv und kann sich einloggen')
                             ->default(true),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->columnSpanFull(),
 
                 /* ── Grunddaten ──────────────────────────────────────────── */
                 Forms\Components\Section::make('Grunddaten')
@@ -233,9 +261,21 @@ class OrganisationResource extends Resource
                     ->tooltip(fn (Organisation $record): string => $record->latitude !== null && $record->longitude !== null
                         ? 'Koordinaten: '.$record->latitude.', '.$record->longitude
                         : 'Kein Standort ermittelt'),
-                Tables\Columns\IconColumn::make('is_approved')
-                    ->boolean()
-                    ->label('Freigeschalten'),
+                Tables\Columns\TextColumn::make('approval_status')
+                    ->label('Status')
+                    ->badge()
+                    ->state(fn (Organisation $record): string => $record->approval_status
+                        ?? ($record->is_approved ? 'approved' : 'pending'))
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'approved' => 'Freigeschaltet',
+                        'rejected' => 'Abgelehnt',
+                        default => 'Ausstehend',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'warning',
+                    }),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Gelöscht')
                     ->badge()
@@ -251,8 +291,13 @@ class OrganisationResource extends Resource
             ->striped()
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\TernaryFilter::make('is_approved')
-                    ->label('Freigegeben'),
+                Tables\Filters\SelectFilter::make('approval_status')
+                    ->label('Status')
+                    ->options([
+                        'pending' => 'Ausstehend',
+                        'approved' => 'Freigeschaltet',
+                        'rejected' => 'Abgelehnt',
+                    ]),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('Typ')
                     ->options([
@@ -277,6 +322,7 @@ class OrganisationResource extends Resource
                         ->action(fn (Collection $records) => $records->each(
                             fn (Organisation $organisation) => $organisation->update([
                                 'is_approved' => true,
+                                'approval_status' => 'approved',
                                 'approved_at' => now(),
                             ])
                         ))

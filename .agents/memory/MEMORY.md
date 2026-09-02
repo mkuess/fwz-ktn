@@ -9,3 +9,4 @@
 - [Admin authentication separation](admin-auth-separation.md) — FWZ-admin members sync to Filament users; normal accounts must never gain access to `/verwaltung`.
 - [User-area login audit](user-area-login-audit.md) — log member-area successes and failures without credentials; keep the Filament view read-only.
 - [Organisation category assignment](organisation-category-assignment.md) — bulk category assignment is additive and must preserve existing organisation categories.
+- [Organisation approval states](organisation-approval-states.md) — use pending/approved/rejected while keeping the legacy approval boolean synchronized for public visibility.

@@ -32,6 +32,8 @@ class Organisation extends Model
         'representative',
         'contact_person',
         'is_approved',
+        'approval_status',
+        'rejection_reason',
         'is_active',
         'approved_at',
         'approved_by',
@@ -56,6 +58,22 @@ class Organisation extends Model
 
     protected static function booted(): void
     {
+        static::saving(function (Organisation $organisation): void {
+            if (! $organisation->isDirty('approval_status') || blank($organisation->approval_status)) {
+                return;
+            }
+
+            $isApproved = $organisation->approval_status === 'approved';
+            $organisation->is_approved = $isApproved;
+            $organisation->approved_at = $isApproved
+                ? ($organisation->approved_at ?? now())
+                : null;
+
+            if ($organisation->approval_status !== 'rejected') {
+                $organisation->rejection_reason = null;
+            }
+        });
+
         static::saved(function (Organisation $organisation): void {
             $addressChanged = $organisation->wasRecentlyCreated
                 || $organisation->wasChanged(['street', 'zip', 'city']);
