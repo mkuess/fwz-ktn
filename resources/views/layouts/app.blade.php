@@ -125,7 +125,7 @@
     </div>
     <div>
       <h4>Kontakt</h4>
-         <p><strong>Freiwilligenzentrum Kärnten</strong><br>Rosenegger Straße 20<br>A-9021 Klagenfurt am Wörthersee<br>E-Mail: info@fwz-ktn.at<br>Office: Sandra Dobos 0664 886 250 11</p>
+         <p><strong>Freiwilligenzentrum Kärnten</strong><br>Rosenegger Straße 20<br>A-9021 Klagenfurt am Wörthersee<br>E-Mail: info@fwz-ktn.at<br><br><strong>Office:</strong><br>Sandra Dobos 0664 886 250 11</p>
     </div>
     <div>
       <h4>Rechtliches &amp; Social</h4>
