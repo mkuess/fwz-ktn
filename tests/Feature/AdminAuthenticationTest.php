@@ -41,7 +41,7 @@ class AdminAuthenticationTest extends TestCase
         $this->assertTrue($adminUser->canAccessPanel(Filament::getPanel('admin')));
     }
 
-    public function test_admin_member_cannot_use_the_regular_member_login(): void
+    public function test_admin_member_can_use_the_regular_member_login(): void
     {
         Member::create([
             'first_name' => 'Nur',
@@ -56,9 +56,10 @@ class AdminAuthenticationTest extends TestCase
             'email' => 'verwaltung@example.test',
             'password' => 'admin-password',
         ])
-            ->assertSessionHasErrors('email');
+            ->assertRedirect(route('member.portal'));
 
-        $this->assertGuest('member');
+        $this->assertAuthenticated('member');
+        $this->get(route('member.portal'))->assertOk();
     }
 
     public function test_removing_admin_role_revokes_filament_access(): void

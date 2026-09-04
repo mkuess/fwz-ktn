@@ -42,17 +42,6 @@ class MemberAuthController extends Controller
 
         if (auth('member')->attempt($credentials, $request->boolean('remember'))) {
             $member = auth('member')->user();
-            if ($member->role === 'admin') {
-                LoginLog::record(
-                    $member,
-                    $credentials['email'],
-                    false,
-                    'FWZ-Admins melden sich ausschließlich unter /verwaltung an.',
-                );
-                auth('member')->logout();
-
-                return back()->withErrors(['email' => 'FWZ-Admins melden sich ausschließlich unter /verwaltung an.']);
-            }
             if ($member->status !== 'approved') {
                 LoginLog::record(
                     $member,

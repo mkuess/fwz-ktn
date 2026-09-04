@@ -1,10 +1,10 @@
 ---
 name: Admin authentication separation
-description: Why FWZ-admin members synchronize to Filament users while member and admin login areas remain isolated.
+description: How FWZ admins use both the member portal and the separately authorized Filament administration.
 ---
 
-FWZ-admin members are the source for managed admin identities, but Filament continues authenticating through the `users` provider. Approved members with the `admin` role synchronize to a linked admin user. Only explicitly marked admin users may access the Filament panel.
+FWZ-admin members are the source for managed admin identities. Approved members with the `admin` role may log into the normal member portal and also synchronize to a linked admin user for Filament. Only explicitly marked admin users may access the Filament panel.
 
-**Why:** The project has separate `members` and `users` authentication providers. Creating an “FWZ Admin” as a member previously did not update the Filament user password, so the same email could exist in both tables with different credentials. Allowing every `users` record into Filament also provided no explicit admin boundary.
+**Why:** Admin status adds administrative access; it must not remove the person's normal member access. The project still has separate `members` and `users` authentication providers, so access to the member portal does not itself grant access to Filament.
 
-**How to apply:** Changes to an approved admin member must keep the linked Filament user identity and password synchronized. Removing approval, changing the admin role, or deleting the member must revoke admin access. Admin members must not authenticate through the regular member portal.
+**How to apply:** Let approved admin members authenticate through the regular member guard like other approved members. Keep the linked Filament user identity and password synchronized. Removing approval, changing the admin role, or deleting the member must still revoke administrative access.

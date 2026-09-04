@@ -69,7 +69,7 @@ class LoginLogTest extends TestCase
         ]);
     }
 
-    public function test_admin_login_attempt_is_logged_as_blocked_in_member_area(): void
+    public function test_successful_admin_login_to_member_area_is_logged(): void
     {
         $member = Member::create([
             'first_name' => 'Admin',
@@ -83,12 +83,12 @@ class LoginLogTest extends TestCase
         $this->post(route('member.login.post'), [
             'email' => $member->email,
             'password' => 'admin-password',
-        ])->assertSessionHasErrors('email');
+        ])->assertRedirect(route('member.portal'));
 
         $this->assertDatabaseHas('login_logs', [
             'member_id' => $member->id,
-            'successful' => false,
-            'failure_reason' => 'FWZ-Admins melden sich ausschließlich unter /verwaltung an.',
+            'successful' => true,
+            'failure_reason' => null,
         ]);
     }
 
