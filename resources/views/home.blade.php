@@ -7,12 +7,12 @@
 @php
   $heroSlides = [
     [
-      'image' => 'img/hero-slide-4.jpg',
-      'alt' => 'Ehrenamtliche Helferinnen und Helfer bei einer gemeinsamen Aktion am See',
-    ],
-    [
       'image' => 'img/hero-slide-5.jpg',
       'alt' => 'Musikerinnen und Musiker in traditioneller Kärntner Tracht mit Blasinstrumenten am See',
+    ],
+    [
+      'image' => 'img/hero-slide-4.jpg',
+      'alt' => 'Ehrenamtliche Helferinnen und Helfer bei einer gemeinsamen Aktion am See',
     ],
     [
       'image' => 'img/hero-slide-sport.jpg',
