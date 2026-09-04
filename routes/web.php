@@ -24,6 +24,9 @@ Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('artic
 Route::get('/gesuche', [VolunteerListingController::class, 'index'])
     ->middleware('registration.enabled:volunteer_listings_enabled')
     ->name('volunteer-listings.index');
+Route::get('/gesuche/{volunteerListing}', [VolunteerListingController::class, 'show'])
+    ->middleware('registration.enabled:volunteer_listings_enabled')
+    ->name('volunteer-listings.show');
 
 Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
 Route::get('/vereine/karte', [OrganisationController::class, 'map'])->name('organisations.map');

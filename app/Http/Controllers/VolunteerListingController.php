@@ -16,4 +16,14 @@ class VolunteerListingController extends Controller
 
         return view('volunteer-listings.index', compact('volunteerListings'));
     }
+
+    public function show(VolunteerListing $volunteerListing)
+    {
+        $volunteerListing = VolunteerListing::query()
+            ->publiclyVisible()
+            ->with(['organisation', 'categories', 'activities'])
+            ->findOrFail($volunteerListing->getKey());
+
+        return view('volunteer-listings.show', compact('volunteerListing'));
+    }
 }

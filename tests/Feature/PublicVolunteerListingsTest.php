@@ -23,12 +23,24 @@ class PublicVolunteerListingsTest extends TestCase
             ->assertOk()
             ->assertSee('Aktuelle Möglichkeiten für dein Engagement')
             ->assertSee($listing->title)
-            ->assertSee('href="'.route('volunteer-listings.index').'"', false);
+            ->assertSee('href="'.route('volunteer-listings.index').'"', false)
+            ->assertSee('href="'.route('volunteer-listings.show', $listing).'"', false)
+            ->assertDontSee('Zur Website')
+            ->assertDontSee('Flyer öffnen');
 
         $this->get(route('volunteer-listings.index'))
             ->assertOk()
             ->assertSee($listing->title)
-            ->assertSee($listing->organisation->name);
+            ->assertSee($listing->organisation->name)
+            ->assertSee('href="'.route('volunteer-listings.show', $listing).'"', false);
+
+        $this->get(route('volunteer-listings.show', $listing))
+            ->assertOk()
+            ->assertSee($listing->title)
+            ->assertSee($listing->organisation->name)
+            ->assertSee($listing->description)
+            ->assertSee('Zur Website')
+            ->assertSee('Flyer öffnen');
     }
 
     public function test_admin_can_hide_the_public_volunteer_listings_area(): void
@@ -75,6 +87,8 @@ class PublicVolunteerListingsTest extends TestCase
             ->assertOk()
             ->assertDontSee($inactive->title)
             ->assertDontSee($expired->title);
+        $this->get(route('volunteer-listings.show', $inactive))->assertNotFound();
+        $this->get(route('volunteer-listings.show', $expired))->assertNotFound();
     }
 
     private function createListing(array $attributes = []): VolunteerListing
@@ -96,6 +110,8 @@ class PublicVolunteerListingsTest extends TestCase
             'organisation_id' => $organisation->id,
             'title' => 'Freiwillige Unterstützung gesucht',
             'description' => 'Wir suchen engagierte freiwillige Helferinnen und Helfer.',
+            'website_link' => 'https://example.org/gesuch',
+            'flyer_path' => 'volunteer-listings/flyers/test-flyer.pdf',
             'city' => 'Klagenfurt',
             'is_spontaneous' => false,
             'is_active' => true,
