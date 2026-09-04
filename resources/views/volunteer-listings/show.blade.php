@@ -30,7 +30,7 @@
 @section('content')
   <section class="section">
     <div class="container">
-      <div class="box" style="max-width:900px;margin:0 auto;padding:2.5rem">
+      <div class="box volunteer-listing-detail">
         <article>
           <div class="news-data" style="margin-bottom:2rem;display:flex;gap:1.5rem;flex-wrap:wrap">
             @if($volunteerListing->organisation)

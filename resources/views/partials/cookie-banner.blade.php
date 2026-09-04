@@ -4,17 +4,20 @@
     <div
         x-show="!decided"
         x-cloak
+        x-ref="dialog"
+        @keydown.tab="trapFocus($event)"
+        @keydown.escape.prevent="accept()"
         style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(0,0,0,0.6);pointer-events:all"
         role="dialog"
         aria-modal="true"
-        aria-label="Cookie-Einstellungen">
+        aria-labelledby="cookie-dialog-title">
 
         <!-- Modal card -->
         <div style="background:#ffffff;border-radius:1rem;padding:2rem;width:100%;max-width:480px;box-shadow:0 25px 50px rgba(0,0,0,0.4);max-height:85vh;overflow-y:auto">
 
             <!-- Header -->
             <div style="margin-bottom:1.5rem">
-                <h2 style="margin:0 0 0.5rem;font-size:1.25rem;color:#1a2e1a;font-weight:700">Cookie-Einstellungen</h2>
+                <h2 id="cookie-dialog-title" style="margin:0 0 0.5rem;font-size:1.25rem;color:#1a2e1a;font-weight:700">Cookie-Einstellungen</h2>
                 <p style="margin:0;font-size:0.875rem;color:#374151;line-height:1.5">
                     Wir verwenden Cookies, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen.
                     Technisch notwendige Cookies werden immer gesetzt.
@@ -33,7 +36,7 @@
 
             <!-- Buttons -->
             <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:1.5rem">
-                <button @click="accept()"
+                <button x-ref="firstAction" @click="accept()"
                     style="padding:0.625rem 1.25rem;border:2px solid #d1d5db;background:transparent;color:#6b7280;border-radius:2rem;cursor:pointer;font-size:0.875rem;flex:1;min-width:120px">
                     Ablehnen
                 </button>
@@ -69,6 +72,27 @@ function cookieConsent() {
                     this.decided = false;
                 }
             }
+
+            if (!this.decided) {
+                this.$nextTick(() => this.$refs.firstAction?.focus());
+            }
+        },
+        trapFocus(event) {
+            const focusable = Array.from(this.$refs.dialog.querySelectorAll(
+                'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            ));
+            if (!focusable.length) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
         },
         accept() {
             localStorage.setItem('fwz_cookie_consent', JSON.stringify({
@@ -76,6 +100,7 @@ function cookieConsent() {
                 timestamp: new Date().toISOString()
             }));
             this.decided = true;
+            this.$nextTick(() => document.getElementById('main-content')?.focus());
         }
     }
 }

@@ -124,7 +124,7 @@
 
 @yield('hero')
 
-<main id="main-content">
+<main id="main-content" tabindex="-1">
   @yield('content')
 </main>
 
@@ -135,11 +135,11 @@
       <p>Die zentrale Anlaufstelle für freiwilliges Engagement in Kärnten — klar, regional und verbindend.</p>
     </div>
     <div>
-      <h4>Kontakt</h4>
+      <h3>Kontakt</h3>
          <p><strong>Freiwilligenzentrum Kärnten</strong><br>Rosenegger Straße 20<br>A-9021 Klagenfurt am Wörthersee<br>E-Mail: info@fwz-ktn.at<br><br><strong>Office:</strong><br>Sandra Dobos 0664 886 250 11</p>
     </div>
     <div>
-      <h4>Rechtliches &amp; Social</h4>
+      <h3>Rechtliches &amp; Social</h3>
       <ul>
         <li><a href="{{ route('impressum') }}">Impressum</a></li>
         <li><a href="{{ route('datenschutz') }}">Datenschutz</a></li>

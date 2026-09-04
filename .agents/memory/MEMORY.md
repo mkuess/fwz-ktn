@@ -12,3 +12,4 @@
 - [Organisation bulk logos](organisation-bulk-logos.md) — assign the same image as independent file copies so later edits to one organisation cannot break the others.
 - [Organisation approval states](organisation-approval-states.md) — use pending/approved/rejected while keeping the legacy approval boolean synchronized for public visibility.
 - [Filament upload previews](filament-upload-previews.md) — persisted public files should use same-origin preview URLs behind custom domains to prevent FilePond loading loops.
+- [Extreme zoom overflow](extreme-zoom-overflow.md) — at 200% zoom, inspect grid min-content widths and off-screen controls instead of masking overflow on the body.
