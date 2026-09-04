@@ -48,6 +48,27 @@
             {!! nl2br(e($volunteerListing->description)) !!}
           </div>
 
+          @if($volunteerListing->flyer_path)
+            <div style="margin-top:2rem">
+              <h2 class="h3">Flyer</h2>
+              @if(in_array($flyerExtension, ['jpg', 'jpeg', 'png', 'webp'], true))
+                <img
+                  data-testid="flyer-preview"
+                  src="{{ '/storage/'.ltrim($volunteerListing->flyer_path, '/') }}"
+                  alt="Flyer zu {{ $volunteerListing->title }}"
+                  style="display:block;width:100%;height:auto;object-fit:contain;border-radius:.75rem">
+              @elseif($flyerExtension === 'pdf')
+                <object
+                  data-testid="flyer-preview"
+                  data="{{ '/storage/'.ltrim($volunteerListing->flyer_path, '/') }}"
+                  type="application/pdf"
+                  style="display:block;width:100%;height:900px;max-height:90vh;border:0;border-radius:.75rem;background:#f3f4f6">
+                  <p>Der Flyer kann in diesem Browser nicht eingebettet werden.</p>
+                </object>
+              @endif
+            </div>
+          @endif
+
           @if($volunteerListing->categories->isNotEmpty() || $volunteerListing->activities->isNotEmpty())
             <div style="margin-top:2rem;padding:1.5rem;background:#f9fafb;border-radius:.75rem">
               @if($volunteerListing->categories->isNotEmpty())

@@ -39,6 +39,8 @@ class PublicVolunteerListingsTest extends TestCase
             ->assertSee($listing->title)
             ->assertSee($listing->organisation->name)
             ->assertSee($listing->description)
+            ->assertSee('data-testid="flyer-preview"', false)
+            ->assertSee('type="application/pdf"', false)
             ->assertSee('Zur Website')
             ->assertSee('Flyer öffnen');
     }
