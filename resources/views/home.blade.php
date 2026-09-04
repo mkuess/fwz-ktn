@@ -246,7 +246,7 @@
     </div>
   </section>
 
-  @if(\App\Models\Setting::enabled('volunteer_listings_enabled'))
+  @if(\App\Models\Setting::enabled('volunteer_listings_enabled') && $volunteerListings->isNotEmpty())
     <section class="section" id="gesuche">
       <div class="container">
         <div class="box banner-box">

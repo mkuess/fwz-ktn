@@ -13,6 +13,11 @@
 </head>
 <body>
 
+@php
+  $showVolunteerListings = \App\Models\Setting::enabled('volunteer_listings_enabled')
+      && \App\Models\VolunteerListing::query()->publiclyVisible()->exists();
+@endphp
+
 <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
 
 <div x-data="{ menuOpen: false }">
@@ -27,7 +32,7 @@
           <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         @endif
         <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
-        @if(\App\Models\Setting::enabled('volunteer_listings_enabled'))
+        @if($showVolunteerListings)
           <a href="{{ route('volunteer-listings.index') }}">Gesuche</a>
         @endif
         <a href="#kontakt">Kontakt</a>
@@ -85,7 +90,7 @@
       <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
     @endif
     <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
-    @if(\App\Models\Setting::enabled('volunteer_listings_enabled'))
+    @if($showVolunteerListings)
       <a href="{{ route('volunteer-listings.index') }}" @click="menuOpen = false">Gesuche</a>
     @endif
     <a

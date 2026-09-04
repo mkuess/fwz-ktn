@@ -48,6 +48,18 @@ class PublicVolunteerListingsTest extends TestCase
         $this->get(route('volunteer-listings.index'))->assertNotFound();
     }
 
+    public function test_volunteer_listings_area_and_menu_are_hidden_when_none_are_available(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('Aktuelle Möglichkeiten für dein Engagement')
+            ->assertDontSee('href="'.route('volunteer-listings.index').'"', false);
+
+        $this->get(route('volunteer-listings.index'))
+            ->assertOk()
+            ->assertSee('Aktuell sind keine Gesuche eingetragen.');
+    }
+
     public function test_expired_or_inactive_listings_are_not_public(): void
     {
         $inactive = $this->createListing([
