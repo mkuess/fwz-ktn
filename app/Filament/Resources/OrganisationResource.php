@@ -243,9 +243,10 @@ class OrganisationResource extends Resource
                     ->label('Typ')
                     ->badge()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('E-Mail')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Kategorien')
+                    ->badge()
+                    ->placeholder('Keine Kategorie'),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Stadt')
                     ->searchable()

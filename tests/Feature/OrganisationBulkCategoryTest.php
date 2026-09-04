@@ -45,6 +45,9 @@ class OrganisationBulkCategoryTest extends TestCase
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
         Livewire::test(ListOrganisations::class)
+            ->assertTableColumnExists('categories.name')
+            ->assertTableColumnDoesNotExist('email')
+            ->assertSee('Bestehend')
             ->callTableBulkAction(
                 'assignCategory',
                 $organisations,
