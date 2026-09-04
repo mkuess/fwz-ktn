@@ -14,7 +14,9 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class OrganisationResource extends Resource
 {
@@ -378,6 +380,47 @@ class OrganisationResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion()
                         ->successNotificationTitle('Kategorie erfolgreich zugewiesen'),
+                    Tables\Actions\BulkAction::make('assignLogo')
+                        ->label('Logo zuweisen')
+                        ->icon('heroicon-o-photo')
+                        ->form([
+                            Forms\Components\FileUpload::make('logo_path')
+                                ->label('Gemeinsames Logo')
+                                ->disk('public')
+                                ->visibility('public')
+                                ->image()
+                                ->directory('organisations/logos')
+                                ->required(),
+                        ])
+                        ->requiresConfirmation()
+                        ->modalHeading('Gemeinsames Logo zuweisen')
+                        ->modalDescription('Vorhandene Logos der ausgewählten Organisationen werden ersetzt.')
+                        ->action(function (Collection $records, array $data): void {
+                            $disk = Storage::disk('public');
+                            $sourcePath = $data['logo_path'];
+                            $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
+
+                            $logoPaths = $records->mapWithKeys(function (Organisation $organisation) use ($disk, $extension, $sourcePath): array {
+                                $targetPath = 'organisations/logos/'.Str::ulid()
+                                    .($extension !== '' ? '.'.$extension : '');
+
+                                if (! $disk->copy($sourcePath, $targetPath)) {
+                                    throw new \RuntimeException('Das Logo konnte nicht für alle Organisationen gespeichert werden.');
+                                }
+
+                                return [$organisation->getKey() => $targetPath];
+                            });
+
+                            $records->each(
+                                fn (Organisation $organisation) => $organisation->update([
+                                    'logo_path' => $logoPaths[$organisation->getKey()],
+                                ])
+                            );
+
+                            $disk->delete($sourcePath);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->successNotificationTitle('Logo erfolgreich zugewiesen'),
                     Tables\Actions\BulkAction::make('geocode')
                         ->label('Standort ermitteln')
                         ->icon('heroicon-o-map-pin')
