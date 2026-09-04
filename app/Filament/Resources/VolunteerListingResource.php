@@ -52,6 +52,48 @@ class VolunteerListingResource extends Resource
                     ->url()
                     ->columnSpanFull(),
 
+                Forms\Components\FileUpload::make('flyer_path')
+                    ->label('Flyer')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->directory('volunteer-listings/flyers')
+                    ->acceptedFileTypes([
+                        'application/pdf',
+                        'image/jpeg',
+                        'image/png',
+                        'image/webp',
+                    ])
+                    ->maxSize(10240)
+                    ->openable()
+                    ->downloadable()
+                    ->getUploadedFileUsing(static function (
+                        Forms\Components\BaseFileUpload $component,
+                        string $file,
+                        string|array|null $storedFileNames,
+                    ): ?array {
+                        $storage = $component->getDisk();
+
+                        if (! $storage->exists($file)) {
+                            return null;
+                        }
+
+                        $relativePath = implode('/', array_map(
+                            'rawurlencode',
+                            explode('/', ltrim($file, '/')),
+                        ));
+
+                        return [
+                            'name' => (is_array($storedFileNames)
+                                ? ($storedFileNames[$file] ?? null)
+                                : $storedFileNames) ?? basename($file),
+                            'size' => $storage->size($file),
+                            'type' => $storage->mimeType($file),
+                            'url' => '/storage/'.$relativePath,
+                        ];
+                    })
+                    ->helperText('PDF, JPG, PNG oder WebP; maximal 10 MB')
+                    ->columnSpanFull(),
+
                 Forms\Components\Grid::make(3)->schema([
                     Forms\Components\TextInput::make('street')->label('Straße'),
                     Forms\Components\TextInput::make('zip')->label('PLZ')->maxLength(10),

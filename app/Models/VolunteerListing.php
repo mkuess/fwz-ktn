@@ -13,6 +13,7 @@ class VolunteerListing extends Model
         'title',
         'description',
         'website_link',
+        'flyer_path',
         'is_spontaneous',
         'weekdays',
         'daytimes',
