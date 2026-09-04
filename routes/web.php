@@ -8,6 +8,7 @@ use App\Http\Controllers\MemberPortalController;
 use App\Http\Controllers\MemberRegistrationController;
 use App\Http\Controllers\OrganisationController;
 use App\Http\Controllers\OrganisationRegistrationController;
+use App\Http\Controllers\VolunteerListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -20,6 +21,9 @@ Route::get('/benefits', [BenefitController::class, 'index'])->name('benefits.ind
 
 Route::get('/aktuelles', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/aktuelles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('/gesuche', [VolunteerListingController::class, 'index'])
+    ->middleware('registration.enabled:volunteer_listings_enabled')
+    ->name('volunteer-listings.index');
 
 Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisations.index');
 Route::get('/vereine/karte', [OrganisationController::class, 'map'])->name('organisations.map');

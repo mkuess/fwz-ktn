@@ -7,6 +7,7 @@ use App\Models\Benefit;
 use App\Models\Category;
 use App\Models\Organisation;
 use App\Models\Testimonial;
+use App\Models\VolunteerListing;
 
 class HomeController extends Controller
 {
@@ -37,6 +38,13 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
+        $volunteerListings = VolunteerListing::query()
+            ->publiclyVisible()
+            ->with(['organisation', 'categories', 'activities'])
+            ->latest()
+            ->limit(3)
+            ->get();
+
         $featuredBenefits = Benefit::where('is_active', true)
             ->orderByDesc('is_teaser')
             ->orderBy('sort_order')
@@ -53,7 +61,7 @@ class HomeController extends Controller
             'stunden' => '15.000',
         ];
 
-        return view('home', compact('vereine', 'categories', 'aktionen', 'featuredBenefits', 'testimonials', 'stats'));
+        return view('home', compact('vereine', 'categories', 'aktionen', 'volunteerListings', 'featuredBenefits', 'testimonials', 'stats'));
     }
 
     public function impressum()

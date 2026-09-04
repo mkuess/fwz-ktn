@@ -27,6 +27,9 @@
           <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
         @endif
         <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
+        @if(\App\Models\Setting::enabled('volunteer_listings_enabled'))
+          <a href="{{ route('volunteer-listings.index') }}">Gesuche</a>
+        @endif
         <a href="#kontakt">Kontakt</a>
         <a href="{{ route('articles.index') }}">Aktuelles</a>
       </div>
@@ -82,6 +85,9 @@
       <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
     @endif
     <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
+    @if(\App\Models\Setting::enabled('volunteer_listings_enabled'))
+      <a href="{{ route('volunteer-listings.index') }}" @click="menuOpen = false">Gesuche</a>
+    @endif
     <a
       href="#kontakt"
       @click.prevent="menuOpen = false; window.history.pushState(null, '', '#kontakt'); $nextTick(() => document.getElementById('kontakt').scrollIntoView({ behavior: 'smooth', block: 'start' }))">

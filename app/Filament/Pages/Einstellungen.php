@@ -33,11 +33,14 @@ class Einstellungen extends Page implements HasForms
 
     public bool $login_button_enabled = true;
 
+    public bool $volunteer_listings_enabled = true;
+
     public function mount(): void
     {
         $this->member_registration_enabled = Setting::enabled('member_registration_enabled');
         $this->organisation_registration_enabled = Setting::enabled('organisation_registration_enabled');
         $this->login_button_enabled = Setting::enabled('login_button_enabled');
+        $this->volunteer_listings_enabled = Setting::enabled('volunteer_listings_enabled');
     }
 
     public function form(Form $form): Form
@@ -59,11 +62,16 @@ class Einstellungen extends Page implements HasForms
                             ->offColor('danger'),
                     ]),
                 Section::make('Navigation')
-                    ->description('Steuere die Sichtbarkeit des Login-Buttons im öffentlichen Menü.')
+                    ->description('Steuere die Sichtbarkeit öffentlicher Bereiche und Menüpunkte.')
                     ->schema([
                         Toggle::make('login_button_enabled')
                             ->label('Login-Button „Anmelden“')
                             ->helperText('Wenn deaktiviert, wird der Login-Button im Desktop- und Mobilmenü ausgeblendet.')
+                            ->onColor('success')
+                            ->offColor('danger'),
+                        Toggle::make('volunteer_listings_enabled')
+                            ->label('Gesuche anzeigen')
+                            ->helperText('Blendet den Gesuche-Bereich auf der Startseite, den Menüpunkt und die öffentliche Gesuche-Seite ein oder aus.')
                             ->onColor('success')
                             ->offColor('danger'),
                     ]),
@@ -76,6 +84,7 @@ class Einstellungen extends Page implements HasForms
         Setting::set('member_registration_enabled', $this->member_registration_enabled ? '1' : '0');
         Setting::set('organisation_registration_enabled', $this->organisation_registration_enabled ? '1' : '0');
         Setting::set('login_button_enabled', $this->login_button_enabled ? '1' : '0');
+        Setting::set('volunteer_listings_enabled', $this->volunteer_listings_enabled ? '1' : '0');
 
         Notification::make()
             ->title('Einstellungen gespeichert')

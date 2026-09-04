@@ -246,6 +246,29 @@
     </div>
   </section>
 
+  @if(\App\Models\Setting::enabled('volunteer_listings_enabled'))
+    <section class="section" id="gesuche">
+      <div class="container">
+        <div class="box banner-box">
+          <div class="banner-head">
+            <div>
+              <span class="eyebrow">Gesuche</span>
+              <h2 class="h2">Aktuelle Möglichkeiten für dein Engagement</h2>
+            </div>
+            <a class="btn dark" href="{{ route('volunteer-listings.index') }}">Alle Gesuche <span class="arrow">→</span></a>
+          </div>
+          <div class="news-grid">
+            @forelse($volunteerListings as $volunteerListing)
+              @include('volunteer-listings.partials.card', ['listing' => $volunteerListing])
+            @empty
+              <p class="muted">Aktuell sind keine Gesuche eingetragen.</p>
+            @endforelse
+          </div>
+        </div>
+      </div>
+    </section>
+  @endif
+
   <section class="section" id="aktionen">
     <div class="container">
       <div class="box banner-box">
