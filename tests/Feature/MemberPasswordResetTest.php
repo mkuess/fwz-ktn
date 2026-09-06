@@ -81,6 +81,32 @@ class MemberPasswordResetTest extends TestCase
         Mail::assertNothingSent();
     }
 
+    public function test_mail_transport_failure_does_not_leave_request_hanging_or_code_usable(): void
+    {
+        $member = Member::create([
+            'first_name' => 'Mail',
+            'last_name' => 'Failure',
+            'email' => 'mail-failure@example.test',
+            'password' => 'old-password',
+            'status' => 'approved',
+        ]);
+
+        Mail::shouldReceive('to')
+            ->once()
+            ->with($member->email)
+            ->andThrow(new \RuntimeException('Mail transport unavailable.'));
+
+        $this->post(route('member.forgot.post'), [
+            'email' => $member->email,
+        ])
+            ->assertRedirect(route('member.reset.code'))
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseMissing('member_password_reset_codes', [
+            'email' => $member->email,
+        ]);
+    }
+
     public function test_resetting_an_admin_member_password_updates_the_filament_login(): void
     {
         Mail::fake();

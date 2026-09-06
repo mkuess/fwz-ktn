@@ -115,10 +115,18 @@ class MemberAuthController extends Controller
                 'updated_at' => now(),
             ]);
 
-            Mail::to($member->email)->send(new MemberPasswordResetCodeMail(
-                $code,
-                self::RESET_CODE_LIFETIME_MINUTES,
-            ));
+            try {
+                Mail::to($member->email)->send(new MemberPasswordResetCodeMail(
+                    $code,
+                    self::RESET_CODE_LIFETIME_MINUTES,
+                ));
+            } catch (\Throwable $exception) {
+                DB::table('member_password_reset_codes')
+                    ->where('email', $email)
+                    ->delete();
+
+                report($exception);
+            }
         }
 
         $request->session()->forget('member_password_reset');
