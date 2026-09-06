@@ -20,7 +20,7 @@
 
         <!-- Top: Logo -->
         <div>
-            <img src="{{ asset('img/fwz-logo-new.svg') }}" alt="FWZ Kärnten" style="height:1.75rem;width:auto">
+            <img src="{{ asset('images/fwz_logo.svg') }}" alt="Freiwilligenzentrum Kärnten" style="height:2.5rem;width:auto;max-width:60%">
         </div>
 
         <!-- Middle: Member name + organisation -->
