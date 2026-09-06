@@ -15,6 +15,13 @@
 
     <div style="position:absolute;inset:0;background-image:url('{{ asset('img/mitgliedskarte-bg.png') }}');background-size:100% 100%;background-position:center;background-repeat:no-repeat"></div>
 
+    <!-- Pulsierender Statuspunkt -->
+    <div aria-hidden="true" style="position:absolute;right:1.25rem;bottom:1.25rem;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:2">
+        <div style="position:absolute;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(228,16,23,0.75);animation:ripple 2s ease-out infinite"></div>
+        <div style="position:absolute;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(228,16,23,0.5);animation:ripple 2s ease-out 0.7s infinite"></div>
+        <div style="width:9px;height:9px;border-radius:50%;background:#e41017;box-shadow:0 0 0 2px rgba(255,255,255,0.9);animation:pulse-dot 1.5s ease-in-out infinite;position:relative;z-index:1"></div>
+    </div>
+
     <!-- Card content -->
     <div style="position:relative;z-index:1;padding:1.5rem;height:100%;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box">
 
