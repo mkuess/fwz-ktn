@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\MemberPasswordResetCodeMail;
 use App\Models\LoginLog;
 use App\Models\Member;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class MemberAuthController extends Controller
 {
+    private const RESET_CODE_LIFETIME_MINUTES = 10;
+
+    private const RESET_CODE_MAX_ATTEMPTS = 5;
+
     public function showLogin()
     {
         if (auth('member')->check()) {
@@ -83,20 +90,155 @@ class MemberAuthController extends Controller
         return view('auth.member-forgot-password');
     }
 
-    public function sendResetLink(Request $request)
+    public function sendResetCode(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
-        $member = Member::where('email', $request->email)->first();
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Bitte gib deine E-Mail-Adresse ein.',
+            'email.email' => 'Bitte gib eine gültige E-Mail-Adresse ein.',
+        ]);
+
+        $email = strtolower(trim($validated['email']));
+        $member = Member::query()->whereRaw('LOWER(email) = ?', [$email])->first();
+
         if ($member) {
-            $token = Str::random(64);
-            $member->update([
-                'activation_token' => $token,
-                'activation_sent_at' => now(),
+            $code = (string) random_int(100000, 999999);
+
+            DB::table('member_password_reset_codes')->updateOrInsert([
+                'email' => $email,
+            ], [
+                'code_hash' => Hash::make($code),
+                'attempts' => 0,
+                'expires_at' => now()->addMinutes(self::RESET_CODE_LIFETIME_MINUTES),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-            session(['reset_link' => url('/aktivierung/'.$token)]);
+
+            Mail::to($member->email)->send(new MemberPasswordResetCodeMail(
+                $code,
+                self::RESET_CODE_LIFETIME_MINUTES,
+            ));
         }
 
-        return back()->with('status', 'Falls ein Konto mit dieser E-Mail existiert, wurde ein Link gesendet.');
+        $request->session()->forget('member_password_reset');
+        $request->session()->put('member_password_reset_email', $email);
+
+        return redirect()
+            ->route('member.reset.code')
+            ->with('status', 'Falls ein Konto mit dieser E-Mail-Adresse existiert, wurde ein sechsstelliger Code gesendet.');
+    }
+
+    public function showResetCode(Request $request)
+    {
+        if (! $request->session()->has('member_password_reset_email')) {
+            return redirect()->route('member.forgot');
+        }
+
+        return view('auth.member-reset-code');
+    }
+
+    public function verifyResetCode(Request $request)
+    {
+        $validated = $request->validate([
+            'code' => ['required', 'digits:6'],
+        ], [
+            'code.required' => 'Bitte gib den sechsstelligen Code ein.',
+            'code.digits' => 'Der Code muss aus genau sechs Ziffern bestehen.',
+        ]);
+
+        $email = $request->session()->get('member_password_reset_email');
+        if (! is_string($email)) {
+            return redirect()->route('member.forgot');
+        }
+
+        $reset = DB::table('member_password_reset_codes')->where('email', $email)->first();
+
+        if (! $reset || now()->greaterThan($reset->expires_at)) {
+            DB::table('member_password_reset_codes')->where('email', $email)->delete();
+
+            return back()->withErrors([
+                'code' => 'Der Code ist abgelaufen. Bitte fordere einen neuen Code an.',
+            ]);
+        }
+
+        if ($reset->attempts >= self::RESET_CODE_MAX_ATTEMPTS) {
+            DB::table('member_password_reset_codes')->where('email', $email)->delete();
+
+            return back()->withErrors([
+                'code' => 'Zu viele Fehlversuche. Bitte fordere einen neuen Code an.',
+            ]);
+        }
+
+        if (! Hash::check($validated['code'], $reset->code_hash)) {
+            DB::table('member_password_reset_codes')
+                ->where('email', $email)
+                ->increment('attempts');
+
+            return back()->withErrors([
+                'code' => 'Der eingegebene Code ist nicht korrekt.',
+            ]);
+        }
+
+        $request->session()->put('member_password_reset', [
+            'email' => $email,
+            'verified_at' => now()->timestamp,
+        ]);
+
+        return redirect()->route('member.reset.password');
+    }
+
+    public function showResetPassword(Request $request)
+    {
+        if (! $this->hasValidResetSession($request)) {
+            return redirect()->route('member.forgot');
+        }
+
+        return view('auth.member-reset-password');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        if (! $this->hasValidResetSession($request)) {
+            return redirect()
+                ->route('member.forgot')
+                ->withErrors(['email' => 'Die Passwort-Zurücksetzung ist abgelaufen. Bitte beginne erneut.']);
+        }
+
+        $validated = $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'password.required' => 'Bitte wähle ein neues Passwort.',
+            'password.min' => 'Das Passwort muss mindestens 8 Zeichen lang sein.',
+            'password.confirmed' => 'Die Passwörter stimmen nicht überein.',
+        ]);
+
+        $resetSession = $request->session()->get('member_password_reset');
+        $email = $resetSession['email'];
+        $reset = DB::table('member_password_reset_codes')->where('email', $email)->first();
+
+        if (! $reset || now()->greaterThan($reset->expires_at)) {
+            $request->session()->forget(['member_password_reset', 'member_password_reset_email']);
+
+            return redirect()
+                ->route('member.forgot')
+                ->withErrors(['email' => 'Die Passwort-Zurücksetzung ist abgelaufen. Bitte beginne erneut.']);
+        }
+
+        $member = Member::query()->whereRaw('LOWER(email) = ?', [$email])->first();
+        if (! $member) {
+            $request->session()->forget(['member_password_reset', 'member_password_reset_email']);
+
+            return redirect()->route('member.login');
+        }
+
+        $member->update(['password' => $validated['password']]);
+        DB::table('member_password_reset_codes')->where('email', $email)->delete();
+        $request->session()->forget(['member_password_reset', 'member_password_reset_email']);
+
+        return redirect()
+            ->route('member.login')
+            ->with('status', 'Dein Passwort wurde geändert. Du kannst dich jetzt anmelden.');
     }
 
     public function showActivation(string $token)
@@ -130,5 +272,20 @@ class MemberAuthController extends Controller
         auth('member')->login($member);
 
         return redirect()->route('member.portal')->with('success', 'Willkommen! Dein Konto wurde aktiviert.');
+    }
+
+    private function hasValidResetSession(Request $request): bool
+    {
+        $resetSession = $request->session()->get('member_password_reset');
+
+        if (! is_array($resetSession)
+            || ! isset($resetSession['email'], $resetSession['verified_at'])
+            || ! is_string($resetSession['email'])
+            || ! is_numeric($resetSession['verified_at'])) {
+            return false;
+        }
+
+        return now()->timestamp - (int) $resetSession['verified_at']
+            <= self::RESET_CODE_LIFETIME_MINUTES * 60;
     }
 }

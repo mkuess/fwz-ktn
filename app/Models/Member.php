@@ -123,7 +123,7 @@ class Member extends Authenticatable
 
     public function syncAdminUser(): void
     {
-        $passwordHash = (string) $this->getRawOriginal('password');
+        $passwordHash = (string) $this->getAttribute('password');
         $hasAdminAccess = $this->role === 'admin'
             && $this->status === 'approved'
             && ! $this->trashed()

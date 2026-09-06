@@ -35,7 +35,17 @@ Route::get('/anmelden', [MemberAuthController::class, 'showLogin'])->name('membe
 Route::post('/anmelden', [MemberAuthController::class, 'login'])->name('member.login.post');
 Route::post('/abmelden', [MemberAuthController::class, 'logout'])->name('member.logout');
 Route::get('/passwort-vergessen', [MemberAuthController::class, 'showForgotPassword'])->name('member.forgot');
-Route::post('/passwort-vergessen', [MemberAuthController::class, 'sendResetLink'])->name('member.forgot.post');
+Route::post('/passwort-vergessen', [MemberAuthController::class, 'sendResetCode'])
+    ->middleware('throttle:3,10')
+    ->name('member.forgot.post');
+Route::get('/passwort-vergessen/code', [MemberAuthController::class, 'showResetCode'])->name('member.reset.code');
+Route::post('/passwort-vergessen/code', [MemberAuthController::class, 'verifyResetCode'])
+    ->middleware('throttle:6,1')
+    ->name('member.reset.code.post');
+Route::get('/passwort-vergessen/neues-passwort', [MemberAuthController::class, 'showResetPassword'])->name('member.reset.password');
+Route::post('/passwort-vergessen/neues-passwort', [MemberAuthController::class, 'resetPassword'])
+    ->middleware('throttle:6,1')
+    ->name('member.reset.password.post');
 Route::get('/aktivierung/{token}', [MemberAuthController::class, 'showActivation'])->name('member.activate');
 Route::post('/aktivierung/{token}', [MemberAuthController::class, 'activate'])->name('member.activate.post');
 

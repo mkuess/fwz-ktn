@@ -13,3 +13,4 @@
 - [Organisation approval states](organisation-approval-states.md) — use pending/approved/rejected while keeping the legacy approval boolean synchronized for public visibility.
 - [Filament upload previews](filament-upload-previews.md) — persisted public files should use same-origin preview URLs behind custom domains to prevent FilePond loading loops.
 - [Extreme zoom overflow](extreme-zoom-overflow.md) — at 200% zoom, inspect grid min-content widths and off-screen controls instead of masking overflow on the body.
+- [Pint empty constructors](pint-empty-constructors.md) — avoid empty promoted constructors when Pint's brace fixers disagree; use explicit readonly assignments.
