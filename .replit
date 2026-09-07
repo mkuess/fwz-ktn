@@ -44,3 +44,10 @@ build = ["bash", "-c", "npm run build && php artisan migrate --force"]
 [userenv.shared]
 SESSION_SAME_SITE = "lax"
 SESSION_SECURE_COOKIE = "true"
+MAIL_FROM_ADDRESS = "fwz-ktn@oja.at"
+MAIL_FROM_NAME = "Freiwilligenzentrum Kärnten"
+MAIL_HOST = "email.oja.at"
+MAIL_MAILER = "smtp"
+MAIL_PORT = "587"
+MAIL_TIMEOUT = "10"
+MAIL_USERNAME = "fwz-ktn@oja.at"
