@@ -32,7 +32,7 @@
           </div>
         @endif
 
-        <form action="{{ route('registrierung.schritt1.post') }}" method="POST" enctype="multipart/form-data" novalidate>
+        <form id="organisation-registration-step-one" action="{{ route('registrierung.schritt1.post') }}" method="POST" enctype="multipart/form-data" novalidate>
           @csrf
 
           <div class="form-group">
@@ -76,9 +76,11 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="logo">Logo <span class="form-hint">(optional, JPG/PNG/SVG, max. 4 MB)</span></label>
+            <label class="form-label" for="logo">Logo <span class="form-hint">(optional, JPG/PNG/SVG/WebP; große Fotos werden automatisch verkleinert)</span></label>
             <input class="form-control form-file @error('logo') is-error @enderror" type="file" id="logo" name="logo"
-              accept="image/*">
+              accept=".jpg,.jpeg,.png,.webp,.svg,image/jpeg,image/png,image/webp,image/svg+xml"
+              aria-describedby="logo-upload-status">
+            <p id="logo-upload-status" class="form-hint" aria-live="polite"></p>
             @error('logo')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
@@ -93,3 +95,7 @@
   </div>
 </section>
 @endsection
+
+@push('scripts')
+<script src="{{ asset('js/logo-upload.js') }}" defer></script>
+@endpush
