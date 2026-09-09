@@ -272,8 +272,7 @@ class OrganisationResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->wrap()
-                    ->lineClamp(3)
-                    ->extraAttributes(['style' => 'width: 32%; max-width: 24rem; overflow-wrap: anywhere;']),
+                    ->extraAttributes(['style' => 'width: 36%; max-width: 28rem; overflow-wrap: normal; word-break: normal;']),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Typ')
                     ->badge()
