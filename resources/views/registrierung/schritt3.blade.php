@@ -69,9 +69,10 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="representative">Verantwortliche Person / Obmann·Obfrau</label>
-            <input class="form-control" type="text" id="representative" name="representative"
-              value="{{ old('representative', $old['representative'] ?? '') }}">
+            <label class="form-label" for="representative">Verantwortliche Person / Obmann·Obfrau <span class="req">*</span></label>
+            <input class="form-control @error('representative') is-error @enderror" type="text" id="representative" name="representative"
+              value="{{ old('representative', $old['representative'] ?? '') }}" required>
+            @error('representative')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
           <div class="form-group">

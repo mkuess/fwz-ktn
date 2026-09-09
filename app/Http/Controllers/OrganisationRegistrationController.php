@@ -91,10 +91,11 @@ class OrganisationRegistrationController extends Controller
             'city' => ['nullable', 'string', 'max:100'],
             'phone' => ['required', 'string', 'max:50'],
             'website' => ['nullable', 'url', 'max:255'],
-            'representative' => ['nullable', 'string', 'max:255'],
+            'representative' => ['required', 'string', 'max:255'],
             'contact_person' => ['required', 'string', 'max:255'],
         ], [
             'phone.required' => 'Bitte gib eine Telefonnummer ein.',
+            'representative.required' => 'Bitte gib eine verantwortliche Person ein.',
             'contact_person.required' => 'Bitte gib eine Ansprechperson für das FWZ-Team ein.',
         ]);
 

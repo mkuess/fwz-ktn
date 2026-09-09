@@ -199,4 +199,24 @@ class PublicRegistrationAvailabilityTest extends TestCase
             ])
             ->assertSessionHasErrors('contact_person');
     }
+
+    public function test_organisation_registration_requires_representative(): void
+    {
+        $this
+            ->withSession([
+                'reg_data' => [
+                    'name' => 'Testverein',
+                    'type' => 'verein',
+                    'zvr_number' => '123456789',
+                    'description' => 'Testbeschreibung',
+                    'email' => 'verein@example.test',
+                    'password' => 'test-password',
+                ],
+            ])
+            ->post(route('registrierung.schritt3.post'), [
+                'phone' => '+43 463 123456',
+                'contact_person' => 'Erika Muster',
+            ])
+            ->assertSessionHasErrors('representative');
+    }
 }
