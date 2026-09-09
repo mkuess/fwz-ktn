@@ -61,6 +61,20 @@ class Neuanmeldungen extends Page implements HasTable
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->label('Organisation')
                     ->placeholder('-'),
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Adresse')
+                    ->state(function (Member $record): ?string {
+                        $street = trim((string) $record->street);
+                        $city = trim(implode(' ', array_filter([
+                            $record->zip,
+                            $record->city,
+                        ])));
+                        $address = implode("\n", array_filter([$street, $city]));
+
+                        return $address !== '' ? $address : null;
+                    })
+                    ->placeholder('-')
+                    ->wrap(),
             ])
             ->recordUrl(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
             ->bulkActions([

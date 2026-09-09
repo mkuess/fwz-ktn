@@ -145,6 +145,32 @@ class PublicRegistrationAvailabilityTest extends TestCase
         ])->assertSessionHasErrors('zvr_number');
     }
 
+    public function test_member_registration_requires_complete_address(): void
+    {
+        $organisation = Organisation::create([
+            'type' => 'verein',
+            'role' => 'org_admin',
+            'name' => 'Adress-Testverein',
+            'email' => 'adress-testverein@example.test',
+            'password' => 'test-password',
+            'is_approved' => true,
+            'is_active' => true,
+        ]);
+
+        $this->post(route('member.register.store'), [
+            'organisation_id' => $organisation->id,
+            'first_name' => 'Max',
+            'last_name' => 'Mustermann',
+            'email' => 'max.mustermann@example.test',
+            'confirm_membership' => '1',
+            'confirm_privacy' => '1',
+        ])->assertSessionHasErrors([
+            'street',
+            'zip',
+            'city',
+        ]);
+    }
+
     public function test_initiative_registration_does_not_require_zvr_number(): void
     {
         $this->post(route('registrierung.schritt1.post'), [

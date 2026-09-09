@@ -70,24 +70,24 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="street">Straße &amp; Hausnummer <span class="form-hint">(optional)</span></label>
+            <label class="form-label" for="street">Straße &amp; Hausnummer <span class="req">*</span></label>
             <input class="form-control @error('street') is-error @enderror" type="text" id="street" name="street"
-              value="{{ old('street') }}" autocomplete="street-address">
+              value="{{ old('street') }}" required autocomplete="street-address">
             @error('street')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
           <div class="form-row" style="display:grid;grid-template-columns:140px 1fr;gap:1rem">
             <div class="form-group">
-              <label class="form-label" for="zip">PLZ <span class="form-hint">(optional)</span></label>
+              <label class="form-label" for="zip">PLZ <span class="req">*</span></label>
               <input class="form-control @error('zip') is-error @enderror" type="text" id="zip" name="zip"
-                value="{{ old('zip') }}" maxlength="10" autocomplete="postal-code">
+                value="{{ old('zip') }}" required maxlength="10" autocomplete="postal-code">
               @error('zip')<p class="form-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="city">Ort <span class="form-hint">(optional)</span></label>
+              <label class="form-label" for="city">Ort <span class="req">*</span></label>
               <input class="form-control @error('city') is-error @enderror" type="text" id="city" name="city"
-                value="{{ old('city') }}" autocomplete="address-level2">
+                value="{{ old('city') }}" required autocomplete="address-level2">
               @error('city')<p class="form-error">{{ $message }}</p>@enderror
             </div>
           </div>

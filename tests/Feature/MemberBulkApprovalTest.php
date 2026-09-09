@@ -29,12 +29,18 @@ class MemberBulkApprovalTest extends TestCase
             'password' => 'temporary-password',
             'status' => 'pending',
             'role' => 'member',
+            'street' => $number === 1 ? 'Musterstraße 12' : null,
+            'zip' => $number === 1 ? '9020' : null,
+            'city' => $number === 1 ? 'Klagenfurt' : null,
         ]));
 
         $this->actingAs($admin);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
         Livewire::test(Neuanmeldungen::class)
+            ->assertTableColumnExists('address')
+            ->assertSee('Musterstraße 12')
+            ->assertSee('9020 Klagenfurt')
             ->callTableBulkAction('approveAndSendAccess', $members)
             ->assertHasNoErrors();
 
