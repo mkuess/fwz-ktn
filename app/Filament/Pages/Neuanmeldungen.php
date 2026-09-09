@@ -4,11 +4,14 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\MemberResource;
 use App\Models\Member;
+use App\Services\MemberAccessInvitationService;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 class Neuanmeldungen extends Page implements HasTable
 {
@@ -60,6 +63,55 @@ class Neuanmeldungen extends Page implements HasTable
                     ->placeholder('-'),
             ])
             ->recordUrl(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('approveAndSendAccess')
+                        ->label('Freischalten und Zugangsdaten senden')
+                        ->icon('heroicon-o-envelope')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Mitglieder freischalten')
+                        ->modalDescription('Alle ausgewählten Mitglieder werden freigeschaltet und erhalten anschließend ihren sechsstelligen, sieben Tage gültigen Freischaltcode per E-Mail.')
+                        ->action(function (Collection $records): void {
+                            $sent = 0;
+                            $failed = 0;
+                            $invitationService = app(MemberAccessInvitationService::class);
+
+                            foreach ($records as $member) {
+                                $member->update([
+                                    'status' => 'approved',
+                                    'approved_at' => now(),
+                                ]);
+
+                                try {
+                                    $invitationService->send($member);
+                                    $sent++;
+                                } catch (\Throwable $exception) {
+                                    report($exception);
+                                    $failed++;
+                                }
+                            }
+
+                            if ($failed === 0) {
+                                Notification::make()
+                                    ->title('Mitglieder freigeschaltet')
+                                    ->body($sent.' Zugangsdaten-E-Mail(s) wurden versendet.')
+                                    ->success()
+                                    ->send();
+
+                                return;
+                            }
+
+                            Notification::make()
+                                ->title('Freischaltung abgeschlossen')
+                                ->body($sent.' E-Mail(s) versendet, '.$failed.' E-Mail(s) fehlgeschlagen. Die betreffenden Mitglieder wurden trotzdem gespeichert und freigeschaltet.')
+                                ->warning()
+                                ->persistent()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                ]),
+            ])
             ->defaultSort('created_at', 'desc')
             ->paginated([10, 30, 50]);
     }
