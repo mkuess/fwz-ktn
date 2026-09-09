@@ -32,7 +32,13 @@
           </div>
         @endif
 
-        <form id="organisation-registration-step-one" action="{{ route('registrierung.schritt1.post') }}" method="POST" enctype="multipart/form-data" novalidate>
+        <form
+          id="organisation-registration-step-one"
+          action="{{ route('registrierung.schritt1.post') }}"
+          method="POST"
+          enctype="multipart/form-data"
+          x-data="{ organisationType: @js(old('type', $old['type'] ?? 'verein')) }"
+          novalidate>
           @csrf
 
           <div class="form-group">
@@ -47,12 +53,12 @@
               <legend class="form-label">Typ <span class="req">*</span></legend>
               <div class="form-radios">
                 <label class="form-radio">
-                  <input type="radio" name="type" value="verein"
+                  <input type="radio" name="type" value="verein" x-model="organisationType"
                     {{ old('type', $old['type'] ?? 'verein') === 'verein' ? 'checked' : '' }}>
                   <span>Verein</span>
                 </label>
                 <label class="form-radio">
-                  <input type="radio" name="type" value="organisation"
+                  <input type="radio" name="type" value="organisation" x-model="organisationType"
                     {{ old('type', $old['type'] ?? '') === 'organisation' ? 'checked' : '' }}>
                   <span>Organisation / Initiative</span>
                 </label>
@@ -61,10 +67,12 @@
             @error('type')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
-          <div class="form-group">
+          <div class="form-group" x-show="organisationType === 'verein'" x-cloak>
             <label class="form-label" for="zvr_number">ZVR-Nummer <span class="req">*</span></label>
             <input class="form-control @error('zvr_number') is-error @enderror" type="text" id="zvr_number" name="zvr_number"
-              value="{{ old('zvr_number', $old['zvr_number'] ?? '') }}" placeholder="z. B. 123456789" required>
+              value="{{ old('zvr_number', $old['zvr_number'] ?? '') }}" placeholder="z. B. 123456789"
+              :required="organisationType === 'verein'"
+              :disabled="organisationType !== 'verein'">
             @error('zvr_number')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 

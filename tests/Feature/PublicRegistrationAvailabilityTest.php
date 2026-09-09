@@ -145,6 +145,17 @@ class PublicRegistrationAvailabilityTest extends TestCase
         ])->assertSessionHasErrors('zvr_number');
     }
 
+    public function test_initiative_registration_does_not_require_zvr_number(): void
+    {
+        $this->post(route('registrierung.schritt1.post'), [
+            'name' => 'Initiative ohne ZVR',
+            'type' => 'organisation',
+            'description' => 'Test',
+        ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('registrierung.schritt2'));
+    }
+
     public function test_organisation_registration_requires_phone_number(): void
     {
         $this

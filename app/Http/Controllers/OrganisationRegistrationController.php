@@ -21,7 +21,7 @@ class OrganisationRegistrationController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:verein,organisation'],
-            'zvr_number' => ['required', 'string', 'max:100'],
+            'zvr_number' => ['nullable', 'required_if:type,verein', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:2000'],
             'logo' => ['nullable', 'file', 'image', 'max:4096'],
         ], [
