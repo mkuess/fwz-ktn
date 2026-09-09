@@ -30,7 +30,9 @@
             inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"
             aria-describedby="code-hint{{ $errors->has('code') ? ' code-error' : '' }}"
             style="width:100%;padding:0.75rem 0.875rem;border:1.5px solid {{ $errors->has('code') ? '#ef4444' : '#d1d5db' }};border-radius:0.5rem;font-family:monospace;font-size:1.5rem;letter-spacing:0.2em;text-align:center;box-sizing:border-box">
-          <p id="code-hint" style="font-size:0.8rem;color:#6b7280;margin:0.5rem 0 0">Der Code ist 10 Minuten gültig.</p>
+          <p id="code-hint" style="font-size:0.8rem;color:#6b7280;margin:0.5rem 0 0">
+            Der Code ist {{ session('member_password_reset_lifetime_hint', '10 Minuten') }} gültig.
+          </p>
           @error('code')
             <p id="code-error" role="alert" style="color:#b91c1c;font-size:0.8rem;margin:0.375rem 0 0">{{ $message }}</p>
           @enderror

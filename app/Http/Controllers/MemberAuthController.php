@@ -131,6 +131,7 @@ class MemberAuthController extends Controller
 
         $request->session()->forget('member_password_reset');
         $request->session()->put('member_password_reset_email', $email);
+        $request->session()->put('member_password_reset_lifetime_hint', self::RESET_CODE_LIFETIME_MINUTES.' Minuten');
 
         return redirect()
             ->route('member.reset.code')
@@ -139,6 +140,22 @@ class MemberAuthController extends Controller
 
     public function showResetCode(Request $request)
     {
+        if ($request->filled('email')) {
+            abort_unless($request->hasValidSignature(), 403);
+
+            $email = strtolower(trim((string) $request->query('email')));
+            $memberExists = Member::query()
+                ->whereRaw('LOWER(email) = ?', [$email])
+                ->where('status', 'approved')
+                ->exists();
+
+            abort_unless($memberExists, 404);
+
+            $request->session()->forget('member_password_reset');
+            $request->session()->put('member_password_reset_email', $email);
+            $request->session()->put('member_password_reset_lifetime_hint', '7 Tage');
+        }
+
         if (! $request->session()->has('member_password_reset_email')) {
             return redirect()->route('member.forgot');
         }
@@ -226,7 +243,7 @@ class MemberAuthController extends Controller
         $reset = DB::table('member_password_reset_codes')->where('email', $email)->first();
 
         if (! $reset || now()->greaterThan($reset->expires_at)) {
-            $request->session()->forget(['member_password_reset', 'member_password_reset_email']);
+            $request->session()->forget(['member_password_reset', 'member_password_reset_email', 'member_password_reset_lifetime_hint']);
 
             return redirect()
                 ->route('member.forgot')
@@ -235,14 +252,14 @@ class MemberAuthController extends Controller
 
         $member = Member::query()->whereRaw('LOWER(email) = ?', [$email])->first();
         if (! $member) {
-            $request->session()->forget(['member_password_reset', 'member_password_reset_email']);
+            $request->session()->forget(['member_password_reset', 'member_password_reset_email', 'member_password_reset_lifetime_hint']);
 
             return redirect()->route('member.login');
         }
 
         $member->update(['password' => $validated['password']]);
         DB::table('member_password_reset_codes')->where('email', $email)->delete();
-        $request->session()->forget(['member_password_reset', 'member_password_reset_email']);
+        $request->session()->forget(['member_password_reset', 'member_password_reset_email', 'member_password_reset_lifetime_hint']);
 
         return redirect()
             ->route('member.login')

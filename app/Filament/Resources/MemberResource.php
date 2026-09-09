@@ -4,15 +4,17 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MemberResource\Pages;
 use App\Models\Member;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Illuminate\Support\HtmlString;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\HtmlString;
 
 class MemberResource extends Resource
 {
@@ -39,45 +41,48 @@ class MemberResource extends Resource
                             ->label('')
                             ->content(function ($record): HtmlString {
                                 $name = $record?->organisation?->name ?? '—';
+
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🏢 Organisation</div>
-                                        <div style="font-weight:600">' . e($name) . '</div>
+                                        <div style="font-weight:600">'.e($name).'</div>
                                     </div>
                                 ');
                             }),
                         Placeholder::make('address_card')
                             ->label('')
                             ->content(function ($record): HtmlString {
-                                $street   = $record?->street ?? '—';
-                                $location = trim(($record?->zip ?? '') . ' ' . ($record?->city ?? '')) ?: '—';
+                                $street = $record?->street ?? '—';
+                                $location = trim(($record?->zip ?? '').' '.($record?->city ?? '')) ?: '—';
+
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">📍 Adresse</div>
-                                        <div style="font-weight:600">' . e($street) . '</div>
-                                        <div>' . e($location) . '</div>
+                                        <div style="font-weight:600">'.e($street).'</div>
+                                        <div>'.e($location).'</div>
                                     </div>
                                 ');
                             }),
                         Placeholder::make('info_card')
                             ->label('')
                             ->content(function ($record): HtmlString {
-                                $since  = $record?->created_at?->diffForHumans() ?? '—';
+                                $since = $record?->created_at?->diffForHumans() ?? '—';
                                 $status = match ($record?->status) {
-                                    'pending'  => 'Ausstehend',
+                                    'pending' => 'Ausstehend',
                                     'approved' => 'Genehmigt',
                                     'rejected' => 'Abgelehnt',
-                                    default    => '—',
+                                    default => '—',
                                 };
                                 $activationSent = $record?->activation_sent_at?->format('d.m.Y H:i') ?? 'Noch nicht gesendet';
-                                $memberNumber   = $record?->membership_number ?? 'Noch nicht generiert';
+                                $memberNumber = $record?->membership_number ?? 'Noch nicht generiert';
+
                                 return new HtmlString('
                                     <div style="text-align:center;padding:0.5rem">
                                         <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem">🕐 Angemeldet</div>
-                                        <div style="font-weight:600">' . e($since) . '</div>
-                                        <div style="font-size:0.75rem;margin-bottom:0.5rem">' . e($status) . '</div>
-                                        <div style="font-size:0.7rem;color:#6b7280">📧 Aktivierungslink: ' . e($activationSent) . '</div>
-                                        <div style="font-size:0.7rem;color:#6b7280">🪪 Nr: ' . e($memberNumber) . '</div>
+                                        <div style="font-weight:600">'.e($since).'</div>
+                                        <div style="font-size:0.75rem;margin-bottom:0.5rem">'.e($status).'</div>
+                                        <div style="font-size:0.7rem;color:#6b7280">📧 Aktivierungslink: '.e($activationSent).'</div>
+                                        <div style="font-size:0.7rem;color:#6b7280">🪪 Nr: '.e($memberNumber).'</div>
                                     </div>
                                 ');
                             }),
@@ -91,12 +96,24 @@ class MemberResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('Status')
                             ->options([
-                                'pending'  => 'Ausstehend',
+                                'pending' => 'Ausstehend',
                                 'approved' => 'Geprüft',
                                 'rejected' => 'Abgelehnt',
                             ])
                             ->required()
                             ->live(),
+                        Forms\Components\Actions::make([
+                            Forms\Components\Actions\Action::make('sendAccessCredentials')
+                                ->label('Zugangsdaten zusenden')
+                                ->icon('heroicon-o-envelope')
+                                ->color('success')
+                                ->requiresConfirmation()
+                                ->modalHeading('Zugangsdaten zusenden')
+                                ->modalDescription('Das Formular wird gespeichert. Danach erhält das Mitglied eine E-Mail mit einem sechsstelligen Freischaltcode.')
+                                ->action(fn ($livewire) => $livewire->saveAndSendAccessCredentials()),
+                        ])
+                            ->key('send-access-credentials-actions')
+                            ->visible(fn (Get $get): bool => $get('status') === 'approved'),
                         Forms\Components\Textarea::make('rejection_reason')
                             ->label('Ablehnungsgrund')
                             ->placeholder('Bitte Grund angeben...')
@@ -138,9 +155,9 @@ class MemberResource extends Resource
                         Forms\Components\Select::make('role')
                             ->label('Rolle')
                             ->options([
-                                'member'    => '👤 Mitglied',
+                                'member' => '👤 Mitglied',
                                 'org_admin' => '🏢 Organisations-Admin',
-                                'admin'     => '🔑 FWZ Admin',
+                                'admin' => '🔑 FWZ Admin',
                             ])
                             ->default('member')
                             ->live()
@@ -203,7 +220,7 @@ class MemberResource extends Resource
                             ->relationship(
                                 'managedOrganisations',
                                 'name',
-                                fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('is_active', true)->orderBy('name')
+                                fn (Builder $query) => $query->where('is_active', true)->orderBy('name')
                             )
                             ->searchable()
                             ->preload(false)
@@ -234,22 +251,22 @@ class MemberResource extends Resource
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending'  => 'Ausstehend',
+                        'pending' => 'Ausstehend',
                         'approved' => 'Genehmigt',
                         'rejected' => 'Abgelehnt',
-                        default    => $state,
+                        default => $state,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'approved' => 'success',
                         'rejected' => 'danger',
-                        default    => 'gray',
+                        default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('source')
                     ->label('Quelle')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'self' => 'Selbst registriert',
-                        'csv'  => 'CSV-Import',
+                        'csv' => 'CSV-Import',
                         default => $state,
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -257,15 +274,15 @@ class MemberResource extends Resource
                     ->label('Rolle')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        'member'    => 'Mitglied',
+                        'member' => 'Mitglied',
                         'org_admin' => 'Org-Admin',
-                        'admin'     => 'Admin',
-                        default     => $state ?? 'Mitglied',
+                        'admin' => 'Admin',
+                        default => $state ?? 'Mitglied',
                     })
                     ->color(fn (?string $state): string => match ($state) {
                         'org_admin' => 'info',
-                        'admin'     => 'danger',
-                        default     => 'gray',
+                        'admin' => 'danger',
+                        default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('managedOrganisations.name')
                     ->label('Organisationszugang')
@@ -287,14 +304,14 @@ class MemberResource extends Resource
                     ->state(function (Member $record): string {
                         $lines = [];
 
-                        $lines[] = '<span style="font-size:0.75rem;color:#6b7280">Angemeldet am: ' . e($record->created_at?->format('d.m.Y')) . '</span>';
+                        $lines[] = '<span style="font-size:0.75rem;color:#6b7280">Angemeldet am: '.e($record->created_at?->format('d.m.Y')).'</span>';
 
                         if ($record->status === 'rejected') {
-                            $reason = $record->rejection_reason ? 'title="' . e($record->rejection_reason) . '"' : 'title="Keine Info"';
-                            $lines[] = '<span ' . $reason . ' style="color:#ef4444;cursor:help">✗ Abgelehnt</span>';
+                            $reason = $record->rejection_reason ? 'title="'.e($record->rejection_reason).'"' : 'title="Keine Info"';
+                            $lines[] = '<span '.$reason.' style="color:#ef4444;cursor:help">✗ Abgelehnt</span>';
                         } elseif ($record->card_status === 'zugesendet' && $record->card_sent_at) {
-                            $sentAt = \Carbon\Carbon::parse($record->card_sent_at)->format('d.m.Y');
-                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet am ' . e($sentAt) . '</span>';
+                            $sentAt = Carbon::parse($record->card_sent_at)->format('d.m.Y');
+                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet am '.e($sentAt).'</span>';
                         } elseif ($record->card_status === 'zugesendet') {
                             $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet</span>';
                         }
@@ -310,7 +327,7 @@ class MemberResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
-                        'pending'  => 'Ausstehend',
+                        'pending' => 'Ausstehend',
                         'approved' => 'Genehmigt',
                         'rejected' => 'Abgelehnt',
                     ]),
@@ -327,9 +344,9 @@ class MemberResource extends Resource
                 Tables\Filters\SelectFilter::make('role')
                     ->label('Rolle')
                     ->options([
-                        'member'    => 'Mitglied',
+                        'member' => 'Mitglied',
                         'org_admin' => 'Organisations-Admin',
-                        'admin'     => 'FWZ Admin',
+                        'admin' => 'FWZ Admin',
                     ]),
             ])
             ->actions([
@@ -347,13 +364,13 @@ class MemberResource extends Resource
                             Forms\Components\Select::make('role')
                                 ->label('Rolle')
                                 ->options([
-                                    'member'    => '👤 Mitglied',
+                                    'member' => '👤 Mitglied',
                                     'org_admin' => '🏢 Organisations-Admin',
-                                    'admin'     => '🔑 FWZ Admin',
+                                    'admin' => '🔑 FWZ Admin',
                                 ])
                                 ->required(),
                         ])
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data): void {
+                        ->action(function (Collection $records, array $data): void {
                             $records->each->update(['role' => $data['role']]);
                         })
                         ->deselectRecordsAfterCompletion()
@@ -362,10 +379,10 @@ class MemberResource extends Resource
                         ->label('Ausgewählte freischalten')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records): void {
+                        ->action(function (Collection $records): void {
                             $records->each(function (Member $record) {
                                 $record->update([
-                                    'status'      => 'approved',
+                                    'status' => 'approved',
                                     'approved_at' => now(),
                                 ]);
                             });
@@ -393,9 +410,9 @@ class MemberResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListMembers::route('/'),
+            'index' => Pages\ListMembers::route('/'),
             'create' => Pages\CreateMember::route('/create'),
-            'edit'   => Pages\EditMember::route('/{record}/edit'),
+            'edit' => Pages\EditMember::route('/{record}/edit'),
         ];
     }
 }
