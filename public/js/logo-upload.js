@@ -9,9 +9,9 @@
         return;
     }
 
-    var maxUploadBytes = 4 * 1024 * 1024;
-    var compressionThresholdBytes = 3 * 1024 * 1024;
-    var maxDimension = 2000;
+    var maxOriginalBytes = 20 * 1024 * 1024;
+    var targetUploadBytes = 700 * 1024;
+    var maxDimension = 1600;
     var processing = false;
     var ready = true;
 
@@ -60,20 +60,28 @@
         var image = await loadImage(file);
         var scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
         var canvas = document.createElement('canvas');
-        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
-        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+        var outputType = file.type === 'image/jpeg' ? 'image/jpeg' : 'image/webp';
+        var blob = null;
 
-        var outputType = file.type === 'image/png' && file.size < maxUploadBytes
-            ? 'image/png'
-            : 'image/jpeg';
-        var quality = 0.86;
-        var blob = await canvasToBlob(canvas, outputType, quality);
+        for (var attempt = 0; attempt < 9; attempt++) {
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
 
-        while (blob && blob.size > compressionThresholdBytes && quality > 0.5) {
-            quality -= 0.08;
-            blob = await canvasToBlob(canvas, 'image/jpeg', quality);
-            outputType = 'image/jpeg';
+            var context = canvas.getContext('2d');
+            if (outputType === 'image/jpeg') {
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            var quality = Math.max(0.48, 0.84 - (attempt * 0.05));
+            blob = await canvasToBlob(canvas, outputType, quality);
+
+            if (blob && blob.size <= targetUploadBytes) {
+                break;
+            }
+
+            scale *= 0.82;
         }
 
         if (!blob) {
@@ -81,7 +89,7 @@
         }
 
         var baseName = file.name.replace(/\.[^.]+$/, '');
-        var extension = outputType === 'image/png' ? 'png' : 'jpg';
+        var extension = outputType === 'image/webp' ? 'webp' : 'jpg';
 
         return new File([blob], baseName + '.' + extension, {
             type: outputType,
@@ -97,9 +105,16 @@
             return;
         }
 
+        if (file.size > maxOriginalBytes) {
+            input.value = '';
+            setError('Das ausgewählte Logo ist größer als 20 MB. Bitte wähle eine kleinere Bilddatei.');
+            return;
+        }
+
         if (file.type === 'image/svg+xml') {
-            if (file.size > maxUploadBytes) {
-                setError('Diese SVG-Datei ist größer als 4 MB. Bitte wähle eine kleinere Datei.');
+            if (file.size > targetUploadBytes) {
+                input.value = '';
+                setError('Diese SVG-Datei ist zu groß. Bitte wähle eine SVG-Datei unter 700 KB.');
             } else {
                 setStatus('Logo ausgewählt (' + formatMegabytes(file.size) + ').');
             }
@@ -111,7 +126,7 @@
             return;
         }
 
-        if (file.size <= compressionThresholdBytes) {
+        if (file.size <= targetUploadBytes) {
             setStatus('Logo ausgewählt (' + formatMegabytes(file.size) + ').');
             return;
         }
@@ -123,8 +138,9 @@
         try {
             var compressedFile = await compressImage(file);
 
-            if (compressedFile.size > maxUploadBytes) {
-                setError('Das Bild ist auch nach dem Verkleinern noch größer als 4 MB.');
+            if (compressedFile.size > targetUploadBytes) {
+                input.value = '';
+                setError('Das Bild konnte nicht ausreichend verkleinert werden. Bitte wähle eine kleinere Datei.');
                 return;
             }
 
@@ -143,6 +159,12 @@
     });
 
     form.addEventListener('submit', function (event) {
+        var file = input.files && input.files[0];
+
+        if (file && file.size > targetUploadBytes) {
+            setError('Das Logo ist noch zu groß und kann nicht hochgeladen werden. Bitte wähle eine kleinere Datei.');
+        }
+
         if (processing || !ready) {
             event.preventDefault();
             status.focus();

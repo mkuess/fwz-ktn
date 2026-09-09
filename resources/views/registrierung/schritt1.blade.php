@@ -88,7 +88,7 @@
             <input class="form-control form-file @error('logo') is-error @enderror" type="file" id="logo" name="logo"
               accept=".jpg,.jpeg,.png,.webp,.svg,image/jpeg,image/png,image/webp,image/svg+xml"
               aria-describedby="logo-upload-status">
-            <p id="logo-upload-status" class="form-hint" aria-live="polite"></p>
+            <p id="logo-upload-status" class="form-hint" aria-live="polite" tabindex="-1"></p>
             @error('logo')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
@@ -105,5 +105,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/logo-upload.js') }}" defer></script>
+<script src="{{ asset('js/logo-upload.js') }}?v={{ filemtime(public_path('js/logo-upload.js')) }}" defer></script>
 @endpush
