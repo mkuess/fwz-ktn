@@ -15,16 +15,17 @@ class EditMember extends EditRecord
 
     public function getFormActionsAlignment(): string|Alignment
     {
-        return Alignment::End;
+        return Alignment::Start;
     }
 
     protected function getFormActions(): array
     {
         return [
+            $this->getSaveFormAction(),
             $this->getCancelFormAction(),
             Actions\DeleteAction::make()
-                ->record($this->getRecord()),
-            $this->getSaveFormAction(),
+                ->record($this->getRecord())
+                ->extraAttributes(['class' => 'ms-auto']),
         ];
     }
 

@@ -10,6 +10,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -113,6 +114,7 @@ class MemberResource extends Resource
                                 ->action(fn ($livewire) => $livewire->saveAndSendAccessCredentials()),
                         ])
                             ->key('send-access-credentials-actions')
+                            ->verticalAlignment(VerticalAlignment::End)
                             ->visible(fn (Get $get): bool => $get('status') === 'approved'),
                         Forms\Components\Textarea::make('rejection_reason')
                             ->label('Ablehnungsgrund')
