@@ -241,12 +241,15 @@ class OrganisationResource extends Resource
                 /* ── Einstellungen ───────────────────────────────────────── */
                 Forms\Components\Section::make('Einstellungen')
                     ->schema([
-                        Forms\Components\Select::make('categories')
+                        Forms\Components\CheckboxList::make('categories')
                             ->label('Kategorien')
                             ->relationship('categories', 'name')
-                            ->multiple()
-                            ->preload()
                             ->searchable()
+                            ->bulkToggleable()
+                            ->columns([
+                                'default' => 1,
+                                'md' => 2,
+                            ])
                             ->columnSpanFull(),
                     ])
                     ->columns(1),
