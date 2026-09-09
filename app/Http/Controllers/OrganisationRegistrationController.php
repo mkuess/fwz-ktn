@@ -21,7 +21,7 @@ class OrganisationRegistrationController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:verein,organisation'],
-            'zvr_number' => ['nullable', 'string', 'max:100'],
+            'zvr_number' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:2000'],
             'logo' => ['nullable', 'file', 'image', 'max:4096'],
         ], [
@@ -89,10 +89,12 @@ class OrganisationRegistrationController extends Controller
             'street' => ['nullable', 'string', 'max:255'],
             'zip' => ['nullable', 'string', 'max:10'],
             'city' => ['nullable', 'string', 'max:100'],
-            'phone' => ['nullable', 'string', 'max:50'],
+            'phone' => ['required', 'string', 'max:50'],
             'website' => ['nullable', 'url', 'max:255'],
             'representative' => ['nullable', 'string', 'max:255'],
             'contact_person' => ['nullable', 'string', 'max:255'],
+        ], [
+            'phone.required' => 'Bitte gib eine Telefonnummer ein.',
         ]);
 
         $reg = array_merge(session('reg_data', []), $data);

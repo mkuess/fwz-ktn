@@ -62,9 +62,9 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="zvr_number">ZVR-Nummer <span class="form-hint">(falls vorhanden)</span></label>
+            <label class="form-label" for="zvr_number">ZVR-Nummer <span class="req">*</span></label>
             <input class="form-control @error('zvr_number') is-error @enderror" type="text" id="zvr_number" name="zvr_number"
-              value="{{ old('zvr_number', $old['zvr_number'] ?? '') }}" placeholder="z. B. 123456789">
+              value="{{ old('zvr_number', $old['zvr_number'] ?? '') }}" placeholder="z. B. 123456789" required>
             @error('zvr_number')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 

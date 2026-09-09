@@ -55,9 +55,10 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" for="phone">Telefonnummer</label>
-              <input class="form-control" type="tel" id="phone" name="phone"
-                value="{{ old('phone', $old['phone'] ?? '') }}" autocomplete="tel">
+              <label class="form-label" for="phone">Telefonnummer <span class="req">*</span></label>
+              <input class="form-control @error('phone') is-error @enderror" type="tel" id="phone" name="phone"
+                value="{{ old('phone', $old['phone'] ?? '') }}" autocomplete="tel" required>
+              @error('phone')<p class="form-error">{{ $message }}</p>@enderror
             </div>
             <div class="form-group">
               <label class="form-label" for="website">Website</label>

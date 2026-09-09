@@ -135,4 +135,29 @@ class PublicRegistrationAvailabilityTest extends TestCase
             ->assertDontSee('Du möchtest einen Verein anmelden?')
             ->assertDontSee('href="'.route('registrierung.schritt1').'"', false);
     }
+
+    public function test_organisation_registration_requires_zvr_number(): void
+    {
+        $this->post(route('registrierung.schritt1.post'), [
+            'name' => 'Verein ohne ZVR',
+            'type' => 'verein',
+            'description' => 'Test',
+        ])->assertSessionHasErrors('zvr_number');
+    }
+
+    public function test_organisation_registration_requires_phone_number(): void
+    {
+        $this
+            ->withSession([
+                'reg_data' => [
+                    'name' => 'Testverein',
+                    'type' => 'verein',
+                    'zvr_number' => '123456789',
+                    'email' => 'verein@example.test',
+                    'password' => 'test-password',
+                ],
+            ])
+            ->post(route('registrierung.schritt3.post'), [])
+            ->assertSessionHasErrors('phone');
+    }
 }
