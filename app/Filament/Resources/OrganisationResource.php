@@ -262,24 +262,34 @@ class OrganisationResource extends Resource
                 Tables\Columns\ImageColumn::make('logo_path')
                     ->label('Logo')
                     ->disk('public')
-                    ->size(40)
+                    ->size(32)
                     ->square(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap()
+                    ->lineClamp(2)
+                    ->extraAttributes(['style' => 'width: 28%; max-width: 18rem; overflow-wrap: anywhere;']),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Typ')
                     ->badge()
-                    ->sortable(),
+                    ->sortable()
+                    ->extraAttributes(['style' => 'width: 7rem;']),
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('Kategorien')
                     ->badge()
-                    ->placeholder('Keine Kategorie'),
+                    ->limitList(2)
+                    ->limit(20)
+                    ->placeholder('Keine Kategorie')
+                    ->extraAttributes(['style' => 'width: 22%; max-width: 14rem; overflow-wrap: anywhere;']),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Stadt')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap()
+                    ->lineClamp(2)
+                    ->extraAttributes(['style' => 'width: 9rem; max-width: 9rem; overflow-wrap: anywhere;']),
                 Tables\Columns\IconColumn::make('latitude')
                     ->label('Standort')
                     ->boolean()
@@ -288,6 +298,7 @@ class OrganisationResource extends Resource
                     ->falseIcon('heroicon-o-x-mark')
                     ->trueColor('success')
                     ->falseColor('gray')
+                    ->extraAttributes(['style' => 'width: 5rem;'])
                     ->tooltip(fn (Organisation $record): string => $record->latitude !== null && $record->longitude !== null
                         ? 'Koordinaten: '.$record->latitude.', '.$record->longitude
                         : 'Kein Standort ermittelt'),
@@ -305,7 +316,8 @@ class OrganisationResource extends Resource
                         'approved' => 'success',
                         'rejected' => 'danger',
                         default => 'warning',
-                    }),
+                    })
+                    ->extraAttributes(['style' => 'width: 8rem;']),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Gelöscht')
                     ->badge()
@@ -319,6 +331,7 @@ class OrganisationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->striped()
+            ->recordUrl(fn (Organisation $record): string => static::getUrl('edit', ['record' => $record]))
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('approval_status')
@@ -336,7 +349,6 @@ class OrganisationResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\RestoreAction::make()
                     ->label('Wiederherstellen'),
                 Tables\Actions\ForceDeleteAction::make()

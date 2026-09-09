@@ -49,10 +49,14 @@ class NeueOrganisationen extends Page implements HasTable
                     ->label('Organisation')
                     ->description(fn (Organisation $record): string => $record->email ?? '')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap()
+                    ->lineClamp(2)
+                    ->extraAttributes(['style' => 'width: 40%; max-width: 22rem; overflow-wrap: anywhere;']),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Typ')
                     ->badge()
+                    ->extraAttributes(['style' => 'width: 9rem;'])
                     ->color(fn (string $state): string => match ($state) {
                         'verein' => 'success',
                         'organisation' => 'warning',
@@ -60,15 +64,20 @@ class NeueOrganisationen extends Page implements HasTable
                     }),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Ort')
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->wrap()
+                    ->lineClamp(2)
+                    ->extraAttributes(['style' => 'width: 12rem; max-width: 12rem; overflow-wrap: anywhere;']),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Angemeldet')
                     ->since()
                     ->tooltip(fn (Organisation $record): string => $record->created_at?->format('d.m.Y H:i') ?? '')
-                    ->sortable(),
+                    ->sortable()
+                    ->extraAttributes(['style' => 'width: 8rem;']),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Aktiv')
-                    ->boolean(),
+                    ->boolean()
+                    ->extraAttributes(['style' => 'width: 4rem;']),
             ])
             ->recordUrl(fn (Organisation $record): string => OrganisationResource::getUrl('edit', ['record' => $record]))
             ->defaultSort('created_at', 'desc')
