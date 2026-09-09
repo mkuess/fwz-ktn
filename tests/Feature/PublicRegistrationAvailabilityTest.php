@@ -156,6 +156,15 @@ class PublicRegistrationAvailabilityTest extends TestCase
             ->assertRedirect(route('registrierung.schritt2'));
     }
 
+    public function test_organisation_registration_requires_description(): void
+    {
+        $this->post(route('registrierung.schritt1.post'), [
+            'name' => 'Verein ohne Beschreibung',
+            'type' => 'verein',
+            'zvr_number' => '123456789',
+        ])->assertSessionHasErrors('description');
+    }
+
     public function test_organisation_registration_requires_phone_number(): void
     {
         $this
@@ -170,5 +179,24 @@ class PublicRegistrationAvailabilityTest extends TestCase
             ])
             ->post(route('registrierung.schritt3.post'), [])
             ->assertSessionHasErrors('phone');
+    }
+
+    public function test_organisation_registration_requires_contact_person(): void
+    {
+        $this
+            ->withSession([
+                'reg_data' => [
+                    'name' => 'Testverein',
+                    'type' => 'verein',
+                    'zvr_number' => '123456789',
+                    'description' => 'Testbeschreibung',
+                    'email' => 'verein@example.test',
+                    'password' => 'test-password',
+                ],
+            ])
+            ->post(route('registrierung.schritt3.post'), [
+                'phone' => '+43 463 123456',
+            ])
+            ->assertSessionHasErrors('contact_person');
     }
 }

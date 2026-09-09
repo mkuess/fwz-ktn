@@ -75,13 +75,14 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="contact_person">Ansprechperson für das FWZ-Team</label>
+            <label class="form-label" for="contact_person">Ansprechperson für das FWZ-Team <span class="req">*</span></label>
             <label class="form-check" style="margin-bottom:10px">
               <input type="checkbox" id="same-contact" name="same_contact" value="1">
               <span>Identisch mit verantwortlicher Person</span>
             </label>
-            <input class="form-control" type="text" id="contact_person" name="contact_person"
-              value="{{ old('contact_person', $old['contact_person'] ?? '') }}">
+            <input class="form-control @error('contact_person') is-error @enderror" type="text" id="contact_person" name="contact_person"
+              value="{{ old('contact_person', $old['contact_person'] ?? '') }}" required>
+            @error('contact_person')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
           <div class="form-actions">

@@ -22,7 +22,7 @@ class OrganisationRegistrationController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:verein,organisation'],
             'zvr_number' => ['nullable', 'required_if:type,verein', 'string', 'max:100'],
-            'description' => ['nullable', 'string', 'max:2000'],
+            'description' => ['required', 'string', 'max:2000'],
             'logo' => ['nullable', 'file', 'image', 'max:4096'],
         ], [
             'logo.image' => 'Bitte wähle eine gültige Bilddatei aus.',
@@ -92,9 +92,10 @@ class OrganisationRegistrationController extends Controller
             'phone' => ['required', 'string', 'max:50'],
             'website' => ['nullable', 'url', 'max:255'],
             'representative' => ['nullable', 'string', 'max:255'],
-            'contact_person' => ['nullable', 'string', 'max:255'],
+            'contact_person' => ['required', 'string', 'max:255'],
         ], [
             'phone.required' => 'Bitte gib eine Telefonnummer ein.',
+            'contact_person.required' => 'Bitte gib eine Ansprechperson für das FWZ-Team ein.',
         ]);
 
         $reg = array_merge(session('reg_data', []), $data);

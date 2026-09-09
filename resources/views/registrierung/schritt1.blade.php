@@ -77,9 +77,9 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="description">Kurzbeschreibung <span class="form-hint">(max. 2000 Zeichen)</span></label>
+            <label class="form-label" for="description">Kurzbeschreibung <span class="req">*</span> <span class="form-hint">(max. 2000 Zeichen)</span></label>
             <textarea class="form-control @error('description') is-error @enderror" id="description" name="description"
-              rows="4" placeholder="Wofür steht eure Organisation? Was macht ihr?">{{ old('description', $old['description'] ?? '') }}</textarea>
+              rows="4" placeholder="Wofür steht eure Organisation? Was macht ihr?" required>{{ old('description', $old['description'] ?? '') }}</textarea>
             @error('description')<p class="form-error">{{ $message }}</p>@enderror
           </div>
 
