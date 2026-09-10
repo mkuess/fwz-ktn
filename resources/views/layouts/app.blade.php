@@ -25,7 +25,7 @@
 <header class="header">
   <nav class="nav">
     <div class="nav-left">
-      <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-new.svg') }}" alt="FWZ Kärnten" width="234" height="40"></a>
+      <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-new2.svg') }}?v={{ filemtime(public_path('img/fwz-logo-new2.svg')) }}" alt="FWZ Kärnten" width="234" height="40"></a>
       <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Über uns</a>
         @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
@@ -131,7 +131,7 @@
 <footer class="footer" id="kontakt">
   <div class="container footer-grid">
     <div>
-      <img class="footer-logo" src="{{ asset('img/fwz-logo-new.svg') }}" alt="FWZ Kärnten">
+      <img class="footer-logo" src="{{ asset('img/fwz-logo-new2.svg') }}?v={{ filemtime(public_path('img/fwz-logo-new2.svg')) }}" alt="FWZ Kärnten">
       <p>Die zentrale Anlaufstelle für freiwilliges Engagement in Kärnten — klar, regional und verbindend.</p>
     </div>
     <div>
