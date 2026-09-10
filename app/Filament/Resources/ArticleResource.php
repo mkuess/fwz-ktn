@@ -68,8 +68,35 @@ class ArticleResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('cover_image_path')
                     ->label('Titelbild')
+                    ->disk('public')
+                    ->visibility('public')
                     ->image()
-                    ->directory('articles/covers'),
+                    ->directory('articles/covers')
+                    ->getUploadedFileUsing(static function (
+                        Forms\Components\BaseFileUpload $component,
+                        string $file,
+                        string|array|null $storedFileNames,
+                    ): ?array {
+                        $storage = $component->getDisk();
+
+                        if (! $storage->exists($file)) {
+                            return null;
+                        }
+
+                        $relativePath = implode('/', array_map(
+                            'rawurlencode',
+                            explode('/', ltrim($file, '/')),
+                        ));
+
+                        return [
+                            'name' => (is_array($storedFileNames)
+                                ? ($storedFileNames[$file] ?? null)
+                                : $storedFileNames) ?? basename($file),
+                            'size' => $storage->size($file),
+                            'type' => $storage->mimeType($file),
+                            'url' => '/storage/'.$relativePath,
+                        ];
+                    }),
                 Forms\Components\DateTimePicker::make('published_at')
                     ->label('Veröffentlicht am'),
                 Forms\Components\Toggle::make('is_published')
