@@ -130,7 +130,7 @@
       <div class="box welcome-box">
         <div class="welcome-media">
           <img src="{{ asset('img/welcome-photo.jpg') }}?v={{ filemtime(public_path('img/welcome-photo.jpg')) }}" alt="Patrick Egger und LH Ing. Daniel Fellner">
-          <div class="welcome-caption">Patrick Egger und LH Ing. Daniel Fellner</div>
+          <div class="welcome-caption">Patrick Egger (Operative Leitung Freiwilligenzentrum-Kärnten) und LH Ing. Daniel Fellner</div>
         </div>
         <div class="welcome-text">
           <span class="eyebrow">Herzlich willkommen</span>
