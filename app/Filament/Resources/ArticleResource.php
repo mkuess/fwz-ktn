@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ArticleResource extends Resource
 {
@@ -80,10 +81,12 @@ class ArticleResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('file_path')
                             ->required()
+                            ->maxSize(102400)
+                            ->helperText('Maximale Dateigröße: 100 MB')
                             ->directory('articles/attachments')
                             ->live()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                if ($state instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                                if ($state instanceof TemporaryUploadedFile) {
                                     $set('original_name', $state->getClientOriginalName());
                                     $set('mime_type', $state->getMimeType());
                                     $set('file_size', $state->getSize());
