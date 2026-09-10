@@ -88,7 +88,7 @@ class Neuanmeldungen extends Page implements HasTable
                         ->modalDescription('Alle ausgewählten Mitglieder werden freigeschaltet und erhalten anschließend ihren sechsstelligen, sieben Tage gültigen Freischaltcode per E-Mail.')
                         ->action(function (Collection $records): void {
                             $sent = 0;
-                            $failed = 0;
+                            $failedEmails = [];
                             $invitationService = app(MemberAccessInvitationService::class);
 
                             foreach ($records as $member) {
@@ -102,11 +102,15 @@ class Neuanmeldungen extends Page implements HasTable
                                     $sent++;
                                 } catch (\Throwable $exception) {
                                     report($exception);
-                                    $failed++;
+                                    $member->update([
+                                        'status' => 'pending',
+                                        'approved_at' => null,
+                                    ]);
+                                    $failedEmails[] = $member->email;
                                 }
                             }
 
-                            if ($failed === 0) {
+                            if ($failedEmails === []) {
                                 Notification::make()
                                     ->title('Mitglieder freigeschaltet')
                                     ->body($sent.' Zugangsdaten-E-Mail(s) wurden versendet.')
@@ -118,7 +122,10 @@ class Neuanmeldungen extends Page implements HasTable
 
                             Notification::make()
                                 ->title('Freischaltung abgeschlossen')
-                                ->body($sent.' E-Mail(s) versendet, '.$failed.' E-Mail(s) fehlgeschlagen. Die betreffenden Mitglieder wurden trotzdem gespeichert und freigeschaltet.')
+                                ->body(
+                                    $sent.' E-Mail(s) versendet, '.count($failedEmails).' E-Mail(s) fehlgeschlagen. '
+                                    .'Nicht freigegeben: '.implode(', ', $failedEmails)
+                                )
                                 ->warning()
                                 ->persistent()
                                 ->send();
