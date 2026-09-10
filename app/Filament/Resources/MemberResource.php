@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MemberResource\Pages;
 use App\Models\Member;
-use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
@@ -300,27 +299,21 @@ class MemberResource extends Resource
                     ->state(fn (?Member $record): ?string => $record?->deleted_at ? 'Gelöscht' : null)
                     ->color('danger')
                     ->visible(fn (?Member $record): bool => $record?->deleted_at !== null),
-                Tables\Columns\TextColumn::make('registration_info')
-                    ->label('Angemeldet')
-                    ->html()
-                    ->state(function (Member $record): string {
-                        $lines = [];
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Adresse')
+                    ->state(function (Member $record): ?string {
+                        $street = trim((string) $record->street);
+                        $city = trim(implode(' ', array_filter([
+                            $record->zip,
+                            $record->city,
+                        ])));
+                        $address = implode("\n", array_filter([$street, $city]));
 
-                        $lines[] = '<span style="font-size:0.75rem;color:#6b7280">Angemeldet am: '.e($record->created_at?->format('d.m.Y')).'</span>';
-
-                        if ($record->status === 'rejected') {
-                            $reason = $record->rejection_reason ? 'title="'.e($record->rejection_reason).'"' : 'title="Keine Info"';
-                            $lines[] = '<span '.$reason.' style="color:#ef4444;cursor:help">✗ Abgelehnt</span>';
-                        } elseif ($record->card_status === 'zugesendet' && $record->card_sent_at) {
-                            $sentAt = Carbon::parse($record->card_sent_at)->format('d.m.Y');
-                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet am '.e($sentAt).'</span>';
-                        } elseif ($record->card_status === 'zugesendet') {
-                            $lines[] = '<span style="color:#22c55e">✓ Karte zugesendet</span>';
-                        }
-
-                        return implode('<br>', $lines);
+                        return $address !== '' ? $address : null;
                     })
-                    ->sortable('created_at'),
+                    ->placeholder('-')
+                    ->searchable(['street', 'zip', 'city'])
+                    ->wrap(),
             ])
             ->recordUrl(fn (Member $record): string => static::getUrl('edit', ['record' => $record]))
             ->striped()

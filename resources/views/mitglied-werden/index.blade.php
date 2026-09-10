@@ -80,7 +80,7 @@
             <div class="form-group">
               <label class="form-label" for="zip">PLZ <span class="req">*</span></label>
               <input class="form-control @error('zip') is-error @enderror" type="text" id="zip" name="zip"
-                value="{{ old('zip') }}" required maxlength="10" autocomplete="postal-code">
+                value="{{ old('zip') }}" required maxlength="4" inputmode="numeric" autocomplete="postal-code">
               @error('zip')<p class="form-error">{{ $message }}</p>@enderror
             </div>
 

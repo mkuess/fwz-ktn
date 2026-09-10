@@ -171,6 +171,31 @@ class PublicRegistrationAvailabilityTest extends TestCase
         ]);
     }
 
+    public function test_member_registration_rejects_postal_codes_longer_than_four_characters(): void
+    {
+        $organisation = Organisation::create([
+            'type' => 'verein',
+            'role' => 'org_admin',
+            'name' => 'PLZ-Testverein',
+            'email' => 'plz-testverein@example.test',
+            'password' => 'test-password',
+            'is_approved' => true,
+            'is_active' => true,
+        ]);
+
+        $this->post(route('member.register.store'), [
+            'organisation_id' => $organisation->id,
+            'first_name' => 'Max',
+            'last_name' => 'Mustermann',
+            'email' => 'plz-test@example.test',
+            'street' => 'Musterstraße 12',
+            'zip' => '12345',
+            'city' => 'Klagenfurt',
+            'confirm_membership' => '1',
+            'confirm_privacy' => '1',
+        ])->assertSessionHasErrors('zip');
+    }
+
     public function test_initiative_registration_does_not_require_zvr_number(): void
     {
         $this->post(route('registrierung.schritt1.post'), [
