@@ -26,4 +26,17 @@ class ArticleAttachment extends Model
     {
         return $this->belongsTo(Article::class);
     }
+
+    public function isVideo(): bool
+    {
+        if (str_starts_with(strtolower($this->mime_type), 'video/')) {
+            return true;
+        }
+
+        return in_array(
+            strtolower(pathinfo($this->original_name ?: $this->file_path, PATHINFO_EXTENSION)),
+            ['mp4', 'webm', 'ogv', 'ogg'],
+            true,
+        );
+    }
 }

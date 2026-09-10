@@ -51,11 +51,40 @@
             {!! $article->body !!}
           </div>
 
-          @if($article->attachments && $article->attachments->count() > 0)
+          @php
+            $videoAttachments = $article->attachments->filter(fn ($attachment) => $attachment->isVideo());
+            $downloadAttachments = $article->attachments->reject(fn ($attachment) => $attachment->isVideo());
+          @endphp
+
+          @if($videoAttachments->isNotEmpty())
+            <div style="margin-top:2rem;display:flex;flex-direction:column;gap:1.5rem">
+              @foreach($videoAttachments as $video)
+                <figure style="margin:0">
+                  <video
+                    controls
+                    playsinline
+                    preload="metadata"
+                    style="display:block;width:100%;height:auto;max-height:70vh;background:#000;border-radius:0.75rem"
+                    aria-label="{{ $video->original_name }}">
+                    <source src="{{ Storage::url($video->file_path) }}" type="{{ $video->mime_type ?: 'video/mp4' }}">
+                    Dein Browser kann dieses Video nicht wiedergeben.
+                    <a href="{{ Storage::url($video->file_path) }}">Video herunterladen</a>
+                  </video>
+                  @if($video->original_name)
+                    <figcaption style="margin-top:0.5rem;color:#6b7280;font-size:0.875rem">
+                      {{ $video->original_name }}
+                    </figcaption>
+                  @endif
+                </figure>
+              @endforeach
+            </div>
+          @endif
+
+          @if($downloadAttachments->isNotEmpty())
             <div style="margin-top:2rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem">
               <h3 style="margin:0 0 1rem">Anhänge</h3>
               <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.5rem">
-                @foreach($article->attachments as $attachment)
+                @foreach($downloadAttachments as $attachment)
                   <li>
                     <a href="{{ Storage::url($attachment->file_path) }}" target="_blank" download="{{ $attachment->original_name }}" style="color:var(--yellow)">
                       📎 {{ $attachment->original_name }}

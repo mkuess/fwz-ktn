@@ -19,6 +19,7 @@ class ArticleController extends Controller
     {
         $article = Article::where('slug', $slug)
             ->where('is_published', true)
+            ->with('attachments')
             ->firstOrFail();
 
         return view('articles.show', compact('article'));
