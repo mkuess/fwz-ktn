@@ -8,14 +8,31 @@ use App\Models\Member;
 use App\Models\Organisation;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\View\View;
 
 class ListMembers extends ListRecords
 {
     protected static string $resource = MemberResource::class;
 
+    public ?string $emailExportStatus = null;
+
+    public ?string $emailExportRole = null;
+
+    public string $emailExportAddresses = '';
+
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('exportEmailAddresses')
+                ->label('E-Mail-Adressen exportieren')
+                ->icon('heroicon-o-envelope')
+                ->color('gray')
+                ->mountUsing(fn () => $this->refreshEmailExport())
+                ->modalHeading('E-Mail-Adressen für den Mailversand')
+                ->modalWidth('2xl')
+                ->modalContent(fn (): View => view('filament.members.email-export'))
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Schließen'),
             SmartCsvImportAction::make(
                 name: 'importCsv',
                 label: 'CSV importieren',
@@ -101,5 +118,36 @@ class ListMembers extends ListRecords
             SmartCsvImportAction::viewLogAction(),
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function updatedEmailExportStatus(): void
+    {
+        $this->refreshEmailExport();
+    }
+
+    public function updatedEmailExportRole(): void
+    {
+        $this->refreshEmailExport();
+    }
+
+    public function refreshEmailExport(): void
+    {
+        $query = Member::query();
+
+        if (filled($this->emailExportStatus)) {
+            $query->where('status', $this->emailExportStatus);
+        }
+
+        if (filled($this->emailExportRole)) {
+            $query->where('role', $this->emailExportRole);
+        }
+
+        $this->emailExportAddresses = $query
+            ->pluck('email')
+            ->map(fn (?string $email): string => strtolower(trim((string) $email)))
+            ->filter(fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false)
+            ->unique()
+            ->sort()
+            ->implode(', ');
     }
 }
