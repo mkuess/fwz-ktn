@@ -4,9 +4,11 @@ namespace App\Filament\Resources\OrganisationResource\Pages;
 
 use App\Filament\Resources\OrganisationResource;
 use App\Filament\Support\SmartCsvImportAction;
+use App\Models\Category;
 use App\Models\Organisation;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -14,9 +16,30 @@ class ListOrganisations extends ListRecords
 {
     protected static string $resource = OrganisationResource::class;
 
+    public string $emailExportType = 'organisation';
+
+    public ?string $emailExportCategoryId = null;
+
+    public string $emailExportAddresses = '';
+
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('exportEmailAddresses')
+                ->label('E-Mail-Adressen exportieren')
+                ->icon('heroicon-o-envelope')
+                ->color('gray')
+                ->mountUsing(fn () => $this->refreshEmailExport())
+                ->modalHeading('E-Mail-Adressen für den Mailversand')
+                ->modalWidth('2xl')
+                ->modalContent(fn (): View => view('filament.organisations.email-export', [
+                    'categories' => Category::query()
+                        ->orderBy('sort_order')
+                        ->orderBy('name')
+                        ->get(['id', 'name']),
+                ]))
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Schließen'),
             SmartCsvImportAction::make(
                 name: 'importCsv',
                 label: 'CSV importieren',
@@ -104,5 +127,36 @@ class ListOrganisations extends ListRecords
             SmartCsvImportAction::viewLogAction(),
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function updatedEmailExportType(): void
+    {
+        $this->refreshEmailExport();
+    }
+
+    public function updatedEmailExportCategoryId(): void
+    {
+        $this->refreshEmailExport();
+    }
+
+    public function refreshEmailExport(): void
+    {
+        $query = Organisation::query()
+            ->where('type', $this->emailExportType);
+
+        if (filled($this->emailExportCategoryId)) {
+            $query->whereHas(
+                'categories',
+                fn ($categoryQuery) => $categoryQuery->whereKey((int) $this->emailExportCategoryId)
+            );
+        }
+
+        $this->emailExportAddresses = $query
+            ->pluck('email')
+            ->map(fn (?string $email): string => strtolower(trim((string) $email)))
+            ->filter(fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false)
+            ->unique()
+            ->sort()
+            ->implode(', ');
     }
 }
