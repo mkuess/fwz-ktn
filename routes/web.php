@@ -51,6 +51,8 @@ Route::post('/aktivierung/{token}', [MemberAuthController::class, 'activate'])->
 
 Route::middleware(['auth:member'])->group(function () {
     Route::get('/mein-bereich', [MemberPortalController::class, 'index'])->name('member.portal');
+    Route::get('/mein-bereich/daten-aendern', [MemberPortalController::class, 'edit'])->name('member.profile.edit');
+    Route::patch('/mein-bereich/daten-aendern', [MemberPortalController::class, 'update'])->name('member.profile.update');
     Route::get('/mein-bereich/benefit/{id}', [MemberPortalController::class, 'benefit'])->name('member.benefit');
 });
 Route::get('/vereine/suche', [OrganisationController::class, 'search'])->name('vereine.suche');

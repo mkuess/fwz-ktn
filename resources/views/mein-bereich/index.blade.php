@@ -52,14 +52,27 @@
           </div>
           @if(isset($member->organisation) && $member->organisation)
           <div style="margin-bottom:1rem">
-            <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.2rem">Organisation</div>
+            <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.2rem">Verein / Organisation</div>
             <div style="font-weight:600">{{ is_object($member->organisation) ? $member->organisation->name : $member->organisation }}</div>
           </div>
+          @else
+          <div style="margin-bottom:1rem">
+            <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.2rem">Verein / Organisation</div>
+            <div style="font-weight:600">Keinem Verein zugeordnet</div>
+          </div>
           @endif
-          <div>
+          <div style="margin-bottom:1rem">
+            <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.2rem">Adresse</div>
+            <div style="font-weight:600">
+              {{ $member->street ?: '–' }}<br>
+              {{ trim(($member->zip ?? '').' '.($member->city ?? '')) ?: '–' }}
+            </div>
+          </div>
+          <div style="margin-bottom:1.25rem">
             <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.2rem">Mitgliedsnummer</div>
             <div style="font-weight:600;font-family:monospace">{{ $member->membership_number ?? '– wird zugeteilt –' }}</div>
           </div>
+          <a href="{{ route('member.profile.edit') }}" class="btn btn-primary">Daten ändern</a>
         </div>
       </div>
 
