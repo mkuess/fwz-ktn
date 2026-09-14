@@ -33,17 +33,17 @@ class MemberEmailExportTest extends TestCase
             ->mountAction('exportEmailAddresses')
             ->assertSet(
                 'emailExportAddresses',
-                'approved-member@example.test, approved-org-admin@example.test, pending-member@example.test, rejected-admin@example.test'
+                'approved-member@example.test; approved-org-admin@example.test; pending-member@example.test; rejected-admin@example.test'
             )
             ->set('emailExportStatus', 'approved')
             ->assertSet(
                 'emailExportAddresses',
-                'approved-member@example.test, approved-org-admin@example.test'
+                'approved-member@example.test; approved-org-admin@example.test'
             )
             ->set('emailExportRole', 'member')
             ->assertSet('emailExportAddresses', 'approved-member@example.test')
             ->set('emailExportStatus', null)
-            ->assertSet('emailExportAddresses', 'approved-member@example.test, pending-member@example.test')
+            ->assertSet('emailExportAddresses', 'approved-member@example.test; pending-member@example.test')
             ->assertSee('E-Mail-Adressen kopieren');
     }
 

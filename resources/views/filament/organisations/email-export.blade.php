@@ -40,7 +40,7 @@
                 E-Mail-Adressen
             </label>
             <span class="text-xs text-gray-500 dark:text-gray-400">
-                {{ $this->emailExportAddresses === '' ? 0 : substr_count($this->emailExportAddresses, ',') + 1 }} Adresse(n)
+                {{ $this->emailExportAddresses === '' ? 0 : substr_count($this->emailExportAddresses, ';') + 1 }} Adresse(n)
             </span>
         </div>
         <textarea

@@ -157,6 +157,6 @@ class ListOrganisations extends ListRecords
             ->filter(fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false)
             ->unique()
             ->sort()
-            ->implode(', ');
+            ->implode('; ');
     }
 }

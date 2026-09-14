@@ -42,7 +42,7 @@ class OrganisationEmailExportTest extends TestCase
         Livewire::test(ListOrganisations::class)
             ->assertActionExists('exportEmailAddresses')
             ->mountAction('exportEmailAddresses')
-            ->assertSet('emailExportAddresses', 'kultur@example.test, sport@example.test')
+            ->assertSet('emailExportAddresses', 'kultur@example.test; sport@example.test')
             ->set('emailExportCategoryId', (string) $sport->id)
             ->assertSet('emailExportAddresses', 'sport@example.test')
             ->set('emailExportType', 'verein')
