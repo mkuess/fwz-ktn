@@ -29,6 +29,7 @@ class MemberProfileTest extends TestCase
             ->get(route('member.profile.edit'))
             ->assertOk()
             ->assertSee('Daten ändern')
+            ->assertSee('class="btn primary"', false)
             ->assertSee('Testverein')
             ->assertSee('readonly', false);
     }

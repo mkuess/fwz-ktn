@@ -72,7 +72,7 @@
             <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.2rem">Mitgliedsnummer</div>
             <div style="font-weight:600;font-family:monospace">{{ $member->membership_number ?? '– wird zugeteilt –' }}</div>
           </div>
-          <a href="{{ route('member.profile.edit') }}" class="btn btn-primary">Daten ändern</a>
+          <a href="{{ route('member.profile.edit') }}" class="btn primary">Daten ändern</a>
         </div>
       </div>
 
