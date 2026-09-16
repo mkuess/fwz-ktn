@@ -147,9 +147,22 @@
         <li><a href="#" onclick="resetCookieConsent(); return false;" style="font-size:0.75rem;color:#9ca3af">Cookie-Einstellungen</a></li>
       </ul>
       <div class="socials">
-        <span class="social">f</span>
-        <span class="social">◎</span>
-        <span class="social">▶</span>
+        <a
+          class="social"
+          href="https://www.facebook.com/p/Freiwilligenzentrum-K%C3%A4rnten-61581834813445/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Freiwilligenzentrum Kärnten auf Facebook"
+          title="Facebook"
+        >f</a>
+        <a
+          class="social"
+          href="https://www.instagram.com/freiwilligenzentrum.kaernten/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Freiwilligenzentrum Kärnten auf Instagram"
+          title="Instagram"
+        >◎</a>
       </div>
     </div>
   </div>
