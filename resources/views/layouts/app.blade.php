@@ -40,6 +40,34 @@
       </div>
     </div>
     <div class="nav-actions">
+      <div class="header-socials" aria-label="Social Media">
+        <a
+          class="header-social"
+          href="https://www.facebook.com/p/Freiwilligenzentrum-K%C3%A4rnten-61581834813445/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Freiwilligenzentrum Kärnten auf Facebook"
+          title="Facebook"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v7h4v-7h3.2l.8-4h-4V9c0-.7.3-1 1-1Z"></path>
+          </svg>
+        </a>
+        <a
+          class="header-social"
+          href="https://www.instagram.com/freiwilligenzentrum.kaernten/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Freiwilligenzentrum Kärnten auf Instagram"
+          title="Instagram"
+        >
+          <svg class="instagram-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4.25"></circle>
+            <circle cx="17.4" cy="6.7" r="1"></circle>
+          </svg>
+        </a>
+      </div>
       @if(auth('member')->check())
         <a class="btn primary" href="{{ route('member.portal') }}">Mein Bereich <span class="arrow">→</span></a>
         <form method="POST" action="{{ route('member.logout') }}" style="display:inline">
