@@ -162,7 +162,13 @@
           rel="noopener noreferrer"
           aria-label="Freiwilligenzentrum Kärnten auf Instagram"
           title="Instagram"
-        >◎</a>
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4.25"></circle>
+            <circle cx="17.4" cy="6.7" r="1"></circle>
+          </svg>
+        </a>
       </div>
     </div>
   </div>

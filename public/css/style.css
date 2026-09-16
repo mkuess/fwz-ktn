@@ -181,6 +181,7 @@ p{margin:0;color:var(--text)}
 .footer ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
 .socials{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 .social{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;font-weight:900}
+.social svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .copyright{margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:.9rem;color:rgba(255,255,255,.68)}
 @media (max-width: 1100px){
   .features,.org-grid,.news-grid,.benefit-grid,.testi-grid{grid-template-columns:repeat(2,1fr)}
