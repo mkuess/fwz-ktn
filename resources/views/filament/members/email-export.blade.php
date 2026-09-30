@@ -2,39 +2,9 @@
     class="space-y-5"
     x-data="{ copied: false }"
 >
-    <div class="grid gap-4 sm:grid-cols-2">
-        <div>
-            <label for="member-email-export-status" class="mb-2 block text-sm font-medium text-gray-950 dark:text-white">
-                Status
-            </label>
-            <select
-                id="member-email-export-status"
-                wire:model.live="emailExportStatus"
-                class="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-950 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-            >
-                <option value="">Alle Status</option>
-                <option value="pending">Ausstehend</option>
-                <option value="approved">Geprüft</option>
-                <option value="rejected">Abgelehnt</option>
-            </select>
-        </div>
-
-        <div>
-            <label for="member-email-export-role" class="mb-2 block text-sm font-medium text-gray-950 dark:text-white">
-                Rolle
-            </label>
-            <select
-                id="member-email-export-role"
-                wire:model.live="emailExportRole"
-                class="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-950 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-            >
-                <option value="">Alle Rollen</option>
-                <option value="member">Mitglied</option>
-                <option value="org_admin">Organisations-Admin</option>
-                <option value="admin">FWZ Admin</option>
-            </select>
-        </div>
-    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-300">
+        Die Adressen entsprechen der aktuellen Suche und den Filtern der Mitgliederliste – über alle Ergebnisseiten hinweg.
+    </p>
 
     <div>
         <div class="mb-2 flex items-center justify-between gap-3">

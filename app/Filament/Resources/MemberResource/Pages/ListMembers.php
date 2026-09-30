@@ -14,10 +14,6 @@ class ListMembers extends ListRecords
 {
     protected static string $resource = MemberResource::class;
 
-    public ?string $emailExportStatus = null;
-
-    public ?string $emailExportRole = null;
-
     public string $emailExportAddresses = '';
 
     protected function getHeaderActions(): array
@@ -120,29 +116,9 @@ class ListMembers extends ListRecords
         ];
     }
 
-    public function updatedEmailExportStatus(): void
-    {
-        $this->refreshEmailExport();
-    }
-
-    public function updatedEmailExportRole(): void
-    {
-        $this->refreshEmailExport();
-    }
-
     public function refreshEmailExport(): void
     {
-        $query = Member::query();
-
-        if (filled($this->emailExportStatus)) {
-            $query->where('status', $this->emailExportStatus);
-        }
-
-        if (filled($this->emailExportRole)) {
-            $query->where('role', $this->emailExportRole);
-        }
-
-        $this->emailExportAddresses = $query
+        $this->emailExportAddresses = $this->getTableQueryForExport()
             ->pluck('email')
             ->map(fn (?string $email): string => strtolower(trim((string) $email)))
             ->filter(fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false)
