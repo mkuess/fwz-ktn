@@ -24,9 +24,12 @@
 
         <div style="margin-bottom:1.25rem">
           <label for="password" style="display:block;font-size:0.875rem;font-weight:600;margin-bottom:0.375rem;color:#374151">Neues Passwort</label>
-          <input type="password" id="password" name="password" required autofocus autocomplete="new-password" minlength="8"
+          <div class="password-field" x-data="{ passwordVisible: false }">
+          <input type="password" :type="passwordVisible ? 'text' : 'password'" id="password" name="password" required autofocus autocomplete="new-password" minlength="8"
             aria-describedby="password-hint{{ $errors->has('password') ? ' password-error' : '' }}"
             style="width:100%;padding:0.625rem 0.875rem;border:1.5px solid {{ $errors->has('password') ? '#ef4444' : '#d1d5db' }};border-radius:0.5rem;font-size:1rem;box-sizing:border-box">
+          @include('partials.password-toggle', ['fieldId' => 'password'])
+          </div>
           <p id="password-hint" style="font-size:0.8rem;color:#6b7280;margin:0.5rem 0 0">Mindestens 8 Zeichen.</p>
           @error('password')
             <p id="password-error" role="alert" style="color:#b91c1c;font-size:0.8rem;margin:0.375rem 0 0">{{ $message }}</p>
@@ -35,8 +38,11 @@
 
         <div style="margin-bottom:1.5rem">
           <label for="password_confirmation" style="display:block;font-size:0.875rem;font-weight:600;margin-bottom:0.375rem;color:#374151">Passwort bestätigen</label>
-          <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password" minlength="8"
+          <div class="password-field" x-data="{ passwordVisible: false }">
+          <input type="password" :type="passwordVisible ? 'text' : 'password'" id="password_confirmation" name="password_confirmation" required autocomplete="new-password" minlength="8"
             style="width:100%;padding:0.625rem 0.875rem;border:1.5px solid #d1d5db;border-radius:0.5rem;font-size:1rem;box-sizing:border-box">
+          @include('partials.password-toggle', ['fieldId' => 'password_confirmation'])
+          </div>
         </div>
 
         <button type="submit" class="btn-cta" style="width:100%;border:none;cursor:pointer;font-family:inherit">

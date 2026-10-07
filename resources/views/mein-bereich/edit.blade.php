@@ -76,19 +76,28 @@
       <div class="profile-form-grid">
         <div class="form-group full-width">
           <label class="form-label" for="current_password">Aktuelles Passwort</label>
-          <input class="form-control @error('current_password') is-error @enderror" id="current_password" name="current_password" type="password" autocomplete="current-password">
+          <div class="password-field" x-data="{ passwordVisible: false }">
+            <input class="form-control @error('current_password') is-error @enderror" id="current_password" name="current_password" type="password" :type="passwordVisible ? 'text' : 'password'" autocomplete="current-password">
+            @include('partials.password-toggle', ['fieldId' => 'current_password'])
+          </div>
           @error('current_password')<div class="form-error">{{ $message }}</div>@enderror
         </div>
 
         <div class="form-group">
           <label class="form-label" for="password">Neues Passwort</label>
-          <input class="form-control @error('password') is-error @enderror" id="password" name="password" type="password" minlength="8" autocomplete="new-password">
+          <div class="password-field" x-data="{ passwordVisible: false }">
+            <input class="form-control @error('password') is-error @enderror" id="password" name="password" type="password" :type="passwordVisible ? 'text' : 'password'" minlength="8" autocomplete="new-password">
+            @include('partials.password-toggle', ['fieldId' => 'password'])
+          </div>
           @error('password')<div class="form-error">{{ $message }}</div>@enderror
         </div>
 
         <div class="form-group">
           <label class="form-label" for="password_confirmation">Neues Passwort bestätigen</label>
-          <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password">
+          <div class="password-field" x-data="{ passwordVisible: false }">
+            <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" :type="passwordVisible ? 'text' : 'password'" minlength="8" autocomplete="new-password">
+            @include('partials.password-toggle', ['fieldId' => 'password_confirmation'])
+          </div>
         </div>
       </div>
 
