@@ -29,7 +29,7 @@ class OrganisationPanelProvider extends PanelProvider
             ->authGuard('organisation')
             ->login(fn () => redirect()->route('member.login'))
             ->brandName('Organisationsbereich')
-            ->brandLogo(asset('img/fwz-logo-new2.svg'))
+            ->brandLogo(asset('images/fwz_logo.svg'))
             ->brandLogoHeight('2.5rem')
             ->colors(['primary' => Color::Amber])
             ->pages([Dashboard::class, Members::class, Profile::class])

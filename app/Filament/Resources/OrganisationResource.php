@@ -273,6 +273,11 @@ class OrganisationResource extends Resource
                     ->sortable()
                     ->wrap()
                     ->extraAttributes(['style' => 'width: 36%; max-width: 28rem; overflow-wrap: normal; word-break: normal;']),
+                Tables\Columns\TextColumn::make('members_count')
+                    ->label('Angemeldete User')
+                    ->counts('members')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Typ')
                     ->badge()
