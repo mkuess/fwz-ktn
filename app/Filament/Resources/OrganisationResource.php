@@ -278,7 +278,11 @@ class OrganisationResource extends Resource
                     ->wrap()
                     ->extraAttributes(['style' => 'width: 36%; max-width: 28rem; overflow-wrap: normal; word-break: normal;']),
                 Tables\Columns\TextColumn::make('members_count')
-                    ->label('Angemeldete User')
+                    ->label(fn (): HtmlString => new HtmlString(
+                        '<span title="Angemeldete User">'.
+                        svg('heroicon-o-users', 'h-5 w-5', ['aria-hidden' => 'true'])->toHtml().
+                        '<span class="sr-only">Angemeldete User</span></span>'
+                    ))
                     ->counts('members')
                     ->numeric()
                     ->sortable(),

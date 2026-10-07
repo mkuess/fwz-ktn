@@ -47,6 +47,8 @@ class OrganisationMemberCountTest extends TestCase
 
         Livewire::test(ListOrganisations::class)
             ->assertTableColumnExists('members_count')
+            ->assertSeeHtml('<span title="Angemeldete User">')
+            ->assertSeeHtml('<span class="sr-only">Angemeldete User</span>')
             ->assertTableColumnStateSet('members_count', 3, (string) $organisations[0]->id)
             ->assertTableColumnStateSet('members_count', 0, (string) $organisations[1]->id)
             ->sortTable('members_count', 'desc')

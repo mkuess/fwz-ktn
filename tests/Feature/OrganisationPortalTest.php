@@ -175,6 +175,29 @@ class OrganisationPortalTest extends TestCase
         $this->get('/verwaltung/organisation')->assertRedirect('/verwaltung/organisation/login');
     }
 
+    public function test_empty_dashboard_shows_no_new_registrations_and_links_to_all_members(): void
+    {
+        $organisation = $this->organisation('empty-dashboard');
+        $old = $this->member($organisation, 'older-registration');
+        $old->forceFill(['created_at' => now()->subDays(3)])->saveQuietly();
+        $foreign = $this->member($this->organisation('empty-foreign'), 'foreign-registration');
+
+        $this->actingAs($organisation, 'organisation');
+        Filament::setCurrentPanel(Filament::getPanel('organisation'));
+        $this->withSession(['organisation_login_since' => now()->subDay()->toDateTimeString()]);
+
+        Livewire::test(Dashboard::class)
+            ->assertCanNotSeeTableRecords([$old, $foreign])
+            ->assertSee('Keine Neuanmeldungen')
+            ->assertSee('Alle Mitglieder ansehen')
+            ->assertSee(Members::getUrl(panel: 'organisation'), false);
+
+        $this->get(Members::getUrl(panel: 'organisation'))
+            ->assertOk()
+            ->assertSee($old->email)
+            ->assertDontSee($foreign->email);
+    }
+
     private function organisation(string $suffix): Organisation
     {
         return Organisation::create([
