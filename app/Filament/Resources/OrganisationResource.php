@@ -154,11 +154,15 @@ class OrganisationResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('password')
-                            ->label('Passwort')
+                            ->label(fn (string $operation): string => $operation === 'create' ? 'Passwort' : 'Neues Passwort')
                             ->password()
-                            ->required()
-                            ->visibleOn('create')
+                            ->revealable()
+                            ->autocomplete('new-password')
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(''))
+                            ->helperText('Mindestens 8 Zeichen. Beim Bearbeiten leer lassen, um das bisherige Passwort beizubehalten.')
                             ->dehydrated(fn ($state) => filled($state))
+                            ->minLength(8)
                             ->maxLength(255),
                     ])
                     ->columns(2),
