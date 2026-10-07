@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'Verwaltung',
-                'Gesuche',
+                'Mach mit',
                 'Sonstiges',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

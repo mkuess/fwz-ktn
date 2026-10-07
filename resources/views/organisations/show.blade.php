@@ -49,7 +49,7 @@
 
         @if($organisation->volunteerListings->count() > 0)
           <div class="box" style="padding:2rem">
-            <h2 style="margin:0 0 1rem;font-size:1.25rem">Aktuelle Gesuche</h2>
+            <h2 style="margin:0 0 1rem;font-size:1.25rem">Mach mit</h2>
             @foreach($organisation->volunteerListings as $listing)
               <div style="padding:1rem 0;border-bottom:1px solid #e5e7eb">
                 <h3 style="margin:0 0 0.5rem;font-size:1rem">{{ $listing->title }}</h3>

@@ -12,7 +12,7 @@
       <img src="{{ '/storage/'.ltrim($imagePath, '/') }}" alt="{{ $listing->title }}">
     @endif
     <div class="news-body">
-      <div class="news-meta">GESUCH</div>
+      <div class="news-meta">Mach mit</div>
       <h3 class="h3">{{ $listing->title }}</h3>
       <div class="news-data">
         @if($listing->organisation)

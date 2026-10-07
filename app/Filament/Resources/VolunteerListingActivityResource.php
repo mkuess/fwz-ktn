@@ -17,9 +17,9 @@ class VolunteerListingActivityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bolt';
 
-    protected static ?string $navigationLabel = 'Gesuch-Aktivitäten';
+    protected static ?string $navigationLabel = 'Mach-mit-Aktivitäten';
 
-    protected static ?string $navigationGroup = 'Gesuche';
+    protected static ?string $navigationGroup = 'Mach mit';
 
     protected static ?int $navigationSort = 3;
 

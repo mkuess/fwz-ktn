@@ -16,13 +16,13 @@ class VolunteerListingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hand-raised';
 
-    protected static ?string $navigationGroup = 'Gesuche';
+    protected static ?string $navigationGroup = 'Mach mit';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $modelLabel = 'Gesuch';
+    protected static ?string $modelLabel = 'Mach-mit-Angebot';
 
-    protected static ?string $pluralModelLabel = 'Gesuche';
+    protected static ?string $pluralModelLabel = 'Mach mit';
 
     public static function form(Form $form): Form
     {

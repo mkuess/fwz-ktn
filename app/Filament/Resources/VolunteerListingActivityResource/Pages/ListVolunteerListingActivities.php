@@ -49,7 +49,7 @@ class ListVolunteerListingActivities extends ListRecords
 
                     return true;
                 },
-                entityPluralLabel: 'Gesuch-Aktivitäten',
+                entityPluralLabel: 'Mach-mit-Aktivitäten',
             ),
             Actions\CreateAction::make(),
         ];

@@ -18,7 +18,7 @@
 @section('hero')
 <div class="page-hero" @if($heroImagePath) style="background-image:linear-gradient(rgba(10,28,10,0.78),rgba(10,28,10,0.78)),url('{{ '/storage/'.ltrim($heroImagePath, '/') }}');background-size:cover;background-position:center" @endif>
   <div class="container">
-    <span class="eyebrow">GESUCH</span>
+    <span class="eyebrow">Mach mit</span>
     <h1 class="h2">{{ $volunteerListing->title }}</h1>
     @if($volunteerListing->organisation)
       <p style="opacity:.8">{{ $volunteerListing->organisation->name }}</p>
@@ -109,7 +109,7 @@
             @endif
           </div>
 
-          <a href="{{ route('volunteer-listings.index') }}" style="display:inline-block;margin-top:2rem;font-weight:600;color:inherit">← Zurück zu allen Gesuchen</a>
+          <a href="{{ route('volunteer-listings.index') }}" style="display:inline-block;margin-top:2rem;font-weight:600;color:inherit">← Zurück zu „Mach mit“</a>
         </article>
       </div>
     </div>

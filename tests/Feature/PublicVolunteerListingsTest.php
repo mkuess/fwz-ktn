@@ -71,7 +71,9 @@ class PublicVolunteerListingsTest extends TestCase
 
         $this->get(route('volunteer-listings.index'))
             ->assertOk()
-            ->assertSee('Aktuell sind keine Gesuche eingetragen.');
+            ->assertSee('Mach mit')
+            ->assertDontSee('Gesuche')
+            ->assertSee('Aktuell sind keine Mitmach-Möglichkeiten eingetragen.');
     }
 
     public function test_expired_or_inactive_listings_are_not_public(): void

@@ -70,8 +70,8 @@ class Einstellungen extends Page implements HasForms
                             ->onColor('success')
                             ->offColor('danger'),
                         Toggle::make('volunteer_listings_enabled')
-                            ->label('Gesuche anzeigen')
-                            ->helperText('Blendet den Gesuche-Bereich auf der Startseite, den Menüpunkt und die öffentliche Gesuche-Seite ein oder aus.')
+                            ->label('Mach mit anzeigen')
+                            ->helperText('Blendet den Bereich „Mach mit“ auf der Startseite, den Menüpunkt und die öffentliche Seite „Mach mit“ ein oder aus.')
                             ->onColor('success')
                             ->offColor('danger'),
                     ]),

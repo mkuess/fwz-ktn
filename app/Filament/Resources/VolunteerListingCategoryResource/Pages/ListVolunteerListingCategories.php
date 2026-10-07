@@ -49,7 +49,7 @@ class ListVolunteerListingCategories extends ListRecords
 
                     return true;
                 },
-                entityPluralLabel: 'Gesuch-Kategorien',
+                entityPluralLabel: 'Mach-mit-Kategorien',
             ),
             Actions\CreateAction::make(),
         ];

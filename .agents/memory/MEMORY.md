@@ -14,3 +14,4 @@
 - [Filament upload previews](filament-upload-previews.md) — persisted public files should use same-origin preview URLs behind custom domains to prevent FilePond loading loops.
 - [Extreme zoom overflow](extreme-zoom-overflow.md) — at 200% zoom, inspect grid min-content widths and off-screen controls instead of masking overflow on the body.
 - [Pint empty constructors](pint-empty-constructors.md) — avoid empty promoted constructors when Pint's brace fixers disagree; use explicit readonly assignments.
+- [Mach mit naming](mach-mit-naming.md) — user-facing naming applies to frontend and administration; renaming labels must not break existing links.

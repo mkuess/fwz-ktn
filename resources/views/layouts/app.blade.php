@@ -33,7 +33,7 @@
         @endif
         <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
         @if($showVolunteerListings)
-          <a href="{{ route('volunteer-listings.index') }}">Gesuche</a>
+          <a href="{{ route('volunteer-listings.index') }}">Mach mit</a>
         @endif
         <a href="#kontakt">Kontakt</a>
         <a href="{{ route('articles.index') }}">Aktuelles</a>
@@ -119,7 +119,7 @@
     @endif
     <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
     @if($showVolunteerListings)
-      <a href="{{ route('volunteer-listings.index') }}" @click="menuOpen = false">Gesuche</a>
+      <a href="{{ route('volunteer-listings.index') }}" @click="menuOpen = false">Mach mit</a>
     @endif
     <a
       href="#kontakt"

@@ -253,16 +253,16 @@
         <div class="box banner-box">
           <div class="banner-head">
             <div>
-              <span class="eyebrow">Gesuche</span>
+              <span class="eyebrow">Mach mit</span>
               <h2 class="h2">Aktuelle Möglichkeiten für dein Engagement</h2>
             </div>
-            <a class="btn dark" href="{{ route('volunteer-listings.index') }}">Alle Gesuche <span class="arrow">→</span></a>
+            <a class="btn dark" href="{{ route('volunteer-listings.index') }}">Mach mit <span class="arrow">→</span></a>
           </div>
           <div class="news-grid">
             @forelse($volunteerListings as $volunteerListing)
               @include('volunteer-listings.partials.card', ['listing' => $volunteerListing])
             @empty
-              <p class="muted">Aktuell sind keine Gesuche eingetragen.</p>
+              <p class="muted">Aktuell sind keine Mitmach-Möglichkeiten eingetragen.</p>
             @endforelse
           </div>
         </div>

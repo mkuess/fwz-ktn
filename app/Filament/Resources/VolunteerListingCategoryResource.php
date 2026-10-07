@@ -17,15 +17,15 @@ class VolunteerListingCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationLabel = 'Gesuch-Kategorien';
+    protected static ?string $navigationLabel = 'Mach-mit-Kategorien';
 
-    protected static ?string $navigationGroup = 'Gesuche';
+    protected static ?string $navigationGroup = 'Mach mit';
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $modelLabel = 'Gesuch-Kategorie';
+    protected static ?string $modelLabel = 'Mach-mit-Kategorie';
 
-    protected static ?string $pluralModelLabel = 'Gesuch-Kategorien';
+    protected static ?string $pluralModelLabel = 'Mach-mit-Kategorien';
 
     public static function form(Form $form): Form
     {
