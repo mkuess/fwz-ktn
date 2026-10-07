@@ -164,7 +164,17 @@
     </div>
     <div>
       <h3>Kontakt</h3>
-         <p><strong>Freiwilligenzentrum Kärnten</strong><br>Rosenegger Straße 20<br>A-9021 Klagenfurt am Wörthersee<br>E-Mail: info@fwz-ktn.at<br><br><strong>Office:</strong><br>Sandra Dobos 0664 886 250 11</p>
+      <p>
+        <strong>Freiwilligenzentrum Kärnten</strong><br>
+        Rosenegger Straße 20<br>
+        A-9021 Klagenfurt am Wörthersee<br><br>
+        <strong>Operative Leitung:</strong><br>
+        Patrick Egger – <a href="tel:+4366488625010">0664 886 250 10</a><br>
+        <a href="mailto:patrick.egger@fwz-ktn.at">patrick.egger@fwz-ktn.at</a><br><br>
+        <strong>Office:</strong><br>
+        Sandra Dobos – <a href="tel:+4366488625011">0664 886 250 11</a><br>
+        <a href="mailto:info@fwz-ktn.at">info@fwz-ktn.at</a>
+      </p>
     </div>
     <div>
       <h3>Rechtliches &amp; Social</h3>
