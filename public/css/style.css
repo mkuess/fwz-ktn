@@ -404,9 +404,9 @@ img.org-logo{object-fit:contain;background:#f3f7fc;padding:6px}
 .form-control{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font:inherit;font-size:.96rem;color:var(--ink);background:#fff;transition:border-color .15s,box-shadow .15s}
 .form-control:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,49,101,.12)}
 .form-control.is-error{border-color:#c0392b}
-.password-field{position:relative}
-.password-field input{padding-right:52px!important}
-.password-toggle{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:44px;height:40px;display:grid;place-items:center;border:0;border-radius:8px;background:transparent;color:var(--blue);cursor:pointer}
+.password-field{position:relative;display:grid;align-items:center}
+.password-field input{grid-area:1/1;display:block;min-width:0;width:100%;padding-right:52px!important}
+.password-toggle{grid-area:1/1;justify-self:end;align-self:stretch;z-index:1;width:44px;margin:3px;display:grid;place-items:center;padding:0;border:0;border-radius:8px;background:transparent;color:var(--blue);cursor:pointer}
 .password-toggle:hover{background:var(--yellow-soft)}
 .password-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 textarea.form-control{resize:vertical;min-height:110px}
