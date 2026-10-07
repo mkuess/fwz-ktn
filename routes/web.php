@@ -9,6 +9,7 @@ use App\Http\Controllers\MemberRegistrationController;
 use App\Http\Controllers\OrganisationController;
 use App\Http\Controllers\OrganisationRegistrationController;
 use App\Http\Controllers\VolunteerListingController;
+use App\Http\Middleware\EnsureMemberLoginAllowed;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -32,7 +33,7 @@ Route::get('/vereine', [OrganisationController::class, 'index'])->name('organisa
 Route::get('/vereine/karte', [OrganisationController::class, 'map'])->name('organisations.map');
 
 Route::get('/anmelden', [MemberAuthController::class, 'showLogin'])->name('member.login');
-Route::post('/anmelden', [MemberAuthController::class, 'login'])->name('member.login.post');
+Route::post('/anmelden', [MemberAuthController::class, 'login'])->middleware('throttle:10,1')->name('member.login.post');
 Route::post('/abmelden', [MemberAuthController::class, 'logout'])->name('member.logout');
 Route::get('/passwort-vergessen', [MemberAuthController::class, 'showForgotPassword'])->name('member.forgot');
 Route::post('/passwort-vergessen', [MemberAuthController::class, 'sendResetCode'])
@@ -49,7 +50,7 @@ Route::post('/passwort-vergessen/neues-passwort', [MemberAuthController::class, 
 Route::get('/aktivierung/{token}', [MemberAuthController::class, 'showActivation'])->name('member.activate');
 Route::post('/aktivierung/{token}', [MemberAuthController::class, 'activate'])->name('member.activate.post');
 
-Route::middleware(['auth:member'])->group(function () {
+Route::middleware(['auth:member', EnsureMemberLoginAllowed::class])->group(function () {
     Route::get('/mein-bereich', [MemberPortalController::class, 'index'])->name('member.portal');
     Route::get('/mein-bereich/daten-aendern', [MemberPortalController::class, 'edit'])->name('member.profile.edit');
     Route::patch('/mein-bereich/daten-aendern', [MemberPortalController::class, 'update'])->name('member.profile.update');

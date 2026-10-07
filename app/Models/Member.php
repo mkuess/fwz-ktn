@@ -66,6 +66,7 @@ class Member extends Authenticatable
         'card_sent_at',
         'activation_sent_at',
         'activation_token',
+        'is_login_blocked',
     ];
 
     protected $hidden = [
@@ -88,6 +89,7 @@ class Member extends Authenticatable
             'newsletter_optin' => 'boolean',
             'card_sent_at' => 'date',
             'activation_sent_at' => 'datetime',
+            'is_login_blocked' => 'boolean',
         ];
     }
 

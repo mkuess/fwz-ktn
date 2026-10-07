@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Services\GeocodingService;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Organisation extends Model
+class Organisation extends Authenticatable implements FilamentUser
 {
     use SoftDeletes;
 
@@ -41,6 +43,7 @@ class Organisation extends Model
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
     protected function casts(): array
@@ -53,6 +56,7 @@ class Organisation extends Model
             'latitude' => 'float',
             'longitude' => 'float',
             'geocoded_at' => 'datetime',
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -118,6 +122,14 @@ class Organisation extends Model
     public function members(): HasMany
     {
         return $this->hasMany(Member::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $panel->getId() === 'organisation'
+            && $this->is_active
+            && $this->is_approved
+            && ! $this->trashed();
     }
 
     public function volunteerListings(): HasMany

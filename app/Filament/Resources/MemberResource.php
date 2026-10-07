@@ -120,6 +120,9 @@ class MemberResource extends Resource
                             ->placeholder('Bitte Grund angeben...')
                             ->visible(fn (Get $get): bool => $get('status') === 'rejected')
                             ->nullable(),
+                        Forms\Components\Toggle::make('is_login_blocked')
+                            ->label('Mitgliedszugang gesperrt')
+                            ->helperText('Verhindert den Zugang über /anmelden, auch bei bereits bestehenden Mitgliedersitzungen.'),
                     ])
                     ->columns(2),
 

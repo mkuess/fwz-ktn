@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Mail\MemberPasswordResetCodeMail;
 use App\Models\LoginLog;
 use App\Models\Member;
+use App\Models\Organisation;
+use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +21,14 @@ class MemberAuthController extends Controller
 
     public function showLogin()
     {
+        if (auth('organisation')->check()) {
+            if (auth('organisation')->user()->canAccessPanel(Filament::getPanel('organisation'))) {
+                return redirect('/verwaltung/organisation');
+            }
+
+            auth('organisation')->logout();
+        }
+
         if (auth('member')->check()) {
             return redirect()->route('member.portal');
         }
@@ -49,21 +59,44 @@ class MemberAuthController extends Controller
 
         if (auth('member')->attempt($credentials, $request->boolean('remember'))) {
             $member = auth('member')->user();
-            if ($member->status !== 'approved') {
+            if ($member->status !== 'approved' || $member->is_login_blocked) {
+                $reason = $member->is_login_blocked
+                    ? 'Dein Zugang wurde gesperrt. Bitte wende dich an deinen Verein oder das Freiwilligenzentrum.'
+                    : 'Dein Konto wurde noch nicht freigeschaltet.';
                 LoginLog::record(
                     $member,
                     $credentials['email'],
                     false,
-                    'Konto noch nicht freigeschaltet.',
+                    $reason,
                 );
                 auth('member')->logout();
 
-                return back()->withErrors(['email' => 'Dein Konto wurde noch nicht freigeschaltet.']);
+                return back()->withErrors(['email' => $reason]);
             }
             LoginLog::record($member, $credentials['email'], true);
             $request->session()->regenerate();
 
             return redirect()->route('member.portal');
+        }
+
+        $organisation = Organisation::query()
+            ->whereRaw('LOWER(email) = ?', [strtolower(trim($credentials['email']))])
+            ->first();
+
+        if ($organisation && Hash::check($credentials['password'], $organisation->password)) {
+            if (! $organisation->canAccessPanel(Filament::getPanel('organisation'))) {
+                LoginLog::record(null, $organisation->email, false, 'Organisation nicht freigeschaltet oder inaktiv.');
+
+                return back()->withErrors(['email' => 'Deine Organisation ist nicht freigeschaltet oder nicht aktiv.']);
+            }
+
+            $request->session()->regenerate();
+            $request->session()->put('organisation_login_since', $organisation->last_login_at?->toDateTimeString());
+            auth('organisation')->login($organisation, $request->boolean('remember'));
+            $organisation->forceFill(['last_login_at' => now()])->save();
+            LoginLog::record(null, $organisation->email, true);
+
+            return redirect('/verwaltung/organisation');
         }
 
         LoginLog::record(
@@ -79,6 +112,7 @@ class MemberAuthController extends Controller
     public function logout(Request $request)
     {
         auth('member')->logout();
+        auth('organisation')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

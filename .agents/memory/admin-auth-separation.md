@@ -3,7 +3,7 @@ name: Admin authentication separation
 description: How FWZ admins use both the member portal and the separately authorized Filament administration.
 ---
 
-FWZ-admin members are the source for managed admin identities. Approved members with the `admin` role may log into the normal member portal and also synchronize to a linked admin user for Filament. Only explicitly marked admin users may access the Filament panel.
+FWZ-admin members are the source for managed admin identities. Approved members with the `admin` role may log into the normal member portal and also synchronize to a linked admin user for Filament. Only explicitly marked admin users may access the FWZ admin panel. Organisation accounts have a separate panel and must never acquire FWZ administrative rights through their login.
 
 **Why:** Admin status adds administrative access; it must not remove the person's normal member access. The project still has separate `members` and `users` authentication providers, so access to the member portal does not itself grant access to Filament.
 

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Member;
+use App\Models\Organisation;
 use App\Models\User;
 
 return [
@@ -46,6 +48,10 @@ return [
             'driver' => 'session',
             'provider' => 'members',
         ],
+        'organisation' => [
+            'driver' => 'session',
+            'provider' => 'organisations',
+        ],
     ],
 
     /*
@@ -72,7 +78,11 @@ return [
         ],
         'members' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Member::class,
+            'model' => Member::class,
+        ],
+        'organisations' => [
+            'driver' => 'eloquent',
+            'model' => Organisation::class,
         ],
     ],
 
