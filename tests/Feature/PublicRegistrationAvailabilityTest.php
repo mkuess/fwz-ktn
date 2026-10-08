@@ -14,6 +14,16 @@ class PublicRegistrationAvailabilityTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_registration_link_is_not_shown_in_desktop_or_mobile_menu(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('>Registrieren</a>', false)
+            ->assertSee('Jetzt Verein registrieren');
+
+        $this->get(route('registrierung.schritt1'))->assertOk();
+    }
+
     public function test_public_registrations_are_enabled_by_default(): void
     {
         $this->assertDatabaseHas('settings', [

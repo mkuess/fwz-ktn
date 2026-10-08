@@ -28,9 +28,6 @@
       <a href="{{ route('home') }}#top"><img class="logo" src="{{ asset('img/fwz-logo-new2.svg') }}?v={{ filemtime(public_path('img/fwz-logo-new2.svg')) }}" alt="FWZ Kärnten" width="234" height="40"></a>
       <div class="menu" id="mobile-menu">
         <a href="{{ route('home') }}#fwz">Über uns</a>
-        @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
-          <a href="{{ route('registrierung.schritt1') }}">Registrieren</a>
-        @endif
         <a href="{{ route('organisations.map') }}">Vereine/Organisationen</a>
         @if($showVolunteerListings)
           <a href="{{ route('volunteer-listings.index') }}">Mach mit</a>
@@ -114,9 +111,6 @@
 
   <nav class="mobile-nav-panel__nav" aria-label="Mobilmenü">
     <a href="{{ route('home') }}#fwz" @click="menuOpen = false">Über uns</a>
-    @if(\App\Models\Setting::enabled('organisation_registration_enabled'))
-      <a href="{{ route('registrierung.schritt1') }}" @click="menuOpen = false">Registrieren</a>
-    @endif
     <a href="{{ route('organisations.map') }}" @click="menuOpen = false">Vereine/Organisationen</a>
     @if($showVolunteerListings)
       <a href="{{ route('volunteer-listings.index') }}" @click="menuOpen = false">Mach mit</a>
