@@ -14,3 +14,9 @@ Organisation blocking is a reversible member-login restriction, separate from FW
 **Why:** The user requested a manual block and an indication whether members can log in. Unblocking must not implicitly approve pending or rejected members.
 
 **How to apply:** Enforce restrictions on existing member sessions as well as password login. Preserve approval status during both blocking and unblocking.
+
+CSV roster comparison is a read-only membership review, not an import or automatic access decision. Compare all registrations of the current organisation, not just new registrations. Organisations can use differently named and ordered CSV columns.
+
+**Why:** The user wants to check whether registered users really belong to their association. Missing or differing emails and names are not sufficient evidence to revoke access.
+
+**How to apply:** Allow explicit column mapping for email, first name and last name. Treat name-only or conflicting matches as manual-review cases. Never automatically change approval or login blocking from a CSV comparison.

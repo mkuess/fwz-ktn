@@ -19,7 +19,7 @@ class Profile extends Page
 
     protected static ?string $slug = 'meine-daten';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static string $view = 'filament.organisation.profile';
 

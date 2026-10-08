@@ -3,6 +3,14 @@ name: Filament smart CSV import (multi-step wizard with column mapping)
 description: Reusable pattern for a self-service CSV import (auto-detect delimiter, user maps columns, updateOrCreate dedup) built as a plain Filament Action, not the Importer/ImportAction system
 ---
 
+## CSV header positions
+
+CSV exports can contain blank and duplicate headers, including trailing unused columns. Preserve physical column positions when parsing these files; name-keyed readers and removing blank headers can reject the export or silently shift the mapping.
+
+**Why:** A real organisation roster included numerous unnamed columns and repeated headings. Header-index mapping is required to interpret that format safely.
+
+**How to apply:** In read-only roster comparisons, parse rows positionally, label mapping choices with column numbers, and do not pass duplicate headings to a reader requiring unique header names.
+
 ## Filament `Action` supports wizard steps natively
 `Filament\Actions\Action` (via `Concerns\HasWizard`) has a `->steps([Step::make(...)->schema([...]), ...])` method that internally calls `->form($steps)`. All step fields share one `$data` array delivered to `->action(function (array $data) {...})` — no need for session/cache to pass state between steps.
 
@@ -14,6 +22,12 @@ description: Reusable pattern for a self-service CSV import (auto-detect delimit
 A `Filament\Forms\Components\Select` in a later step can read a `FileUpload` field's live state from an earlier step via `->options(function (Get $get) { $get('csv_file') ... })`, as long as the FileUpload has `->live()` and `->storeFiles(false)` (so the file is available synchronously in the same request without a disk round-trip).
 
 **Why:** `storeFiles(false)` keeps the upload as a `Livewire\Features\SupportFileUploads\TemporaryUploadedFile` rather than persisting it to a disk.
+
+Header-based Select options must be evaluated lazily, not captured as an array while constructing the form.
+
+**Why:** Filament caches forms before upload actions populate the headers. Suggested selected values can look correct while the dropdown still has no options, especially after uploading a second file.
+
+**How to apply:** Resolve options through a closure using the current headers. Verify the actual option lists after both initial upload and reupload, not just the selected values.
 
 **Gotcha — `$get()` returns the raw, non-dehydrated state, which is an array, not the file itself.** Filament's `BaseFileUpload` always stores its internal state as `[uuid => TemporaryUploadedFile]`, *even for a single non-multiple upload* — the "give me just one file" behavior (`Arr::first($state)`) only happens in `dehydrateStateUsing()`, which runs when the form is submitted and populates `$data` in the action closure. Any `Get $get` call made *inside* step closures (`options()`, `default()`, `content()`, etc., which run mid-form before submission) gets the raw keyed array instead. Always unwrap with something like `is_array($file) ? Arr::first($file) : $file` before treating the value as a single file/`TemporaryUploadedFile`, or headers/options silently stay empty with no error.
 

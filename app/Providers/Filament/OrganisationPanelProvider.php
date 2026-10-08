@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Organisation\Pages\CsvComparison;
 use App\Filament\Organisation\Pages\Dashboard;
 use App\Filament\Organisation\Pages\Members;
 use App\Filament\Organisation\Pages\Profile;
@@ -32,7 +33,7 @@ class OrganisationPanelProvider extends PanelProvider
             ->brandLogo(asset('images/fwz_logo.svg'))
             ->brandLogoHeight('2.5rem')
             ->colors(['primary' => Color::Amber])
-            ->pages([Dashboard::class, Members::class, Profile::class])
+            ->pages([Dashboard::class, Members::class, CsvComparison::class, Profile::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
