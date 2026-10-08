@@ -2,7 +2,6 @@
 
 namespace App\Filament\Organisation\Pages;
 
-use App\Filament\Organisation\Support\MemberTable;
 use App\Models\Member;
 use App\Services\OrganisationMemberCsvComparison;
 use Filament\Forms;
@@ -94,6 +93,7 @@ class CsvComparison extends Page implements HasTable
 
     public function prepare(): void
     {
+        $this->validateComparisonContext();
         $file = $this->uploadForm->getState()['csv'];
         if (! $file instanceof TemporaryUploadedFile) {
             throw ValidationException::withMessages(['uploadData.csv' => 'Bitte lade eine CSV-Datei hoch.']);
@@ -107,18 +107,21 @@ class CsvComparison extends Page implements HasTable
         $this->forgetComparison();
         $this->comparisonToken = Str::random(40);
         $this->headers = $csv['headers'];
-        Cache::put($this->cacheKey(), ['csv' => $csv, 'result' => null], now()->addMinutes(30));
+        Cache::put($this->cacheKey(), [
+            'csv' => $csv, 'result' => null, 'organisation_id' => $this->comparisonOrganisationId(),
+        ], now()->addMinutes(30));
         $this->mappingForm->fill(app(OrganisationMemberCsvComparison::class)->suggest($this->headers));
     }
 
     public function compare(): void
     {
+        $this->validateComparisonContext();
         $mapping = $this->mappingForm->getState();
         $state = $this->comparisonToken ? Cache::get($this->cacheKey()) : null;
-        if (! $state) {
+        if (! $state || ($state['organisation_id'] ?? null) !== $this->comparisonOrganisationId()) {
             throw ValidationException::withMessages(['mappingData.email' => 'Der Upload ist abgelaufen. Bitte lade die CSV erneut hoch.']);
         }
-        $state['result'] = app(OrganisationMemberCsvComparison::class)->compare($state['csv'], $mapping, (int) auth('organisation')->id());
+        $state['result'] = app(OrganisationMemberCsvComparison::class)->compare($state['csv'], $mapping, $this->comparisonOrganisationId());
         Cache::put($this->cacheKey(), $state, now()->addMinutes(30));
         unset($this->comparison);
         $this->resetTable();
@@ -138,14 +141,19 @@ class CsvComparison extends Page implements HasTable
     #[Computed]
     public function comparison(): ?array
     {
-        return $this->comparisonToken ? (Cache::get($this->cacheKey())['result'] ?? null) : null;
+        $state = $this->comparisonToken ? Cache::get($this->cacheKey()) : null;
+
+        return $state && ($state['organisation_id'] ?? null) === $this->comparisonOrganisationId() ? $state['result'] : null;
     }
 
     public function table(Table $table): Table
     {
         $issues = $this->comparison['issues'] ?? [];
 
-        return MemberTable::configure($table, Member::query()->whereIn('id', array_keys($issues)))
+        return $table
+            ->query(Member::query()->where('organisation_id', $this->comparisonOrganisationId())->whereIn('id', array_keys($issues)))
+            ->defaultSort('created_at', 'desc')
+            ->paginationPageOptions([10, 30, 50])
             ->columns([
                 Tables\Columns\TextColumn::make('full_name')->label('Name')
                     ->state(fn (Member $record): string => trim($record->first_name.' '.$record->last_name))
@@ -182,7 +190,32 @@ class CsvComparison extends Page implements HasTable
 
     private function cacheKey(): string
     {
-        return 'organisation-csv:'.auth('organisation')->id().':'.hash('sha256', session()->getId()).':'.$this->comparisonToken;
+        return $this->comparisonCacheIdentity().':'.hash('sha256', session()->getId()).':'.$this->comparisonToken;
+    }
+
+    public function isAdminComparison(): bool
+    {
+        return false;
+    }
+
+    public function hasSelectedOrganisation(): bool
+    {
+        return $this->comparisonOrganisationId() !== null;
+    }
+
+    protected function comparisonOrganisationId(): ?int
+    {
+        return auth('organisation')->id();
+    }
+
+    protected function comparisonCacheIdentity(): string
+    {
+        return 'organisation-csv:'.auth('organisation')->id();
+    }
+
+    protected function validateComparisonContext(): void
+    {
+        abort_unless(auth('organisation')->check(), 403);
     }
 
     private function forgetComparison(): void

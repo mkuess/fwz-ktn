@@ -1,12 +1,20 @@
 <x-filament-panels::page>
     <x-filament::section heading="Vereinsliste mit Anmeldungen vergleichen">
         <p class="text-sm text-gray-600 dark:text-gray-300">
-            Lade die aktuelle Mitgliederliste deiner Organisation hoch. Der Abgleich berücksichtigt
-            alle Anmeldungen deiner Organisation – nicht nur die seit dem letzten Login.
+            Lade die aktuelle Mitgliederliste {{ $this->isAdminComparison() ? 'des ausgewählten Vereins' : 'deiner Organisation' }} hoch.
+            Der Abgleich berücksichtigt alle Anmeldungen {{ $this->isAdminComparison() ? 'des ausgewählten Vereins' : 'deiner Organisation' }}
+            – nicht nur die seit dem letzten Login.
             Es werden keine Mitglieder importiert, verändert, gelöscht oder gesperrt.
         </p>
     </x-filament::section>
 
+    @if ($this->isAdminComparison())
+        <x-filament::section heading="Verein auswählen">
+            {{ $this->selectionForm }}
+        </x-filament::section>
+    @endif
+
+    @if (! $this->isAdminComparison() || $this->hasSelectedOrganisation())
     @if ($headers === [])
         <x-filament::section heading="1. CSV hochladen">
             <form wire:submit="prepare" class="space-y-6">
@@ -49,7 +57,9 @@
                     <dd class="text-xl font-semibold">{{ $result['csv_rows'] }}</dd>
                 </div>
                 <div>
-                    <dt class="text-sm text-gray-500 dark:text-gray-400">Anmeldungen deiner Organisation</dt>
+                    <dt class="text-sm text-gray-500 dark:text-gray-400">
+                        Anmeldungen {{ $this->isAdminComparison() ? 'des ausgewählten Vereins' : 'deiner Organisation' }}
+                    </dt>
                     <dd class="text-xl font-semibold">{{ $result['total'] }}</dd>
                 </div>
                 <div>
@@ -78,5 +88,6 @@
             </p>
         </x-filament::section>
         {{ $this->table }}
+    @endif
     @endif
 </x-filament-panels::page>

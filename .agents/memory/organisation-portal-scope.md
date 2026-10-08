@@ -20,3 +20,9 @@ CSV roster comparison is a read-only membership review, not an import or automat
 **Why:** The user wants to check whether registered users really belong to their association. Missing or differing emails and names are not sufficient evidence to revoke access.
 
 **How to apply:** Allow explicit column mapping for email, first name and last name. Treat name-only or conflicting matches as manual-review cases. Never automatically change approval or login blocking from a CSV comparison.
+
+FWZ admins should have the same read-only CSV comparison, with a searchable association selector. Organisation accounts must still be restricted to their own organisation.
+
+**Why:** The user requested an admin comparison under “Verwaltung” with autocomplete selection of the association to check.
+
+**How to apply:** Keep comparison behaviour identical across both areas. Changing the selected association must discard the old comparison so results cannot be mistaken for those of another association.
