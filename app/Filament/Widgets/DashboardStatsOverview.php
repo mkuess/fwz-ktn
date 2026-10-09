@@ -28,7 +28,7 @@ class DashboardStatsOverview extends BaseWidget
                 ->icon('heroicon-o-users')
                 ->color('info'),
 
-            Stat::make('Ausstehende Mitglieder', Member::where('status', 'pending')->count())
+            Stat::make('Ausstehende Mitglieder', Member::where('status', 'pending')->where('role', 'member')->count())
                 ->description('Warten auf Freischaltung')
                 ->icon('heroicon-o-user-plus')
                 ->color('warning'),
